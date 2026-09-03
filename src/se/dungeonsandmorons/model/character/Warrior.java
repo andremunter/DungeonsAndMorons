@@ -1,39 +1,42 @@
 package se.dungeonsandmorons.model.character;
 
-import se.dungeonsandmorons.model.Attacker;
-import se.dungeonsandmorons.model.Flyable;
-import se.dungeonsandmorons.model.Targetable;
+import se.dungeonsandmorons.model.Attribute;
+import se.dungeonsandmorons.model.combat.Targetable;
+import se.dungeonsandmorons.model.skill.Skill;
 
-public class Warrior extends Character implements Targetable, Attacker {
-    int damage = 3;
+public class Warrior extends Character {
 
-    public Warrior(int strength, int agility, int intelligence){
-        super(strength, agility, intelligence);
+    public Warrior(String name) {
+        super(name);
+        this.strengthPerLevel = 5;
+        this.agilityPerLevel = 3;
+        this.intelligencePerLevel = 1;
+        this.vitalityPerLevel = 3;
+
+        this.skills.add(new Skill("Swing", "swosch", 10, Attribute.STRENGTH, 2, 0));
     }
 
     @Override
-    public void attack(Targetable target) {
-        if (target instanceof Attacker){
-            IO.println("Target can fight back");
-        }
-        int damageDealt = calculateDamage(target);
-        IO.println("Warrior swung their axe and dealt " + damageDealt + " damage to " + target.getClass().getSimpleName());
-        target.takeDamage(damageDealt);
-    }
+    public void attack(Targetable target, Skill skill) {
 
-    @Override
-    public void takeDamage(int damage) {
-        setHp(getHp() - damage);
-    }
-
-    private int calculateDamage(Targetable target){
-        int damage = getStrength() * 2;
-
-        if (target instanceof Flyable){
-            IO.println("Målet flyger, du halvmissade yxkastet");
-            damage /= 2;
+        int attributeBase = 0;
+        switch (skill.getAttribute()) {
+            case Attribute.STRENGTH -> attributeBase = this.getStrength();
+            case Attribute.AGILITY -> attributeBase = this.getAgility();
+            case Attribute.INTELLIGENCE -> attributeBase = this.getIntelligence();
+            case Attribute.VITALITY -> attributeBase = this.getVitality();
         }
 
-        return damage;
+
+        if (getCurrentMana() < skill.getResourceCost()) {
+            IO.println("Not enough mana to cast " + skill.getName());
+            return;
+        }
+
+        setCurrentMana(getCurrentMana() - skill.getResourceCost());
+        int skillDamage = (skill.getBaseDamage() * (attributeBase * skill.getAttributeDamageMultiplier()));
+
+        IO.println(String.format("%s used `%s` and dealt %d damage to %s.", getName(), skill.getName(), skillDamage, target.getName()));
+        target.takeDamage(skillDamage);
     }
 }

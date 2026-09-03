@@ -1,24 +1,26 @@
 package se.dungeonsandmorons.model.character;
 
-import se.dungeonsandmorons.model.Attacker;
+import se.dungeonsandmorons.model.combat.Attacker;
 import se.dungeonsandmorons.model.Flyable;
-import se.dungeonsandmorons.model.Targetable;
+import se.dungeonsandmorons.model.combat.Targetable;
+import se.dungeonsandmorons.model.skill.Skill;
 
 public class Archer extends Character implements Targetable, Attacker {
     int damage = 3;
 
-    public Archer(int strength, int agility, int intelligence){
-        super(strength, agility, intelligence);
+    public Archer(String name) {
+        super(name);
     }
+
     @Override
-    public void attack(Targetable target) {
+    public void attack(Targetable target, Skill skill) {
         IO.println("Archer shot their bow and dealt " + calculateDamage(target) + " damage");
         target.takeDamage(calculateDamage(target));
     }
 
     @Override
     public void takeDamage(int damage) {
-        setHp(getHp()-damage);
+        setMaxHealth(getMaxHealth()-damage);
     }
 
     private int calculateDamage(Targetable target){
