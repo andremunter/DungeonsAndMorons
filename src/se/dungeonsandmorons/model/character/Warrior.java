@@ -19,6 +19,11 @@ public class Warrior extends Character {
     @Override
     public void attack(Targetable target, Skill skill) {
 
+        if (target.getCurrentHealth() < 1) {
+            IO.println(target.getName() + " is already dead.");
+            return;
+        }
+
         int attributeBase = 0;
         switch (skill.getAttribute()) {
             case Attribute.STRENGTH -> attributeBase = this.getStrength();
@@ -34,9 +39,9 @@ public class Warrior extends Character {
         }
 
         setCurrentMana(getCurrentMana() - skill.getResourceCost());
-        int skillDamage = (skill.getBaseDamage() * (attributeBase * skill.getAttributeDamageMultiplier()));
+        int skillDamage = (skill.getBaseDamage() * Math.max(1,(attributeBase * skill.getAttributeDamageMultiplier())));
 
         IO.println(String.format("%s used `%s` and dealt %d damage to %s.", getName(), skill.getName(), skillDamage, target.getName()));
-        target.takeDamage(skillDamage);
+        target.takeDamage(skillDamage, this);
     }
 }

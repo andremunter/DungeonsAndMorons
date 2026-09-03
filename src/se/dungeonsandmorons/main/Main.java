@@ -7,22 +7,22 @@ import se.dungeonsandmorons.model.character.Warrior;
 import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.npc.Npc;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import se.dungeonsandmorons.model.combat.CombatService;
+
 public class Main {
 
-    static void main(String[] args) {
 
-        Character warrior = new Warrior("Gucki");
-
-        Npc dragon = new Dragon("Green Dragon", 199, 50);
-        Npc bird = new Bird("Parrot", 199, 5);
+    private final Game game = new Game();
 
 
-        warrior.attack(dragon, warrior.getSkills().getFirst());
-        warrior.attack(dragon, warrior.getSkills().getFirst());
+    void main(String[] args) {
+
+        game.runGame();
 
 
-        TurnHandler.handleEnemyTurn(dragon, warrior);
-        TurnHandler.handleEnemyTurn(bird, warrior);
     }
 
 }

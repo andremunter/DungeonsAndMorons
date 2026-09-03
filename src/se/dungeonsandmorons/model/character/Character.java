@@ -9,17 +9,16 @@ import java.util.List;
 
 public abstract class Character implements Attacker, Targetable {
     private String name;
-    private final int baseHealth;
-    private final int baseMana;
+
+    private int level;
+    private int experience;
+    private int expPerLevel;
 
     private int maxHealth;
     private int currentHealth;
 
     private int maxMana;
     private int currentMana;
-
-    private int level;
-    private int experience;
 
     private int strength;
     private int agility;
@@ -40,23 +39,24 @@ public abstract class Character implements Attacker, Targetable {
 
     Character(String name) {
         this.name = name;
-        baseHealth = 150;
-        baseMana = 35;
-        maxHealth = baseHealth;
+        this.level = 0;
+        this.experience = 0;
+        this.expPerLevel = 45;
+        maxHealth = 150;
         currentHealth = maxHealth;
-        maxMana = baseMana;
+        maxMana = 35;
         currentMana = maxMana;
-        strength = 5;
-        agility = 5;
-        intelligence = 5;
-        vitality = 5;
+        strength = 0;
+        agility = 0;
+        intelligence = 0;
+        vitality = 0;
     }
 
     public boolean isAlive() {
         return this.currentHealth > 0;
     }
 
-    public void takeDamage(int amount) {
+    public void takeDamage(int amount, Attacker attacker) {
         this.currentHealth = Math.max(0, this.currentHealth - amount);
         if (!isAlive()) {
             IO.println(name + " died!");
@@ -64,6 +64,8 @@ public abstract class Character implements Attacker, Targetable {
     }
 
     public void levelUp() {
+        IO.println(String.format("%s leveled up from level %d to level %d.", name, level, level+1));
+
         addLevel(1);
         addStrength(strengthPerLevel);
         addAgility(agilityPerLevel);
@@ -74,12 +76,39 @@ public abstract class Character implements Attacker, Targetable {
     }
 
     private void updateStats() {
-        maxHealth = (level * healthPerLevel) + (healthPerVitality * (vitality * vitalityPerLevel)) + baseHealth;
-        maxMana = (level * manaPerLevel) + (manaPerIntelligence * (intelligence * intelligencePerLevel)) + baseMana;
+        maxHealth += (level * healthPerLevel) + (healthPerVitality * (vitality * vitalityPerLevel));
+        maxMana += (level * manaPerLevel) + (manaPerIntelligence * (intelligence * intelligencePerLevel)) ;
 
         currentHealth = maxHealth;
         currentMana = maxMana;
+
     }
+
+    public void getStats() {
+        IO.print(String.format("""
+                Name: %s
+                Class: %s
+                Level: %d,
+                Experience: %d
+                MaxHealth: %d,
+                MaxMana: %d,
+                Strength: %d,
+                Agility: %d,
+                Intelligence: %d,
+                Vitality: %d
+                """, name, getClass().getSimpleName(), level, experience, maxHealth, maxMana, strength, agility, intelligence, vitality));
+    }
+
+    public void addExperience(int amount) {
+        if (this.experience + amount >= expPerLevel) {
+            levelUp();
+            this.experience = 0;
+        } else {
+            this.experience += amount;
+            IO.println(String.format("%s gained %d experience.", name, amount));
+        }
+    }
+
 
     void die() {
 
@@ -108,7 +137,6 @@ public abstract class Character implements Attacker, Targetable {
     public void setVitality(int vitality) { this.vitality = vitality; }
 
     public void addLevel(int amount) { this.level += amount; }
-    public void addExperience(int amount) { this.experience += amount; }
     public void addMaxHealth(int amount) { this.maxHealth += amount; }
     public void addStrength(int amount) { this.strength += amount; }
     public void addAgility(int amount) { this.agility += amount; }

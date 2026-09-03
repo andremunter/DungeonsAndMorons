@@ -31,9 +31,4 @@ public abstract class Npc implements Targetable {
     public int getCurrentHealth() { return this.currentHealth; }
     public List<Skill> getSkills() { return this.skills; }
 
-    public void addExperience(int experience) {
-
-    }
-
-
 }

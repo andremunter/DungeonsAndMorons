@@ -10,7 +10,9 @@ public class TurnHandler {
         if (enemy instanceof Attacker attacker) {
             attacker.attack(player, enemy.getSkills().getFirst());
         } else {
-            IO.println(enemy.getName() + " is peaceful and does not attack back.");
+            if (enemy.isAlive()) {
+                IO.println(enemy.getName() + " is peaceful and does not attack back.");
+            }
         }
     }
 
