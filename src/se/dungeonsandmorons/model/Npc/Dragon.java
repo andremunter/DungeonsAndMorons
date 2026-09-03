@@ -7,7 +7,7 @@ import se.dungeonsandmorons.model.Targetable;
 public class Dragon extends Npc implements Targetable, Attacker, Flyable {
 
     @Override
-    public void attack(Targetable targetable) {
+    public void attack(Targetable target) {
 
     }
 
