@@ -9,8 +9,12 @@ public class Warrior extends Character implements Targetable, Attacker{
 
     @Override
     public void attack(Targetable targetable) {
-        targetable.takeDamage(calculateDamage());
-        IO.println("Warrior swung their axe and dealt " + calculateDamage() + " damage");
+        if (targetable instanceof Attacker){
+            IO.println("Target can fight back");
+        }
+        int damageDealt = calculateDamage(targetable);
+        IO.println("Warrior swung their axe and dealt " + damageDealt + " damage to " + targetable.getClass().getSimpleName());
+        targetable.takeDamage(damageDealt);
     }
 
     @Override
@@ -18,7 +22,14 @@ public class Warrior extends Character implements Targetable, Attacker{
         setHp(getHp() - damage);
     }
 
-    private int calculateDamage(){
-        return getStrength() * 2;
+    private int calculateDamage(Targetable targetable){
+        int damage = getStrength() * 2;
+
+        if (targetable instanceof Flyable){
+            IO.println("Målet flyger, du halvmissade yxkastet");
+            damage /= 2;
+        }
+
+        return damage;
     }
 }

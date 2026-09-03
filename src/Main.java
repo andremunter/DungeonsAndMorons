@@ -9,14 +9,15 @@ void main() {
             new Magician(1, 2, 5)
     };
 
-    Dragon dragon = new Dragon();
+    Targetable[] targets = {
+            new Dragon(),
+            new Bird()
+    };
 
-    IO.println("Dragons hp = " + dragon.getHp());
 
     for (Attacker attacker : attackers){
-        attacker.attack(dragon);
-        IO.println("Dragons hp = " + dragon.getHp());
+        attacker.attack(targets[0]);
+        attacker.attack(targets[1]);
     }
 
-    dragon.fly();
 }

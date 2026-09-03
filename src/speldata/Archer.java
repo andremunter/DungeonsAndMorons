@@ -8,8 +8,8 @@ public class Archer extends Character implements Targetable, Attacker {
     }
     @Override
     public void attack(Targetable targetable) {
-        targetable.takeDamage(calculateDamage());
-        IO.println("Archer shot their bow and dealt " + calculateDamage() + " damage");
+        IO.println("Archer shot their bow and dealt " + calculateDamage(targetable) + " damage");
+        targetable.takeDamage(calculateDamage(targetable));
     }
 
     @Override
@@ -17,7 +17,14 @@ public class Archer extends Character implements Targetable, Attacker {
         setHp(getHp()-damage);
     }
 
-    private int calculateDamage(){
-        return getAgility() * 2;
+    private int calculateDamage(Targetable targetable){
+        int damage = getAgility() * 2;
+
+        if (targetable instanceof Flyable){
+
+            damage *= 2;
+        }
+
+        return damage;
     }
 }

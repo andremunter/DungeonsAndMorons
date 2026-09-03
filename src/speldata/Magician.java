@@ -8,8 +8,8 @@ public class Magician extends Character implements Targetable, Attacker{
 
     @Override
     public void attack(Targetable targetable) {
-        targetable.takeDamage(calculateDamage());
         IO.println("Magician threw their wand and dealt " + calculateDamage() + " damage");
+        targetable.takeDamage(calculateDamage());
     }
 
     @Override
