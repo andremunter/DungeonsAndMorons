@@ -1,6 +1,9 @@
-package speldata;
+package se.dungeonsandmorons.model.Npc;
 
-public class Bird extends Npc implements Targetable, Flyable{
+import se.dungeonsandmorons.model.Flyable;
+import se.dungeonsandmorons.model.Targetable;
+
+public class Bird extends Npc implements Targetable, Flyable {
     @Override
     public void fly() {
 

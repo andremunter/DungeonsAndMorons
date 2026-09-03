@@ -1,6 +1,10 @@
-package speldata;
+package se.dungeonsandmorons.model.Npc;
 
-public class Dragon extends Npc implements Targetable, Attacker, Flyable{
+import se.dungeonsandmorons.model.Attacker;
+import se.dungeonsandmorons.model.Flyable;
+import se.dungeonsandmorons.model.Targetable;
+
+public class Dragon extends Npc implements Targetable, Attacker, Flyable {
 
     @Override
     public void attack(Targetable targetable) {

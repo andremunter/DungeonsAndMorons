@@ -1,15 +1,18 @@
-package speldata;
+package se.dungeonsandmorons.model.character;
 
-public class Magician extends Character implements Targetable, Attacker{
+import se.dungeonsandmorons.model.Attacker;
+import se.dungeonsandmorons.model.Targetable;
+
+public class Magician extends Character implements Targetable, Attacker {
 
     public Magician(int strength, int agility, int intelligence){
         super(strength, agility, intelligence);
     }
 
     @Override
-    public void attack(Targetable targetable) {
+    public void attack(Targetable target) {
         IO.println("Magician threw their wand and dealt " + calculateDamage() + " damage");
-        targetable.takeDamage(calculateDamage());
+        target.takeDamage(calculateDamage());
     }
 
     @Override

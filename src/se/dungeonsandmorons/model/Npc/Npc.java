@@ -1,4 +1,4 @@
-package speldata;
+package se.dungeonsandmorons.model.Npc;
 
 public abstract class Npc {
     private int hp = 100;

@@ -1,5 +1,9 @@
-import speldata.*;
-import speldata.Character;
+import se.dungeonsandmorons.model.*;
+import se.dungeonsandmorons.model.Npc.Bird;
+import se.dungeonsandmorons.model.Npc.Dragon;
+import se.dungeonsandmorons.model.character.Archer;
+import se.dungeonsandmorons.model.character.Magician;
+import se.dungeonsandmorons.model.character.Warrior;
 
 
 void main() {

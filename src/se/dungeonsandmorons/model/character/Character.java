@@ -1,4 +1,4 @@
-package speldata;
+package se.dungeonsandmorons.model.character;
 
 public abstract class Character {
     private String name;
