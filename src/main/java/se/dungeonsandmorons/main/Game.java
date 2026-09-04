@@ -117,12 +117,8 @@ public class Game {
                         IO.println("- " + monster.getName());
                     }
                 }
-                case String s when s.toLowerCase().startsWith("load ") -> {
-                    String charName = s.substring("load ".length()).trim();
-                    gameData.player = SaveRepository.load(charName);
-                    IO.println(gameData.player);
-                }
                 case "save" -> SaveRepository.save(gameData.player);
+                case "load" -> loadCharacterMenu();
                 case "help" -> UserInterface.helpMenu();
                 case "quit", "exit", "terminate" -> {
                     IO.println("Exiting game..");
