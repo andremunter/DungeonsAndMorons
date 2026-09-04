@@ -7,14 +7,15 @@ import se.dungeonsandmorons.model.character.Warrior;
 import se.dungeonsandmorons.model.npc.Bird;
 import se.dungeonsandmorons.model.npc.Dragon;
 import se.dungeonsandmorons.model.npc.Npc;
+import se.dungeonsandmorons.userinterface.UserInterface;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
 
+    private final GameData gameData = new GameData();
     private final CombatService combatService = new CombatService();
-    private Character player;
 
     void mainMenu() {
 
@@ -58,7 +59,7 @@ public class Game {
                 """);
         String characterClass = IO.readln("> ").toLowerCase();
         switch (characterClass) {
-            case "warrior" -> player = new Warrior(characterName);
+            case "warrior" -> gameData.player = new Warrior(characterName);
             //case "magician" -> player = new Magician(characterName);
             //case "archer" -> player = new Archer(characterName);
             default -> {
@@ -71,13 +72,12 @@ public class Game {
         listSavedCharacters();
         IO.println("Choose character by typing its name");
         String characterName = IO.readln("> ");
-        player = SaveRepository.load(characterName);
-        IO.println("Successfully loaded player " + player.getName());
+        gameData.player = SaveRepository.load(characterName);
+        IO.println("Successfully loaded player " + gameData.player.getName());
     }
 
     public void listSavedCharacters() {
-        List<Character> characters = new ArrayList<>();
-        characters = SaveRepository.fetchSaves();
+        List<Character> characters = SaveRepository.fetchSaves();
 
         if (!characters.isEmpty()) {
             IO.println("- Saved Characters -");
@@ -106,11 +106,11 @@ public class Game {
                     for (Npc monster : monsters) {
                         if (monster.getName().equalsIgnoreCase(targetName)) {
 
-                            combatService.engageCombat(monster, player);
+                            combatService.engageCombat(monster, gameData.player);
                         }
                     }
                 }
-                case "stats" -> player.getStats();
+                case "stats" -> gameData.player.getStats();
                 case "monsters" -> {
                     IO.println("Monsters in area:");
                     for (Npc monster : monsters) {
@@ -119,22 +119,11 @@ public class Game {
                 }
                 case String s when s.toLowerCase().startsWith("load ") -> {
                     String charName = s.substring("load ".length()).trim();
-                    player = SaveRepository.load(charName);
-                    IO.println(player);
+                    gameData.player = SaveRepository.load(charName);
+                    IO.println(gameData.player);
                 }
-                case "save" -> SaveRepository.save(player);
-                case "help" -> {
-                    IO.print("""
-                            Available commands:
-                            attack monsterName - Engages in combat with specified monster
-                            stats              - Shows player stats
-                            monsters           - Shows monsters in area
-                            load playerName    - Loads specified character
-                            save               - Saves current character progress
-                            characters         - Lists all saved characters
-                            help               - Lists all available commands
-                            """);
-                }
+                case "save" -> SaveRepository.save(gameData.player);
+                case "help" -> UserInterface.helpMenu();
                 case "quit", "exit", "terminate" -> {
                     IO.println("Exiting game..");
                     return;
