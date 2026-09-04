@@ -16,6 +16,10 @@ public class Warrior extends Character {
         this.skills.add(new Skill("Swing", "swosch", 10, Attribute.STRENGTH, 2, 0));
     }
 
+    public Warrior(String name, int level) {
+        super(name, level);
+    }
+
     public Warrior(String name, int level, int experience, int strength, int agility, int intelligence, int vitality, int currentHealth, int maxHealth, int currentMana, int maxMana) {
         super(name, level, experience, strength, agility, intelligence, vitality, currentHealth, maxHealth, currentMana, maxMana);
     }

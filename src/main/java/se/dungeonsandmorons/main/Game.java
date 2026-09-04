@@ -16,10 +16,10 @@ public class Game {
     private final CombatService combatService = new CombatService();
     private Character player;
 
-    private void mainMenu() {
+    void mainMenu() {
 
         IO.println("Welcome to Dungeons and Morons!");
-        //while (true) {
+        while (true) {
             IO.print("""
                     Choose by typing:
                     New Game
@@ -30,17 +30,20 @@ public class Game {
             switch (choice) {
                 case "new game" -> {
                     createCharacterMenu();
+                    runGame();
                 }
                 case "load"     -> {
                     loadCharacterMenu();
+                    runGame();
                 }
                 case "quit"     -> {
                     IO.println("Exiting game..");
+                    return;
                 }
             }
 
 
-        //}
+        }
 
     }
 
@@ -73,7 +76,17 @@ public class Game {
     }
 
     public void listSavedCharacters() {
+        List<Character> characters = new ArrayList<>();
+        characters = SaveRepository.fetchSaves();
 
+        if (!characters.isEmpty()) {
+            IO.println("- Saved Characters -");
+            for (Character character : characters) {
+                IO.println(String.format("%s, %s, level: %d", character.getName(), character.getClass().getSimpleName(), character.getLevel()));
+            }
+        } else {
+            IO.println("No saved characters");
+        }
     }
 
     public void runGame() {
@@ -82,7 +95,7 @@ public class Game {
         monsters.add(new Dragon("Green Dragon", 11, 50));
         monsters.add(new Bird("Parrot", 199, 5));
 
-        mainMenu();
+
 
         while (true) {
 

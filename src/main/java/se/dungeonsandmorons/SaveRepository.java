@@ -1,6 +1,8 @@
 package se.dungeonsandmorons;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.character.Warrior;
@@ -57,7 +59,7 @@ public class SaveRepository {
         String sql = "SELECT character_class, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana FROM character_saves WHERE name = ?";
 
         try (Connection conn = getConnection();
-                PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
                 stmt.setString(1, name);
 
@@ -91,6 +93,34 @@ public class SaveRepository {
         }
 
         return null;
+    }
+
+    public static List<Character> fetchSaves() {
+        List<Character> characters = new ArrayList<>();
+        String sql = "SELECT name, character_class, level FROM character_saves WHERE id >= 0";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                String name             = rs.getString("name");
+                String characterClazz   = rs.getString("character_class");
+                int level               = rs.getInt("level");
+
+                switch (characterClazz) {
+                    case "Warrior"      -> characters.add(new Warrior(name, level));
+                   // case "Magician"     -> characters.add(new Magician());
+                   // case "Archer"       -> characters.add(new Archer());
+
+                }
+
+            }
+
+        } catch (SQLException e) {
+                 System.err.println("Failed to fetch characters: " + e.getMessage());
+        }
+
+        return characters;
     }
 
 

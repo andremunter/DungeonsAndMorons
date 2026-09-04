@@ -8,7 +8,7 @@ public class Main {
 
     void main(String[] args) {
 
-        game.runGame();
+        game.mainMenu();
 
 
     }

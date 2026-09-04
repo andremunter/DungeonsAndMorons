@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Character implements Attacker, Targetable {
-    private String name;
+    protected String name;
 
-    private int level;
+    protected int level;
     private int experience;
     private int expPerLevel;
 
@@ -50,6 +50,11 @@ public abstract class Character implements Attacker, Targetable {
         agility = 0;
         intelligence = 0;
         vitality = 0;
+    }
+
+    Character(String name, int level) {
+        this.name = name;
+        this.level = level;
     }
 
     Character(String name, int level, int experience, int strength, int agility, int intelligence, int vitality, int currentHealth, int maxHealth, int currentMana, int maxMana) {
