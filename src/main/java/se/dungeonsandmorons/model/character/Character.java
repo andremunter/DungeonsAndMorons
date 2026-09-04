@@ -52,6 +52,20 @@ public abstract class Character implements Attacker, Targetable {
         vitality = 0;
     }
 
+    Character(String name, int level, int experience, int strength, int agility, int intelligence, int vitality, int currentHealth, int maxHealth, int currentMana, int maxMana) {
+        this.name = name;
+        this.level = level;
+        this.experience = experience;
+        this.strength = strength;
+        this.agility = agility;
+        this.intelligence = intelligence;
+        this.vitality = vitality;
+        this.currentHealth = currentHealth;
+        this.maxHealth = maxHealth;
+        this.currentMana = currentMana;
+        this.maxMana = maxMana;
+    }
+
     public boolean isAlive() {
         return this.currentHealth > 0;
     }
@@ -119,6 +133,7 @@ public abstract class Character implements Attacker, Targetable {
         return this.maxHealth;
     }
     public int getCurrentHealth() { return this.currentHealth; }
+    public int getMaxMana() { return this.maxMana; }
     public int getCurrentMana() { return this.currentMana; }
     public int getLevel() { return this.level; }
     public int getExperience() { return this.experience; }

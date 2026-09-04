@@ -1,5 +1,6 @@
 package se.dungeonsandmorons.main;
 
+import se.dungeonsandmorons.SaveRepository;
 import se.dungeonsandmorons.model.combat.CombatService;
 import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.character.Warrior;
@@ -21,7 +22,7 @@ public class Game {
         monsters.add(new Bird("Parrot", 199, 5));
 
 
-        Character player = new Warrior("Gucki");
+        Character player = new Warrior("Default");
 
         while (true) {
             String input = IO.readln("> ");
@@ -42,13 +43,20 @@ public class Game {
                         IO.println("- " + monster.getName());
                     }
                 }
+                case String s when s.toLowerCase().startsWith("load ") -> {
+                    String charName = s.substring("load ".length()).trim();
+                    SaveRepository.load(charName);
+                }
                 case "help" -> {
                     IO.print("""
                             Available commands:
-                            attack monsterName
-                            stats
-                            monsters
-                            help
+                            attack monsterName - Engaged in combat with specified monster
+                            stats              - Shows player stats
+                            monsters           - Shows monsters in area
+                            load playerName    - Loads specified character
+                            save               - Saves current character progress
+                            characters         - Lists all saved characters
+                            help               - Lists all available commands
                             """);
                 }
                 case "quit", "exit", "terminate" -> {

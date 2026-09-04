@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/DungeonsAndMorons.iml" filepath="$PROJECT_DIR$/DungeonsAndMorons.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/default.test.iml" filepath="$PROJECT_DIR$/.idea/modules/default.test.iml" />
     </modules>
   </component>
 </project>
