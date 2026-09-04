@@ -63,17 +63,17 @@ public class SaveRepository {
 
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
-                        String className = rs.getString("character_class");
-                        int level = rs.getInt("level");
-                        int experience = rs.getInt("experience");
-                        int strength = rs.getInt("strength");
-                        int agility = rs.getInt("agility");
-                        int intelligence = rs.getInt("intelligence");
-                        int vitality = rs.getInt("vitality");
-                        int health = rs.getInt("health");
-                        int max_health = rs.getInt("max_health");
-                        int mana = rs.getInt("mana");
-                        int max_mana = rs.getInt("max_mana");
+                        String className    = rs.getString("character_class");
+                        int level           = rs.getInt("level");
+                        int experience      = rs.getInt("experience");
+                        int strength        = rs.getInt("strength");
+                        int agility         = rs.getInt("agility");
+                        int intelligence    = rs.getInt("intelligence");
+                        int vitality        = rs.getInt("vitality");
+                        int health          = rs.getInt("health");
+                        int max_health      = rs.getInt("max_health");
+                        int mana            = rs.getInt("mana");
+                        int max_mana        = rs.getInt("max_mana");
 
                         Character loadedCharacter = switch (className) {
                             case "Warrior" -> new Warrior(name, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana);

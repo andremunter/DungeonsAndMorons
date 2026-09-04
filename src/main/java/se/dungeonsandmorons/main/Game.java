@@ -14,6 +14,67 @@ import java.util.List;
 public class Game {
 
     private final CombatService combatService = new CombatService();
+    private Character player;
+
+    private void mainMenu() {
+
+        IO.println("Welcome to Dungeons and Morons!");
+        //while (true) {
+            IO.print("""
+                    Choose by typing:
+                    New Game
+                    Load
+                    Quit
+                    """);
+            String choice = IO.readln("> ").toLowerCase();
+            switch (choice) {
+                case "new game" -> {
+                    createCharacterMenu();
+                }
+                case "load"     -> {
+                    loadCharacterMenu();
+                }
+                case "quit"     -> {
+                    IO.println("Exiting game..");
+                }
+            }
+
+
+        //}
+
+    }
+
+    public void createCharacterMenu() {
+        IO.println("What are you called?");
+        String characterName = IO.readln("> ");
+        IO.print("""
+                Choose a class by typing one of the following:
+                Warrior
+                Magician
+                Archer
+                """);
+        String characterClass = IO.readln("> ").toLowerCase();
+        switch (characterClass) {
+            case "warrior" -> player = new Warrior(characterName);
+            //case "magician" -> player = new Magician(characterName);
+            //case "archer" -> player = new Archer(characterName);
+            default -> {
+                IO.println("Class does not exist.");
+            }
+        }
+    }
+
+    public void loadCharacterMenu() {
+        listSavedCharacters();
+        IO.println("Choose character by typing its name");
+        String characterName = IO.readln("> ");
+        player = SaveRepository.load(characterName);
+        IO.println("Successfully loaded player " + player.getName());
+    }
+
+    public void listSavedCharacters() {
+
+    }
 
     public void runGame() {
 
@@ -21,10 +82,10 @@ public class Game {
         monsters.add(new Dragon("Green Dragon", 11, 50));
         monsters.add(new Bird("Parrot", 199, 5));
 
-
-        Character player = new Warrior("Default");
+        mainMenu();
 
         while (true) {
+
             String input = IO.readln("> ");
             switch (input) {
                 case String s when s.toLowerCase().startsWith("attack ") -> {
@@ -45,12 +106,14 @@ public class Game {
                 }
                 case String s when s.toLowerCase().startsWith("load ") -> {
                     String charName = s.substring("load ".length()).trim();
-                    SaveRepository.load(charName);
+                    player = SaveRepository.load(charName);
+                    IO.println(player);
                 }
+                case "save" -> SaveRepository.save(player);
                 case "help" -> {
                     IO.print("""
                             Available commands:
-                            attack monsterName - Engaged in combat with specified monster
+                            attack monsterName - Engages in combat with specified monster
                             stats              - Shows player stats
                             monsters           - Shows monsters in area
                             load playerName    - Loads specified character
