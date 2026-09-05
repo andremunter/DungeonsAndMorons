@@ -113,7 +113,7 @@ public class Game {
             IO.println(monsters);
         }
 
-
+        combatOptions(dungeon.getMonsters().getFirst(), gameData.player);
 
     }
 
