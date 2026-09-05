@@ -28,6 +28,10 @@ public class SaveRepository {
                 agility = EXCLUDED.agility,
                 intelligence = EXCLUDED.intelligence,
                 vitality = EXCLUDED.vitality,
+                health = EXCLUDED.health,
+                max_health = EXCLUDED.max_health,
+                mana = EXCLUDED.mana,
+                max_mana = EXCLUDED.max_mana,
                 updated_at = CURRENT_TIMESTAMP;
                 """;
 
