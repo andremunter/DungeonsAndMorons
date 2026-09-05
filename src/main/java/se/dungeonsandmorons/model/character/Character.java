@@ -134,6 +134,9 @@ public abstract class Character implements Attacker, Targetable {
         }
     }
 
+    public void learnSkill(Skill skill) {
+        skills.add(skill);
+    }
 
     void die() {
 
