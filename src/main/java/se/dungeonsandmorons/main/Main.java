@@ -8,6 +8,7 @@ public class Main {
 
     void main(String[] args) {
 
+        game.createDungeon();
         game.mainMenu();
 
 

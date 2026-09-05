@@ -6,8 +6,8 @@ import se.dungeonsandmorons.model.combat.Attacker;
 public class Bird extends Npc implements Flyable {
 
 
-    public Bird(String name, int health, int expOnDeath) {
-        super(name, health, expOnDeath);
+    public Bird(String name, int health, int expOnDeath, MonsterRarity rarity) {
+        super(name, health, expOnDeath, rarity);
     }
 
     public void takeDamage(int amount, Attacker attacker) {

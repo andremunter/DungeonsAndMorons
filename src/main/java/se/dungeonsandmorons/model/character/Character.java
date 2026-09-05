@@ -35,6 +35,8 @@ public abstract class Character implements Attacker, Targetable {
     protected int intelligencePerLevel = 1;
     protected int vitalityPerLevel = 3;
 
+    private boolean firstTimeDungeon = true;
+
     protected List<Skill> skills = new ArrayList<>();
 
     Character(String name) {
@@ -69,6 +71,10 @@ public abstract class Character implements Attacker, Targetable {
         this.maxHealth = maxHealth;
         this.currentMana = currentMana;
         this.maxMana = maxMana;
+    }
+
+    public boolean isFirstTimeDungeon() {
+        return firstTimeDungeon;
     }
 
     public boolean isAlive() {
@@ -155,6 +161,7 @@ public abstract class Character implements Attacker, Targetable {
     public void setAgility(int agility) { this.agility = agility; }
     public void setIntelligence(int intelligence) { this.intelligence = intelligence; }
     public void setVitality(int vitality) { this.vitality = vitality; }
+    public void setFirstTimeDungeon(boolean first) { this.firstTimeDungeon = first; }
 
     public void addLevel(int amount) { this.level += amount; }
     public void addMaxHealth(int amount) { this.maxHealth += amount; }

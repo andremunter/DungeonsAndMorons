@@ -26,9 +26,6 @@ public class Dungeon {
 
     @Override
     public String toString() {
-        return String.format("""
-                %s
-                %s
-                Area Level: %d""", name, description, areaLevel);
+        return String.format("%s, '%s', Area Level: %d" , name, description, areaLevel);
     }
 }
