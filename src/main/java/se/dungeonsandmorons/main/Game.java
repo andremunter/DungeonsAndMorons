@@ -4,6 +4,7 @@ import se.dungeonsandmorons.SaveRepository;
 import se.dungeonsandmorons.model.combat.CombatService;
 import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.character.Warrior;
+import se.dungeonsandmorons.model.dungeon.Dungeon;
 import se.dungeonsandmorons.model.npc.Bird;
 import se.dungeonsandmorons.model.npc.Dragon;
 import se.dungeonsandmorons.model.npc.Npc;
@@ -89,6 +90,25 @@ public class Game {
         }
     }
 
+    public void listDungeons() {
+        if (!gameData.dungeons.isEmpty()) {
+            IO.println("- Dungeons -");
+            for (Dungeon dungeon : gameData.dungeons) {
+                IO.println(dungeon);
+            }
+        }
+    }
+
+    public void createDungeon() {
+        List<Npc> monsters = new ArrayList<>();
+        monsters.add(new Bird("Parrot", 40, 10));
+        monsters.add(new Bird("Parrot", 40, 10));
+        monsters.add(new Bird("Parrot", 40, 10));
+        monsters.add(new Bird("Parrot", 40, 10));
+        monsters.add(new Bird("Parrot", 40, 10));
+        gameData.dungeons.add(new Dungeon("Jungle", "", 1 ,monsters));
+    }
+
     public void runGame() {
 
         List<Npc> monsters = new ArrayList<>();
@@ -111,12 +131,7 @@ public class Game {
                     }
                 }
                 case "stats" -> gameData.player.getStats();
-                case "monsters" -> {
-                    IO.println("Monsters in area:");
-                    for (Npc monster : monsters) {
-                        IO.println("- " + monster.getName());
-                    }
-                }
+                case "dungeons" -> listDungeons();
                 case "save" -> SaveRepository.save(gameData.player);
                 case "load" -> loadCharacterMenu();
                 case "help" -> UserInterface.helpMenu();
