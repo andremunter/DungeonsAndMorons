@@ -16,8 +16,8 @@ import java.util.List;
 
 public class Game {
 
-    private final GameData gameData = new GameData();
-    private final CombatService combatService = new CombatService();
+    public static final GameData gameData = new GameData();
+    public static final CombatService combatService = new CombatService();
 
     void mainMenu() {
 
@@ -113,20 +113,8 @@ public class Game {
             IO.println(monsters);
         }
 
-        combatOptions(dungeon.getMonsters().getFirst(), gameData.player);
+        combatService.engageCombat(dungeon.getMonsters().getFirst(), gameData.player);
 
-    }
-
-    public void combatOptions(Npc monster, Character player) {
-        switch (IO.readln("> ").toLowerCase()) {
-            case "attack"   -> combatService.engageCombat(monster, player);
-            case "run"      -> escapeFight();
-            default         -> IO.println("Wrong input.");
-        }
-    }
-
-    public void escapeFight() {
-        IO.println("NOT IMPLEMENTED! GL :)");
     }
 
     public void dungeonTutorial() {
@@ -140,8 +128,9 @@ public class Game {
                 You will always fight a single monster at a time.
                 Early, you will only be able to choose between Attack and Run.
                 More combat options will be available as you progress.
-                You always have to type what you want to do. 
+                You always have to type what you want to do.
                 'attack' to initiate an attack, and 'run' to attempt to escape.
+                To start the dungeon after entering it, simply type 'start'.
                 Now, to continue into the dungeon, just type 'continue'
                 """);
         String input = IO.readln("> ");
@@ -191,15 +180,6 @@ public class Game {
 
             String input = IO.readln("> ");
             switch (input) {
-                case String s when s.toLowerCase().startsWith("attack ") -> {
-                    String targetName = s.substring("attack ".length()).trim();
-                   // for (Npc monster : monsters) {
-                    //    if (monster.getName().equalsIgnoreCase(targetName)) {
-
-                    //        combatService.engageCombat(monster, gameData.player);
-                     //   }
-                   // }
-                }
                 case "stats" -> gameData.player.getStats();
                 case "dungeons" -> enterDungeonMenu();
                 case "save" -> SaveRepository.save(gameData.player);

@@ -7,7 +7,7 @@ import java.util.List;
 
 public class GameData {
 
-    public Character player;
+    public static Character player;
     public List<Dungeon> dungeons = new ArrayList<>();
 
 

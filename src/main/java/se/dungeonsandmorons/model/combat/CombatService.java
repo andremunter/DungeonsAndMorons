@@ -3,25 +3,56 @@ package se.dungeonsandmorons.model.combat;
 import se.dungeonsandmorons.TurnHandler;
 import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.npc.Npc;
+import se.dungeonsandmorons.model.skill.Skill;
+
+import static se.dungeonsandmorons.main.GameData.player;
 
 public class CombatService {
 
+    private final TurnHandler turnHandler = new TurnHandler();
+
     public void engageCombat(Npc enemy, Character player) {
         IO.println(String.format("%s HP: %d | %s HP: %d", player.getName(), player.getCurrentHealth(), enemy.getName(), enemy.getCurrentHealth()));
-        IO.println("Actions: attack | heal | run");
+        IO.println("Actions: attack | run");
         while (enemy.isAlive() && player.isAlive()) {
         String action = IO.readln("> ");
-            switch (action) {
-                case "attack" -> {
-                    player.attack(enemy, player.getSkills().getFirst());
 
-                    TurnHandler.handleEnemyTurn(enemy, player);
+            switch (action) {
+                case String s when s.toLowerCase().startsWith("cast ") -> {
+                    String spellName = s.substring("cast ".length()).trim();
+                    Skill skill = findPlayerSkillByName(spellName);
+                    if (skill != null) {
+                        turnHandler.handleTurn(enemy, player, PlayerCombatAction.CAST, skill);
+                        player.attack(enemy, skill);
+                    } else {
+                        IO.println("Error: Skill is Null!");
+                    }
                 }
+                case "attack"   -> turnHandler.handleTurn(enemy, player, PlayerCombatAction.ATTACK, null);
+                case "run"      -> turnHandler.handleTurn(enemy, player, PlayerCombatAction.RUN, null);
+                default         -> IO.println("Wrong input.");
             }
 
-
         }
+    }
 
+    public Skill findPlayerSkillByName(String name) {
+        if (!player.getSkills().isEmpty()) {
+            for (Skill skill : player.getSkills()) {
+                if (skill.getName().equalsIgnoreCase(name)) {
+                    return skill;
+                }
+            }
+            IO.println("You have not learned this skill.");
+        }
+        return null;
+    }
+
+
+
+
+    public void escapeFight() {
+        IO.println("NOT IMPLEMENTED! GL :)");
     }
 
 }

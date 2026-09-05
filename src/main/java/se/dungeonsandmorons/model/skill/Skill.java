@@ -19,13 +19,11 @@ public class Skill {
         this.resourceCost = resourceCost;
     }
 
-
     public String getName() { return this.name; }
     public String getSound() { return this.sound; }
     public int getBaseDamage() { return this.baseDamage; }
     public Attribute getAttribute() { return this.attribute; }
     public int getAttributeDamageMultiplier() { return this.attributeDamageMultiplier; }
     public int getResourceCost() { return this.resourceCost; }
-
 
 }
