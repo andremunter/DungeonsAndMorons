@@ -1,6 +1,7 @@
 package se.dungeonsandmorons.model.npc;
 
 import se.dungeonsandmorons.model.Flyable;
+import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.combat.Attacker;
 
 public class Bird extends Npc implements Flyable {
@@ -13,7 +14,10 @@ public class Bird extends Npc implements Flyable {
     public void takeDamage(int amount, Attacker attacker) {
         this.currentHealth = Math.max(0, this.currentHealth - amount);
         if (!isAlive()) {
-            System.out.println(name + " died!");
+            IO.println(name + " died!");
+            if(attacker instanceof Character atker) {
+                atker.addExperience(expOnDeath);
+            }
         }
     }
 
