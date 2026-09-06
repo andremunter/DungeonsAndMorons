@@ -2,6 +2,7 @@ package se.dungeonsandmorons.model.combat;
 
 import se.dungeonsandmorons.TurnHandler;
 import se.dungeonsandmorons.model.character.Character;
+import se.dungeonsandmorons.model.dungeon.Dungeon;
 import se.dungeonsandmorons.model.npc.Npc;
 import se.dungeonsandmorons.model.skill.Skill;
 
@@ -11,11 +12,13 @@ public class CombatService {
 
     private final TurnHandler turnHandler = new TurnHandler();
 
-    public void engageCombat(Npc enemy, Character player) {
-        IO.println(String.format("%s HP: %d | %s HP: %d", player.getName(), player.getCurrentHealth(), enemy.getName(), enemy.getCurrentHealth()));
-        IO.println("Actions: attack | run");
+    public boolean engageCombat(Npc enemy, Character player) {
         while (enemy.isAlive() && player.isAlive()) {
-        String action = IO.readln("> ");
+            IO.println(String.format("- TURN %d -", turnHandler.getTurnCount()));
+
+            IO.println(String.format("%s HP: %d | %s HP: %d", player.getName(), player.getCurrentHealth(), enemy.getName(), enemy.getCurrentHealth()));
+            IO.println("Actions: attack | run");
+            String action = IO.readln("> ");
 
             switch (action) {
                 case String s when s.toLowerCase().startsWith("cast ") -> {
@@ -23,7 +26,6 @@ public class CombatService {
                     Skill skill = findPlayerSkillByName(spellName);
                     if (skill != null) {
                         turnHandler.handleTurn(enemy, player, PlayerCombatAction.CAST, skill);
-                        player.attack(enemy, skill);
                     } else {
                         IO.println("Error: Skill is Null!");
                     }
@@ -34,6 +36,10 @@ public class CombatService {
             }
 
         }
+        if (player.isAlive() && !enemy.isAlive()) {
+            return true;
+        }
+        return false;
     }
 
     public Skill findPlayerSkillByName(String name) {

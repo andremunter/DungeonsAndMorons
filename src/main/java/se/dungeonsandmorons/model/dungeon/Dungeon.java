@@ -1,5 +1,6 @@
 package se.dungeonsandmorons.model.dungeon;
 
+import se.dungeonsandmorons.main.GameData;
 import se.dungeonsandmorons.model.npc.Npc;
 
 import java.util.ArrayList;
@@ -26,6 +27,18 @@ public class Dungeon {
 
     @Override
     public String toString() {
-        return String.format("%s, '%s', Area Level: %d" , name, description, areaLevel);
+        return String.format("%s, '%s', Area Level: %d%s" , name, description, areaLevel, hasPlayerClearedDungeon());
+    }
+
+    String hasPlayerClearedDungeon() {
+        List<Dungeon> cDungeons = GameData.player.getClearedDungeons();
+        if (!cDungeons.isEmpty()) {
+            for (Dungeon dung : cDungeons) {
+                if (this.name.equalsIgnoreCase(dung.getName())) {
+                    return " (Cleared)";
+                }
+            }
+        }
+        return "";
     }
 }

@@ -26,4 +26,9 @@ public class Skill {
     public int getAttributeDamageMultiplier() { return this.attributeDamageMultiplier; }
     public int getResourceCost() { return this.resourceCost; }
 
+    @Override
+    public String toString() {
+        return String.format("Skill{name=%s, sound=%s, baseDamage=%d, resourceCost=%d, attribute=%s, attributeDamageMultiplier=%d}", name, sound, baseDamage, resourceCost, attribute, attributeDamageMultiplier);
+    }
+
 }

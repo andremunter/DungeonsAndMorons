@@ -9,7 +9,7 @@ import se.dungeonsandmorons.model.npc.MonsterRarity;
 import se.dungeonsandmorons.model.npc.Npc;
 import se.dungeonsandmorons.model.skill.Skill;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TurnHandlerTest {
 
@@ -49,12 +49,34 @@ public class TurnHandlerTest {
 
     @Test
     public void handleTurnMonsterDies() {
+        // Arrange
+        TurnHandler th = new TurnHandler();
+        Character player = new Warrior("Test");
+        Npc dragon = new Dragon("DragonOneHealth", 1, 10, MonsterRarity.NORMAL);
+
+        // Act
+        th.handleTurn(dragon, player, PlayerCombatAction.ATTACK, player.getSkills().getFirst());
+
+        // Assert
+        assertFalse(dragon.isAlive());
+        assertEquals(10, player.getExperience());
+        assertTrue(player.isAlive());
 
     }
 
     @Test
     public void handleTurnPlayerDies() {
+        // Arrange
+        TurnHandler th = new TurnHandler();
+        Character player = new Warrior("Test");
+        Npc dragon = new Dragon("Dragon", 100, 10, MonsterRarity.NORMAL);
 
+        // Act
+        player.setCurrentHealth(1);
+        th.handleTurn(dragon, player, PlayerCombatAction.ATTACK, player.getSkills().getFirst());
+
+        // Assert
+        assertFalse(player.isAlive());
     }
 
 

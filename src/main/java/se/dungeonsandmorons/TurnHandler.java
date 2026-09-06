@@ -2,12 +2,15 @@ package se.dungeonsandmorons;
 
 import se.dungeonsandmorons.main.Game;
 import se.dungeonsandmorons.model.combat.Attacker;
+import se.dungeonsandmorons.model.combat.CombatState;
 import se.dungeonsandmorons.model.combat.PlayerCombatAction;
 import se.dungeonsandmorons.model.npc.Npc;
 import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.skill.Skill;
 
 public class TurnHandler {
+
+    private int turnCount = 1;
 
     public void handleTurn(Npc enemy, Character player, PlayerCombatAction playerAction, Skill skill) {
 
@@ -22,6 +25,8 @@ public class TurnHandler {
             }
             case PlayerCombatAction.RUN     -> Game.combatService.escapeFight();
         }
+
+        turnCount++;
 
         if (!player.isAlive()) {
             IO.println(String.format("%s(%d) died fighting %s.", player.getName(), player.getLevel(), enemy.getName()));
@@ -41,5 +46,7 @@ public class TurnHandler {
     public static void playerAction(PlayerCombatAction action) {
 
     }
+
+    public int getTurnCount() { return turnCount; }
 
 }

@@ -6,9 +6,9 @@ import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.character.Warrior;
 import se.dungeonsandmorons.model.dungeon.Dungeon;
 import se.dungeonsandmorons.model.npc.Bird;
-import se.dungeonsandmorons.model.npc.Dragon;
 import se.dungeonsandmorons.model.npc.MonsterRarity;
 import se.dungeonsandmorons.model.npc.Npc;
+import se.dungeonsandmorons.model.skill.Skill;
 import se.dungeonsandmorons.userinterface.UserInterface;
 
 import java.util.ArrayList;
@@ -61,7 +61,7 @@ public class Game {
                 """);
         String characterClass = IO.readln("> ").toLowerCase();
         switch (characterClass) {
-            case "warrior" -> gameData.player = new Warrior(characterName);
+            case "warrior" -> GameData.player = new Warrior(characterName);
             //case "magician" -> player = new Magician(characterName);
             //case "archer" -> player = new Archer(characterName);
             default -> {
@@ -74,8 +74,8 @@ public class Game {
         listSavedCharacters();
         IO.println("Choose character by typing its name");
         String characterName = IO.readln("> ");
-        gameData.player = SaveRepository.load(characterName);
-        IO.println("Successfully loaded player " + gameData.player.getName());
+        GameData.player = SaveRepository.load(characterName);
+        IO.println("Successfully loaded player " + GameData.player.getName());
     }
 
     public void listSavedCharacters() {
@@ -103,19 +103,30 @@ public class Game {
     }
 
     public void enterDungeon(Dungeon dungeon) {
-
-        if (gameData.player.isFirstTimeDungeon()) {
+        boolean dungeonCleared = dungeon.getMonsters().isEmpty();
+        if (GameData.player.isFirstTimeDungeon()) {
             dungeonTutorial();
         }
 
-        IO.println(dungeon);
-        for (Npc monsters : dungeon.getMonsters()) {
-            IO.println(monsters);
+        while (!dungeonCleared) {
+            IO.println(dungeon);
+            if (!dungeon.getMonsters().isEmpty()) {
+                for (Npc monsters : dungeon.getMonsters()) {
+                    IO.println(monsters);
+                }
+            }
+
+            if (dungeon.getMonsters().isEmpty()) {
+                GameData.player.addClearedDungeon(dungeon);
+                dungeonCleared = true;
+            }
+
+            if (combatService.engageCombat(dungeon.getMonsters().getFirst(), GameData.player)) {
+                dungeon.getMonsters().removeFirst();
+            }
         }
-
-        combatService.engageCombat(dungeon.getMonsters().getFirst(), gameData.player);
-
     }
+
 
     public void dungeonTutorial() {
         IO.print("""
@@ -137,7 +148,7 @@ public class Game {
         if (!input.equalsIgnoreCase("continue")) {
             dungeonTutorial();
         }
-        gameData.player.setFirstTimeDungeon(false);
+        GameData.player.setFirstTimeDungeon(false);
     }
 
     public void enterDungeonMenu() {
@@ -176,15 +187,17 @@ public class Game {
 
     public void runGame() {
 
+        runGameLoop:
         while (true) {
 
             String input = IO.readln("> ");
             switch (input) {
-                case "stats" -> gameData.player.getStats();
-                case "dungeons" -> enterDungeonMenu();
-                case "save" -> SaveRepository.save(gameData.player);
-                case "load" -> loadCharacterMenu();
-                case "help" -> UserInterface.helpMenu();
+                case "stats"        -> GameData.player.getStats();
+                case "skills"       -> listPlayerSkills(GameData.player);
+                case "dungeons"     -> enterDungeonMenu();
+                case "save"         -> SaveRepository.save(GameData.player);
+                case "load"         -> loadCharacterMenu();
+                case "help"         -> UserInterface.helpMenu();
                 case "quit", "exit", "terminate" -> {
                     IO.println("Exiting game..");
                     return;
@@ -193,6 +206,17 @@ public class Game {
                     IO.println("Wrong input.");
                 }
             }
+        }
+    }
+
+    public void listPlayerSkills(Character player) {
+        if (!player.getSkills().isEmpty()) {
+            IO.println("- Learned Skills -");
+            for (Skill skill : player.getSkills()) {
+                IO.println(skill);
+            }
+        } else {
+            IO.println("You have not learned any skills.");
         }
     }
 

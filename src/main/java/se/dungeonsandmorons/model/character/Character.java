@@ -2,6 +2,7 @@ package se.dungeonsandmorons.model.character;
 
 import se.dungeonsandmorons.model.combat.Attacker;
 import se.dungeonsandmorons.model.combat.Targetable;
+import se.dungeonsandmorons.model.dungeon.Dungeon;
 import se.dungeonsandmorons.model.skill.Skill;
 
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public abstract class Character implements Attacker, Targetable {
     private boolean firstTimeDungeon = true;
 
     protected List<Skill> skills = new ArrayList<>();
+    private List<Dungeon> dungeonsCleared = new ArrayList<>();
 
     Character(String name) {
         this.name = name;
@@ -156,6 +158,7 @@ public abstract class Character implements Attacker, Targetable {
     public int getIntelligence() { return this.intelligence; }
     public int getVitality() { return this.vitality; }
     public List<Skill> getSkills() { return skills; }
+    public List<Dungeon> getClearedDungeons() { return dungeonsCleared; }
 
     public void setMaxHealth(int health) { this.maxHealth = health; }
     public void setCurrentHealth(int health) { this.currentHealth = health; }
@@ -172,5 +175,6 @@ public abstract class Character implements Attacker, Targetable {
     public void addAgility(int amount) { this.agility += amount; }
     public void addIntelligence(int amount) { this.intelligence += amount; }
     public void addVitality(int amount) { this.vitality += amount; }
+    public void addClearedDungeon(Dungeon dungeon) { this.dungeonsCleared.add(dungeon); }
 
 }

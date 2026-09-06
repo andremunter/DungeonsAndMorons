@@ -13,15 +13,17 @@ public class Warrior extends Character {
         this.intelligencePerLevel = 1;
         this.vitalityPerLevel = 3;
 
-        this.skills.add(new Skill("Swing", "swosch", 10, Attribute.STRENGTH, 2, 0));
+        learnDefaultSkill();
     }
 
     public Warrior(String name, int level) {
         super(name, level);
+        learnDefaultSkill();
     }
 
     public Warrior(String name, int level, int experience, int strength, int agility, int intelligence, int vitality, int currentHealth, int maxHealth, int currentMana, int maxMana) {
         super(name, level, experience, strength, agility, intelligence, vitality, currentHealth, maxHealth, currentMana, maxMana);
+        learnDefaultSkill();
     }
 
     @Override
@@ -51,5 +53,9 @@ public class Warrior extends Character {
 
         IO.println(String.format("%s used `%s` and dealt %d damage to %s.", getName(), skill.getName(), skillDamage, target.getName()));
         target.takeDamage(skillDamage, this);
+    }
+
+    private void learnDefaultSkill() {
+        this.skills.add(new Skill("Swing", "swosch", 10, Attribute.STRENGTH, 2, 0));
     }
 }
