@@ -103,12 +103,11 @@ public class Game {
     }
 
     public void enterDungeon(Dungeon dungeon) {
-        boolean dungeonCleared = dungeon.getMonsters().isEmpty();
         if (GameData.player.isFirstTimeDungeon()) {
             dungeonTutorial();
         }
 
-        while (!dungeonCleared) {
+        while (true) {
             IO.println(dungeon);
             if (!dungeon.getMonsters().isEmpty()) {
                 for (Npc monsters : dungeon.getMonsters()) {
@@ -116,13 +115,14 @@ public class Game {
                 }
             }
 
-            if (dungeon.getMonsters().isEmpty()) {
-                GameData.player.addClearedDungeon(dungeon);
-                dungeonCleared = true;
-            }
-
             if (combatService.engageCombat(dungeon.getMonsters().getFirst(), GameData.player)) {
                 dungeon.getMonsters().removeFirst();
+            }
+
+            if (dungeon.getMonsters().isEmpty()) {
+                GameData.player.addClearedDungeon(dungeon);
+                IO.println(String.format("%s cleared!", dungeon.getName()));
+                return;
             }
         }
     }
@@ -164,11 +164,8 @@ public class Game {
 
     public void createDungeon() {
         List<Npc> monsters = new ArrayList<>();
-        monsters.add(new Bird("Parrot", 40, 10, MonsterRarity.NORMAL));
-        monsters.add(new Bird("Parrot", 40, 10, MonsterRarity.NORMAL));
-        monsters.add(new Bird("Parrot", 40, 10, MonsterRarity.NORMAL));
-        monsters.add(new Bird("Parrot", 40, 10, MonsterRarity.MAGIC));
-        monsters.add(new Bird("Parrot", 40, 10, MonsterRarity.RARE));
+        monsters.add(new Bird("Parrot", 40, 100, MonsterRarity.NORMAL));
+        monsters.add(new Bird("Parrot", 40, 100, MonsterRarity.RARE));
         gameData.dungeons.add(new Dungeon("Jungle", "Le jongel of only perot", 1 ,monsters));
     }
 
@@ -187,8 +184,9 @@ public class Game {
 
     public void runGame() {
 
-        runGameLoop:
+
         while (true) {
+        IO.println("- Town -");
 
             String input = IO.readln("> ");
             switch (input) {
