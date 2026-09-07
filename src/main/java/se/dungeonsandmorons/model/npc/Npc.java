@@ -16,30 +16,14 @@ public abstract class Npc implements Targetable {
 
     protected List<Skill> skills = new ArrayList<>();
 
-
-
     Npc(String name, int maxHealth, int expOnDeath, MonsterRarity rarity) {
         this.name = name;
-        this.maxHealth = maxHealth;
+        this.maxHealth = rarity.scale(maxHealth, rarity.getHealthMultiplier());
         this.currentHealth = maxHealth;
-        this.expOnDeath = expOnDeath;
+        this.expOnDeath = rarity.scale(expOnDeath, rarity.getExperienceMultiplier());
         this.rarity = rarity;
 
     }
-
-    private void applyRarityModifiers() {
-        switch (rarity) {
-            case MonsterRarity.MAGIC -> {
-                maxHealth = (int) Math.round(maxHealth * RarityScaler.magic.health);
-                expOnDeath = (int) Math.round(expOnDeath * RarityScaler.magic.experience);
-            }
-            case MonsterRarity.RARE -> maxHealth = (int) Math.round(maxHealth * RarityScaler.magic.health);
-            case MonsterRarity.UNIQUE -> maxHealth = (int) Math.round(maxHealth * RarityScaler.magic.health);
-            case MonsterRarity.BOSS -> maxHealth = (int) Math.round(maxHealth * RarityScaler.magic.health);
-
-        }
-    }
-
 
     public boolean isAlive() { return this.currentHealth > 0; }
 
@@ -48,7 +32,12 @@ public abstract class Npc implements Targetable {
         return this.maxHealth;
     }
     public int getCurrentHealth() { return this.currentHealth; }
+    public int getDeathExperience() { return this.expOnDeath; }
+    public MonsterRarity getRarity() { return this.rarity; }
     public List<Skill> getSkills() { return this.skills; }
+
+    public void setMaxHealth(int maxHealth) { this.maxHealth = maxHealth; }
+    public void setDeathExperience(int expOnDeath) { this.expOnDeath = expOnDeath; }
 
     @Override
     public String toString() {

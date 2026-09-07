@@ -1,7 +1,6 @@
 package se.dungeonsandmorons.userinterface;
 
 import se.dungeonsandmorons.SaveRepository;
-import se.dungeonsandmorons.exception.CharacterDoesNotExistException;
 import se.dungeonsandmorons.main.Game;
 import se.dungeonsandmorons.main.GameData;
 import se.dungeonsandmorons.model.character.Character;
