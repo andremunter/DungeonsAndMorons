@@ -2,7 +2,6 @@ package se.dungeonsandmorons.model.combat;
 
 import se.dungeonsandmorons.TurnHandler;
 import se.dungeonsandmorons.model.character.Character;
-import se.dungeonsandmorons.model.dungeon.Dungeon;
 import se.dungeonsandmorons.model.npc.Npc;
 import se.dungeonsandmorons.model.skill.Skill;
 
