@@ -2,7 +2,6 @@ package se.dungeonsandmorons;
 
 import se.dungeonsandmorons.main.Game;
 import se.dungeonsandmorons.model.combat.Attacker;
-import se.dungeonsandmorons.model.combat.CombatState;
 import se.dungeonsandmorons.model.combat.PlayerCombatAction;
 import se.dungeonsandmorons.model.npc.Npc;
 import se.dungeonsandmorons.model.character.Character;
@@ -43,9 +42,6 @@ public class TurnHandler {
         }
     }
 
-    public static void playerAction(PlayerCombatAction action) {
-
-    }
 
     public int getTurnCount() { return turnCount; }
 
