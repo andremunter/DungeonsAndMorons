@@ -21,8 +21,8 @@ public class Warrior extends Character {
         learnDefaultSkill();
     }
 
-    public Warrior(String name, int level, int experience, int strength, int agility, int intelligence, int vitality, int currentHealth, int maxHealth, int currentMana, int maxMana) {
-        super(name, level, experience, strength, agility, intelligence, vitality, currentHealth, maxHealth, currentMana, maxMana);
+    public Warrior(int id, String name, int level, int experience, int strength, int agility, int intelligence, int vitality, int currentHealth, int maxHealth, int currentMana, int maxMana) {
+        super(id, name, level, experience, strength, agility, intelligence, vitality, currentHealth, maxHealth, currentMana, maxMana);
         learnDefaultSkill();
     }
 

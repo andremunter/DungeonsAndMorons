@@ -1,5 +1,6 @@
 package se.dungeonsandmorons.model.character;
 
+import se.dungeonsandmorons.main.GameData;
 import se.dungeonsandmorons.model.combat.Attacker;
 import se.dungeonsandmorons.model.combat.Targetable;
 import se.dungeonsandmorons.model.dungeon.Dungeon;
@@ -10,6 +11,11 @@ import java.util.List;
 
 public abstract class Character implements Attacker, Targetable {
     protected String name;
+
+    // id is not set on creating a character, as we do not save it on creation.
+    // it is for the first time set in the database when saving character,
+    // and it is then used to set this id
+    protected int id;
 
     protected int level;
     private int experience;
@@ -61,7 +67,9 @@ public abstract class Character implements Attacker, Targetable {
         this.level = level;
     }
 
-    Character(String name, int level, int experience, int strength, int agility, int intelligence, int vitality, int currentHealth, int maxHealth, int currentMana, int maxMana) {
+    // RESTRICTED TO: ONLY FOR LOADING FROM DATABASE
+    Character(int id, String name, int level, int experience, int strength, int agility, int intelligence, int vitality, int currentHealth, int maxHealth, int currentMana, int maxMana) {
+        this.id = id;
         this.name = name;
         this.level = level;
         this.experience = experience;
@@ -140,8 +148,12 @@ public abstract class Character implements Attacker, Targetable {
         skills.add(skill);
     }
 
-    void die() {
-
+    public void clearDungeon(String dungeonName) {
+        for (Dungeon dungeon : GameData.dungeons) {
+            if (dungeon.getName().equalsIgnoreCase(dungeonName)) {
+                addClearedDungeon(dungeon);
+            }
+        }
     }
 
     public String getName() { return this.name; }

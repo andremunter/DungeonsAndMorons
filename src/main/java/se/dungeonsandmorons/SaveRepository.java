@@ -6,6 +6,7 @@ import java.util.List;
 
 import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.character.Warrior;
+import se.dungeonsandmorons.model.dungeon.Dungeon;
 
 public class SaveRepository {
     private static final String URL = "jdbc:postgresql://localhost:5432/dungeonsandmorons";
@@ -17,7 +18,7 @@ public class SaveRepository {
     }
 
     public static void save(Character character) {
-        String sql = """
+        String playerSql = """
                 INSERT INTO character_saves (name, character_class, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana, updated_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
                 ON CONFLICT (name)
@@ -35,68 +36,109 @@ public class SaveRepository {
                 updated_at = CURRENT_TIMESTAMP;
                 """;
 
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        String dungeonSql = """
+                INSERT INTO character_dungeons_cleared (character_id, dungeon_name)
+                VALUES (?, ?)
+                ON CONFLICT (character_id, dungeon_name) DO NOTHING;
+                """;
 
-            stmt.setString(1, character.getName());
-            stmt.setString(2, character.getClass().getSimpleName());
-            stmt.setInt(3, character.getLevel());
-            stmt.setInt(4, character.getExperience());
-            stmt.setInt(5, character.getStrength());
-            stmt.setInt(6, character.getAgility());
-            stmt.setInt(7, character.getIntelligence());
-            stmt.setInt(8, character.getVitality());
-            stmt.setInt(9, character.getCurrentHealth());
-            stmt.setInt(10, character.getMaxHealth());
-            stmt.setInt(11, character.getCurrentMana());
-            stmt.setInt(12, character.getMaxMana());
+        try (Connection conn = getConnection()) {
+            conn.setAutoCommit(false);
 
-            stmt.executeUpdate();
-            IO.println(String.format("Saved %s to database.", character.getName()));
+            int characterId;
 
+
+             try (PreparedStatement charStmt = conn.prepareStatement(playerSql)) {
+
+                charStmt.setString(1, character.getName());
+                charStmt.setString(2, character.getClass().getSimpleName());
+                charStmt.setInt(3, character.getLevel());
+                charStmt.setInt(4, character.getExperience());
+                charStmt.setInt(5, character.getStrength());
+                charStmt.setInt(6, character.getAgility());
+                charStmt.setInt(7, character.getIntelligence());
+                charStmt.setInt(8, character.getVitality());
+                charStmt.setInt(9, character.getCurrentHealth());
+                charStmt.setInt(10, character.getMaxHealth());
+                charStmt.setInt(11, character.getCurrentMana());
+                charStmt.setInt(12, character.getMaxMana());
+
+                try (ResultSet rs = charStmt.executeQuery()) {
+                    if (rs.next()) {
+                        characterId = rs.getInt("id");
+                    } else {
+                        conn.rollback();
+                        return;
+                    }
+                }
+
+                try (PreparedStatement dungeonStmt = conn.prepareStatement(dungeonSql)) {
+                    for (Dungeon dungeon : character.getClearedDungeons()) {
+                        dungeonStmt.setInt(1, characterId);
+                        dungeonStmt.setString(2, dungeon.getName());
+                        dungeonStmt.addBatch();
+                    }
+                    dungeonStmt.executeBatch();
+                }
+
+                conn.commit();
+                IO.println(String.format("Saved %s and cleared dungeons to database.", character.getName()));
+            }
         } catch (SQLException e) {
             System.err.println("Failed to save character: " + e.getMessage());
         }
     }
 
     public static Character load(String name) {
-        String sql = "SELECT character_class, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana FROM character_saves WHERE name = ?";
+        String playerSql = "SELECT id, character_class, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana FROM character_saves WHERE name = ?";
+        String dungeonSql = "SELECT dungeon_name FROM character_dungeons_cleared WHERE character_id = ?";
 
         try (Connection conn = getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement playerStmt = conn.prepareStatement(playerSql)) {
 
-                stmt.setString(1, name);
+                playerStmt.setString(1, name);
 
-                try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        String className    = rs.getString("character_class");
-                        int level           = rs.getInt("level");
-                        int experience      = rs.getInt("experience");
-                        int strength        = rs.getInt("strength");
-                        int agility         = rs.getInt("agility");
-                        int intelligence    = rs.getInt("intelligence");
-                        int vitality        = rs.getInt("vitality");
-                        int health          = rs.getInt("health");
-                        int max_health      = rs.getInt("max_health");
-                        int mana            = rs.getInt("mana");
-                        int max_mana        = rs.getInt("max_mana");
-
-                        Character loadedCharacter = switch (className) {
-                            case "Warrior" -> new Warrior(name, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana);
-                            //case "Magician" -> new Magician(name, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana);
-
-                            default -> throw new IllegalArgumentException("Unknown class: " + className);
-                        };
-
-                        return loadedCharacter;
+                try (ResultSet rs = playerStmt.executeQuery()) {
+                    if (!rs.next()) {
+                        return null;
                     }
+
+                    int characterId     = rs.getInt("id");
+                    String className    = rs.getString("character_class");
+                    int level           = rs.getInt("level");
+                    int experience      = rs.getInt("experience");
+                    int strength        = rs.getInt("strength");
+                    int agility         = rs.getInt("agility");
+                    int intelligence    = rs.getInt("intelligence");
+                    int vitality        = rs.getInt("vitality");
+                    int health          = rs.getInt("health");
+                    int max_health      = rs.getInt("max_health");
+                    int mana            = rs.getInt("mana");
+                    int max_mana        = rs.getInt("max_mana");
+
+                    Character player = switch (className) {
+                        case "Warrior" -> new Warrior(characterId, name, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana);
+                        //case "Magician" -> new Magician(name, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana);
+
+                        default -> throw new IllegalArgumentException("Unknown class: " + className);
+                    };
+
+                    try (PreparedStatement dungeonStmt = conn.prepareStatement(dungeonSql)) {
+                        dungeonStmt.setInt(1, characterId);
+                        try (ResultSet dungeonRs = dungeonStmt.executeQuery()) {
+                            while (dungeonRs.next()) {
+                                player.clearDungeon(dungeonRs.getString("dungeon_name"));
+                            }
+                        }
+                    }
+
+                    return player;
                 }
 
         } catch (SQLException e) {
             System.err.println("Failed to load character: " + e.getMessage());
+            return null;
         }
-
-        return null;
     }
 
     public static List<Character> fetchSaves() {
