@@ -12,7 +12,6 @@ public abstract class Npc implements Targetable {
     private static final double DMG_GROWTH_PER_LEVEL = 0.1;
     private static final double EXP_GROWTH_PER_LEVEL = 0.16;
 
-
     protected final String name;
     protected int level;
     private int maxHealth;
@@ -28,12 +27,16 @@ public abstract class Npc implements Targetable {
 
         int levelOffset = Math.max(0, level - 1);
 
-        //double levelHp = baseHealth * (1.0 + (levelOffset))
+        double levelHp = baseHealth * (1.0 + (levelOffset * HP_GROWTH_PER_LEVEL));
+        double levelExp = baseHealth * (1.0 + (levelOffset * EXP_GROWTH_PER_LEVEL));
 
-        this.maxHealth = rarity.scale(maxHealth, rarity.getHealthMultiplier(), this);
+        // TODO: Should be calced when using skills
+        double levelDmg = baseHealth * (1.0 + (levelOffset * DMG_GROWTH_PER_LEVEL));
+
+        this.maxHealth = (int) Math.round(levelHp * rarity.getHealthMultiplier());
+        this.expOnDeath = (int) Math.round(levelExp * rarity.getExperienceMultiplier());
+
         this.currentHealth = maxHealth;
-        this.expOnDeath = rarity.scale(expOnDeath, rarity.getExperienceMultiplier(), this);
-
 
     }
 

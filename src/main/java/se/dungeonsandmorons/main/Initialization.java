@@ -17,8 +17,8 @@ public class Initialization {
         GameData.dungeons.add(rotwormCave);
 
         List<NpcFactory> caveRecipes = List.of(
-                (lvl, rarity) -> new Rotworm("Rotworm", 1, 40, 20, rarity),
-                (lvl, rarity) -> new Rotworm("Rotworm", 1, 40, 20, rarity)
+                (lvl, rarity) -> new Rotworm("Rotworm", lvl, 40, 20, rarity),
+                (lvl, rarity) -> new Rotworm("Rotworm", lvl, 40, 20, rarity)
         );
 
         rotwormCave.populateDungeon(caveRecipes);

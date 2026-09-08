@@ -21,7 +21,7 @@ public enum MonsterRarity {
     public double getDamageMultiplier()      { return damageMultiplier; }
     public double getExperienceMultiplier()  { return experienceMultiplier; }
 
-    public int scale(int baseValue, double multiplier, Npc monster) {
+    public int scale(int baseValue, double multiplier) {
         return (int) Math.round(baseValue * multiplier);
     }
 
