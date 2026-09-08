@@ -21,7 +21,6 @@ public class Dungeon {
         this.description = description;
         this.areaLevel = areaLevel;
 
-        scaleMonsterToAreaLevel();
     }
 
     public void populateDungeon(List<NpcFactory> recipes) {
@@ -56,14 +55,6 @@ public class Dungeon {
             }
         }
         return false;
-    }
-
-    public void scaleMonsterToAreaLevel() {
-        if (!monsters.isEmpty()) {
-            for (Npc monster : monsters) {
-                monster.setLevel(areaLevel);
-            }
-        }
     }
 
 }
