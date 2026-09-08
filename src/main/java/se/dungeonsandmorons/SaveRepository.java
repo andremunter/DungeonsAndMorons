@@ -9,9 +9,10 @@ import se.dungeonsandmorons.model.character.Warrior;
 import se.dungeonsandmorons.model.dungeon.Dungeon;
 
 public class SaveRepository {
-    private static final String URL = "jdbc:postgresql://localhost:5432/dungeonsandmorons";
-    private static final String USER = "postgres";
-    private static final String PASSWORD = "postgres";
+    //private static final String URL = "jdbc:postgresql://localhost:5432/dungeonsandmorons";
+    private static final String URL = "jdbc:postgresql://ep-cool-art-b2km85jl-pooler.c-6.eu-central-1.aws.neon.tech/neondb?sslmode=require";
+    private static final String USER = "neondb_owner";
+    private static final String PASSWORD = "npg_pTFZ0keKunD1";
 
     private static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);
@@ -33,7 +34,8 @@ public class SaveRepository {
                 max_health = EXCLUDED.max_health,
                 mana = EXCLUDED.mana,
                 max_mana = EXCLUDED.max_mana,
-                updated_at = CURRENT_TIMESTAMP;
+                updated_at = CURRENT_TIMESTAMP
+                RETURNING id;
                 """;
 
         String dungeonSql = """

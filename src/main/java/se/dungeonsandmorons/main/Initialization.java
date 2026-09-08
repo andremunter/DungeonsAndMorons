@@ -1,9 +1,7 @@
 package se.dungeonsandmorons.main;
 
 import se.dungeonsandmorons.model.dungeon.Dungeon;
-import se.dungeonsandmorons.model.npc.Bird;
-import se.dungeonsandmorons.model.npc.MonsterRarity;
-import se.dungeonsandmorons.model.npc.Npc;
+import se.dungeonsandmorons.model.npc.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,13 +11,18 @@ import java.util.List;
 public class Initialization {
 
 
-    public void createDungeon() {
-        List<Npc> monsters = new ArrayList<>();
-        monsters.add(new Bird("Parrot", 10, 100, MonsterRarity.NORMAL));
-        monsters.add(new Bird("Parrot", 10, 100, MonsterRarity.MAGIC));
-        monsters.add(new Bird("Parrot", 10, 100, MonsterRarity.RARE));
+    public void createDungeons() {
 
-        GameData.dungeons.add(new Dungeon("Jungle", "Le jongel of only perot", 1 ,monsters));
+        Dungeon rotwormCave = new Dungeon("Rotworm Cave", "Cave of only rottenwurmen", 1);
+        GameData.dungeons.add(rotwormCave);
+
+        List<NpcFactory> caveRecipes = List.of(
+                (lvl, rarity) -> new Rotworm("Rotworm", 1, 40, 20, rarity),
+                (lvl, rarity) -> new Rotworm("Rotworm", 1, 40, 20, rarity)
+        );
+
+        rotwormCave.populateDungeon(caveRecipes);
+
     }
 
 }

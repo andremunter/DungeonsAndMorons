@@ -67,7 +67,6 @@ public abstract class Character implements Attacker, Targetable {
         this.level = level;
     }
 
-    // RESTRICTED TO: ONLY FOR LOADING FROM DATABASE
     Character(int id, String name, int level, int experience, int strength, int agility, int intelligence, int vitality, int currentHealth, int maxHealth, int currentMana, int maxMana) {
         this.id = id;
         this.name = name;
@@ -152,6 +151,7 @@ public abstract class Character implements Attacker, Targetable {
         for (Dungeon dungeon : GameData.dungeons) {
             if (dungeon.getName().equalsIgnoreCase(dungeonName)) {
                 addClearedDungeon(dungeon);
+                firstTimeDungeon = false;
             }
         }
     }

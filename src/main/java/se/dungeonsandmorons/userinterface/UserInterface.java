@@ -120,7 +120,7 @@ public class UserInterface {
             IO.println("Successfully loaded player " + GameData.player.getName());
         } else {
             IO.println("Character does not exist.");
-            loadCharacterMenu();
+            return;
         }
     }
 
@@ -153,7 +153,11 @@ public class UserInterface {
         IO.println("Enter dungeon by typing its name");
         Dungeon dungeon = dungeonService.findDungeonByName(IO.readln("> "));
         if (dungeon != null) {
-            game.enterDungeon(dungeon);
+            if (!dungeon.getMonsters().isEmpty()) {
+                game.enterDungeon(dungeon);
+            } else {
+                IO.println("Dungeon has already been cleared.");
+            }
         } else {
             IO.println("Something went wrong when entering dungeon.");
         }

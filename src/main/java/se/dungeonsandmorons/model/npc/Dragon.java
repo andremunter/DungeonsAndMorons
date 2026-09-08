@@ -9,8 +9,8 @@ import se.dungeonsandmorons.model.skill.Skill;
 
 public class Dragon extends Npc implements Attacker, Flyable {
 
-    public Dragon(String name, int health, int expOnDeath, MonsterRarity rarity) {
-        super(name, health, expOnDeath, rarity);
+    public Dragon(String name, int level, int baseHealth, int baseExp, MonsterRarity rarity) {
+        super(name, baseHealth, baseExp, level, rarity);
         this.skills.add(new Skill("Breathe fire", "Ffrsszh", 5, Attribute.NONE, 1, 0));
     }
 

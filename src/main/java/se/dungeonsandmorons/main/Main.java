@@ -14,7 +14,7 @@ public class Main {
 
     void main(String[] args) {
 
-        init.createDungeon();
+        init.createDungeons();
 
         game.startGame(userInterface, combatService);
 

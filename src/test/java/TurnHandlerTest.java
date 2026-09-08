@@ -18,7 +18,7 @@ public class TurnHandlerTest {
         // Arrange
         TurnHandler th = new TurnHandler();
         Character player = new Warrior("Test");
-        Npc dragon = new Dragon("Drag-on", 100, 10, MonsterRarity.NORMAL);
+        Npc dragon = new Dragon("Drag-on", 10, 100, 10, MonsterRarity.NORMAL);
 
         // Act
         th.handleTurn(dragon, player, PlayerCombatAction.ATTACK, null);
@@ -33,7 +33,7 @@ public class TurnHandlerTest {
         // Arrange
         TurnHandler th = new TurnHandler();
         Character player = new Warrior("Test");
-        Npc dragon = new Dragon("Draggson", 100, 10, MonsterRarity.NORMAL);
+        Npc dragon = new Dragon("Draggson", 10, 10, 10, MonsterRarity.NORMAL);
         Skill skill = new Skill("Thunda", "BZZZT", 5, Attribute.INTELLIGENCE, 1, 30);
 
 
@@ -52,7 +52,7 @@ public class TurnHandlerTest {
         // Arrange
         TurnHandler th = new TurnHandler();
         Character player = new Warrior("Test");
-        Npc dragon = new Dragon("DragonOneHealth", 1, 10, MonsterRarity.NORMAL);
+        Npc dragon = new Dragon("DragonOneHealth", 1, 1, 10, MonsterRarity.NORMAL);
 
         // Act
         th.handleTurn(dragon, player, PlayerCombatAction.ATTACK, player.getSkills().getFirst());
@@ -69,7 +69,7 @@ public class TurnHandlerTest {
         // Arrange
         TurnHandler th = new TurnHandler();
         Character player = new Warrior("Test");
-        Npc dragon = new Dragon("Dragon", 100, 10, MonsterRarity.NORMAL);
+        Npc dragon = new Dragon("Dragon", 100, 10, 10, MonsterRarity.NORMAL);
 
         // Act
         player.setCurrentHealth(1);

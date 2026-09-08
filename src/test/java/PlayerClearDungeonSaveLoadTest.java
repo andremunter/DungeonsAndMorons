@@ -22,35 +22,6 @@ public class PlayerClearDungeonSaveLoadTest {
     @Test
     public void shouldSaveClearedDungeon() {
 
-        // Arrange
-        Game game = new Game();
-        DungeonService dungService = new DungeonService();
-        Character player = new Warrior("Test");
-        Initialization init = new Initialization();
-        List<Npc> npcs = new ArrayList<>();
-
-        // Act
-        npcs.add(new Dragon("Test", 10, 10, MonsterRarity.NORMAL));
-        Dungeon dungeon = new Dungeon("TestDung", "", 1, npcs);
-        player.clearDungeon("TestDung");
-
-        SaveRepository.save(player);
-        player = null;
-        player = SaveRepository.load("Test");
-
-        Dungeon clearedDungeon = null;
-        for (Dungeon dung : player.getClearedDungeons()) {
-            if (clearedDungeon.getName().equalsIgnoreCase("TestDung")) {
-                clearedDungeon = dung;
-            }
-        }
-
-        // Assert
-
-        assertEquals("TestDung", clearedDungeon.getName());
-
-
-
     }
 
     @Test

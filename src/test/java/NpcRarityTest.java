@@ -10,7 +10,7 @@ public class NpcRarityTest {
     @Test
     public void rareDragonShouldHaveScaledStatsRoundedToInt() {
         // Arrange & Act
-        Npc rareDragon = new Dragon("Dregor", 100, 20, MonsterRarity.RARE);
+        Npc rareDragon = new Dragon("Dregor", 10, 100, 20, MonsterRarity.RARE);
 
         // Assert
         assertEquals(140, rareDragon.getMaxHealth());
