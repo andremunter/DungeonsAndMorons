@@ -1,12 +1,11 @@
 package se.dungeonsandmorons.userinterface;
 
 import se.dungeonsandmorons.SaveRepository;
-import se.dungeonsandmorons.main.Game;
-import se.dungeonsandmorons.main.GameData;
+import se.dungeonsandmorons.game.Game;
+import se.dungeonsandmorons.game.GameData;
 import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.character.Warrior;
 import se.dungeonsandmorons.model.dungeon.Dungeon;
-import se.dungeonsandmorons.model.dungeon.DungeonRegistry;
 import se.dungeonsandmorons.model.skill.Skill;
 import se.dungeonsandmorons.service.DungeonService;
 

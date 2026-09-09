@@ -1,5 +1,6 @@
 package se.dungeonsandmorons.main;
 
+import se.dungeonsandmorons.game.Game;
 import se.dungeonsandmorons.model.combat.CombatService;
 import se.dungeonsandmorons.userinterface.UserInterface;
 

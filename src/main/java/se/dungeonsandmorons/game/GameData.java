@@ -1,4 +1,4 @@
-package se.dungeonsandmorons.main;
+package se.dungeonsandmorons.game;
 import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.dungeon.Dungeon;
 

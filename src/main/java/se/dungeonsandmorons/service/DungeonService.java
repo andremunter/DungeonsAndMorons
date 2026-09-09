@@ -1,6 +1,5 @@
 package se.dungeonsandmorons.service;
 
-import se.dungeonsandmorons.main.GameData;
 import se.dungeonsandmorons.model.dungeon.Dungeon;
 import se.dungeonsandmorons.model.dungeon.DungeonRegistry;
 

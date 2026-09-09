@@ -1,6 +1,6 @@
 package se.dungeonsandmorons;
 
-import se.dungeonsandmorons.main.Game;
+import se.dungeonsandmorons.game.Game;
 import se.dungeonsandmorons.model.combat.Attacker;
 import se.dungeonsandmorons.model.combat.PlayerCombatAction;
 import se.dungeonsandmorons.model.npc.Npc;

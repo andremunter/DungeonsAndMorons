@@ -1,6 +1,6 @@
 package se.dungeonsandmorons.model.character;
 
-import se.dungeonsandmorons.main.GameData;
+import se.dungeonsandmorons.game.GameData;
 import se.dungeonsandmorons.model.combat.Attacker;
 import se.dungeonsandmorons.model.combat.Targetable;
 import se.dungeonsandmorons.model.dungeon.Dungeon;

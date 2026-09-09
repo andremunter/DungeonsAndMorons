@@ -5,7 +5,7 @@ import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.npc.Npc;
 import se.dungeonsandmorons.model.skill.Skill;
 
-import static se.dungeonsandmorons.main.GameData.player;
+import static se.dungeonsandmorons.game.GameData.player;
 
 public class CombatService {
 

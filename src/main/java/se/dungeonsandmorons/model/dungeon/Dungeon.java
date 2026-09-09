@@ -1,7 +1,7 @@
 package se.dungeonsandmorons.model.dungeon;
 
 import se.dungeonsandmorons.exception.ListNullOrEmptyException;
-import se.dungeonsandmorons.main.GameData;
+import se.dungeonsandmorons.game.GameData;
 import se.dungeonsandmorons.model.npc.MonsterRarity;
 import se.dungeonsandmorons.model.npc.Npc;
 import se.dungeonsandmorons.model.npc.NpcFactory;
