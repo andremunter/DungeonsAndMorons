@@ -45,10 +45,11 @@ public class CombatService {
 
     public void handleUserInput(CombatEngine engine, Character player, String input) {
 
-        String trimmed = input.trim();
-        String[] parts = trimmed.split("\\s+", 2);
-        String action = parts[0].toLowerCase();
-        String skill = parts.length > 1 ? parts[1].trim() : "";
+                                        // Reminders for myself:
+        String trimmed = input.trim();  // trim returns the input string with leading & trailing spaces removed
+        String[] parts = trimmed.split("\\s+", 2); // \\s+ removes all spaces between the first and second word
+        String action = parts[0].toLowerCase(); // action is part[0], meaning the first word in the input string
+        String skill = parts.length > 1 ? parts[1].trim() : ""; // if parts array contains more than 1, we have a second part. trim it
 
         switch (action) {
             case "cast" -> {
