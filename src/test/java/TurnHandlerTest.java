@@ -3,7 +3,7 @@ import se.dungeonsandmorons.TurnHandler;
 import se.dungeonsandmorons.model.Attribute;
 import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.character.Warrior;
-import se.dungeonsandmorons.model.combat.PlayerCombatAction;
+import se.dungeonsandmorons.model.combat.CombatAction;
 import se.dungeonsandmorons.model.npc.Dragon;
 import se.dungeonsandmorons.model.npc.MonsterRarity;
 import se.dungeonsandmorons.model.npc.Npc;
@@ -21,7 +21,7 @@ public class TurnHandlerTest {
         Npc dragon = new Dragon("Drag-on", 10, 100, 10, MonsterRarity.NORMAL);
 
         // Act
-        th.handleTurn(dragon, player, PlayerCombatAction.ATTACK, null);
+        th.handleTurn(dragon, player, CombatAction.ATTACK, null);
 
         // Assert
         assertTrue(dragon.getCurrentHealth() < 100);
@@ -39,7 +39,7 @@ public class TurnHandlerTest {
 
         // Act
         player.learnSkill(skill);
-        th.handleTurn(dragon, player, PlayerCombatAction.CAST, player.getSkills().get(1));
+        th.handleTurn(dragon, player, CombatAction.CAST, player.getSkills().get(1));
 
         // Assert
         assertTrue(player.getCurrentMana() < player.getMaxMana());
@@ -55,7 +55,7 @@ public class TurnHandlerTest {
         Npc dragon = new Dragon("DragonOneHealth", 1, 1, 10, MonsterRarity.NORMAL);
 
         // Act
-        th.handleTurn(dragon, player, PlayerCombatAction.ATTACK, player.getSkills().getFirst());
+        th.handleTurn(dragon, player, CombatAction.ATTACK, player.getSkills().getFirst());
 
         // Assert
         assertFalse(dragon.isAlive());
@@ -73,7 +73,7 @@ public class TurnHandlerTest {
 
         // Act
         player.setCurrentHealth(1);
-        th.handleTurn(dragon, player, PlayerCombatAction.ATTACK, player.getSkills().getFirst());
+        th.handleTurn(dragon, player, CombatAction.ATTACK, player.getSkills().getFirst());
 
         // Assert
         assertFalse(player.isAlive());

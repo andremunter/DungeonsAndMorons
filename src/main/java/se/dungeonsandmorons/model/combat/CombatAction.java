@@ -1,6 +1,6 @@
 package se.dungeonsandmorons.model.combat;
 
-public enum PlayerCombatAction {
+public enum CombatAction {
     ATTACK,
     CAST,
     HEAL,

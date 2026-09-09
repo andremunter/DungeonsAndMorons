@@ -24,13 +24,13 @@ public class CombatService {
                     String spellName = s.substring("cast ".length()).trim();
                     Skill skill = findPlayerSkillByName(spellName);
                     if (skill != null) {
-                        turnHandler.handleTurn(enemy, player, PlayerCombatAction.CAST, skill);
+                        turnHandler.handleTurn(enemy, player, CombatAction.CAST, skill);
                     } else {
                         IO.println("Error: Skill is Null!");
                     }
                 }
-                case "attack"   -> turnHandler.handleTurn(enemy, player, PlayerCombatAction.ATTACK, null);
-                case "run"      -> turnHandler.handleTurn(enemy, player, PlayerCombatAction.RUN, null);
+                case "attack"   -> turnHandler.handleTurn(enemy, player, CombatAction.ATTACK, null);
+                case "run"      -> turnHandler.handleTurn(enemy, player, CombatAction.RUN, null);
                 default         -> IO.println("Wrong input.");
             }
 
