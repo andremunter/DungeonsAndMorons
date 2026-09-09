@@ -6,6 +6,7 @@ import se.dungeonsandmorons.main.GameData;
 import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.character.Warrior;
 import se.dungeonsandmorons.model.dungeon.Dungeon;
+import se.dungeonsandmorons.model.dungeon.DungeonRegistry;
 import se.dungeonsandmorons.model.skill.Skill;
 import se.dungeonsandmorons.service.DungeonService;
 
@@ -138,10 +139,13 @@ public class UserInterface {
     }
 
     public void listDungeons() {
-        if (!GameData.dungeons.isEmpty()) {
+        // TODO: Need to be able to list Area Level as well. Dungeon Names are not sufficient.
+        List<String> names = dungeonService.getAvailableDungeonNames();
+
+        if (!names.isEmpty()) {
             IO.println("- Dungeons -");
-            for (Dungeon dungeon : GameData.dungeons) {
-                IO.println(dungeon);
+            for (String dungeonName : names) {
+                IO.println(dungeonName);
             }
         } else {
             IO.println("No dungeons discovered.");
@@ -151,6 +155,7 @@ public class UserInterface {
     public void enterDungeonMenu() {
         listDungeons();
         IO.println("Enter dungeon by typing its name");
+
         Dungeon dungeon = dungeonService.findDungeonByName(IO.readln("> "));
         if (dungeon != null) {
             if (!dungeon.getMonsters().isEmpty()) {

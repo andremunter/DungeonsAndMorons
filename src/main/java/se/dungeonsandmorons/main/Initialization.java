@@ -10,19 +10,22 @@ import java.util.List;
 
 public class Initialization {
 
-
+/*
     public void createDungeons() {
 
         Dungeon rotwormCave = new Dungeon("Rotworm Cave", "Cave of only rottenwurmen", 1);
         GameData.dungeons.add(rotwormCave);
 
         List<NpcFactory> caveRecipes = List.of(
-                (lvl, rarity) -> new Rotworm("Rotworm", lvl, 40, 20, rarity),
+                (lvl, rarity) -> new Rotworm("Rotworm", lvl, 40, 20, MonsterRarity.RARE),
                 (lvl, rarity) -> new Rotworm("Rotworm", lvl, 40, 20, rarity)
         );
 
         rotwormCave.populateDungeon(caveRecipes);
 
     }
+   */
+
+
 
 }
