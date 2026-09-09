@@ -6,6 +6,7 @@ import se.dungeonsandmorons.model.combat.Targetable;
 import se.dungeonsandmorons.model.dungeon.Dungeon;
 import se.dungeonsandmorons.model.skill.Skill;
 
+import java.awt.image.AreaAveragingScaleFilter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +46,7 @@ public abstract class Character implements Attacker, Targetable {
     private boolean firstTimeDungeon = true;
 
     protected List<Skill> skills = new ArrayList<>();
+    //protected List<String> skills = new ArrayList<>();
     private List<Dungeon> dungeonsCleared = new ArrayList<>();
 
     Character(String name) {
@@ -145,6 +147,19 @@ public abstract class Character implements Attacker, Targetable {
 
     public void learnSkill(Skill skill) {
         skills.add(skill);
+    }
+
+    public boolean isSkillLearned(String skillName) {
+        if (getSkills() == null || getSkills().isEmpty()) {
+            return false;
+        }
+
+        for (Skill skill : getSkills()) {
+            if (skill.getName().equalsIgnoreCase(skillName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void clearDungeon(String dungeonName) {

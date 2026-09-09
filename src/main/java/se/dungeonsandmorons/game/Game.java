@@ -17,7 +17,7 @@ public class Game {
    }
 
     public void enterDungeon(Dungeon dungeon) {
-        if (GameData.player.isFirstTimeDungeon()) {
+        if (GameData.PLAYER.isFirstTimeDungeon()) {
             userInterface.dungeonTutorial();
         }
 
@@ -29,15 +29,23 @@ public class Game {
                 }
             }
 
-            if (combatService.engageCombat(dungeon.getMonsters().getFirst(), GameData.player)) {
+            if (combatService.runCombatLoop(dungeon.getMonsters().getFirst(), GameData.PLAYER)) {
                 dungeon.getMonsters().removeFirst();
             }
 
+            /*
+            if (combatService.engageCombat(dungeon.getMonsters().getFirst(), GameData.player)) {
+                dungeon.getMonsters().removeFirst();
+            }
+            */
+
             if (dungeon.getMonsters().isEmpty()) {
-                GameData.player.addClearedDungeon(dungeon);
+                GameData.PLAYER.addClearedDungeon(dungeon);
                 IO.println(String.format("%s cleared!", dungeon.getName()));
                 return;
             }
+
+
         }
     }
 

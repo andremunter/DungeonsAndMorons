@@ -46,7 +46,7 @@ public class Dungeon {
     }
 
     boolean hasPlayerClearedDungeon() {
-        List<Dungeon> cDungeons = GameData.player.getClearedDungeons();
+        List<Dungeon> cDungeons = GameData.PLAYER.getClearedDungeons();
         if (!cDungeons.isEmpty()) {
             for (Dungeon dung : cDungeons) {
                 if (this.name.equalsIgnoreCase(dung.getName())) {

@@ -35,8 +35,8 @@ public class CombatEngine {
         this.state = CombatState.RESOLVING_PLAYER_ACTION;
 
         switch (action) {
-            case ATTACK -> player.attack(enemy, player.getSkills().getFirst());
-            case CAST   -> player.attack(enemy, skill);
+            // TODO: Separate Attack and Cast. Dunno yet how. Cast should be like a magicians Firebolt or a Buff
+            case ATTACK, CAST -> player.attack(enemy, skill);
             case RUN    -> {
                 // TODO: Some kind of escape odds calculation?
                 this.state = CombatState.ESCAPED;

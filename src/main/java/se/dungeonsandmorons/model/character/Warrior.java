@@ -1,6 +1,7 @@
 package se.dungeonsandmorons.model.character;
 
 import se.dungeonsandmorons.exception.AttackingDeadNpcException;
+import se.dungeonsandmorons.exception.SkillNotLearnedException;
 import se.dungeonsandmorons.model.Attribute;
 import se.dungeonsandmorons.model.combat.Targetable;
 import se.dungeonsandmorons.model.skill.Skill;
@@ -32,6 +33,10 @@ public class Warrior extends Character {
 
         if (target.getCurrentHealth() < 1) {
             throw new AttackingDeadNpcException();
+        }
+
+        if (skill == null || !isSkillLearned(skill.getName())) {
+            throw new SkillNotLearnedException("Trying to cast a skill that is not learned!");
         }
 
         int attributeBase = 0;

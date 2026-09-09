@@ -55,10 +55,10 @@ public class UserInterface {
 
             String input = IO.readln("> ");
             switch (input) {
-                case "stats"        -> GameData.player.getStats();
-                case "skills"       -> listPlayerSkills(GameData.player);
+                case "stats"        -> GameData.PLAYER.getStats();
+                case "skills"       -> listPlayerSkills(GameData.PLAYER);
                 case "dungeons"     -> enterDungeonMenu();
-                case "save"         -> SaveRepository.save(GameData.player);
+                case "save"         -> SaveRepository.save(GameData.PLAYER);
                 case "load"         -> loadCharacterMenu();
                 case "help"         -> helpMenu();
                 case "main menu"    -> {
@@ -95,7 +95,7 @@ public class UserInterface {
                 """);
         String characterClass = IO.readln("> ").toLowerCase();
         switch (characterClass) {
-            case "warrior" -> GameData.player = new Warrior(characterName);
+            case "warrior" -> GameData.PLAYER = new Warrior(characterName);
             //case "magician" -> player = new Magician(characterName);
             //case "archer" -> player = new Archer(characterName);
             default -> {
@@ -115,9 +115,9 @@ public class UserInterface {
             mainMenu(game);
         }
 
-        GameData.player = SaveRepository.load(characterName);
-        if (GameData.player != null) {
-            IO.println("Successfully loaded player " + GameData.player.getName());
+        GameData.PLAYER = SaveRepository.load(characterName);
+        if (GameData.PLAYER != null) {
+            IO.println("Successfully loaded player " + GameData.PLAYER.getName());
         } else {
             IO.println("Character does not exist.");
             return;
@@ -187,7 +187,7 @@ public class UserInterface {
         if (!input.equalsIgnoreCase("continue")) {
             dungeonTutorial();
         }
-        GameData.player.setFirstTimeDungeon(false);
+        GameData.PLAYER.setFirstTimeDungeon(false);
     }
 
     public void listPlayerSkills(Character player) {

@@ -1,63 +1,72 @@
 package se.dungeonsandmorons.model.combat;
 
-import se.dungeonsandmorons.TurnHandler;
 import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.npc.Npc;
-import se.dungeonsandmorons.model.skill.Skill;
+import se.dungeonsandmorons.model.skill.SkillRegistry;
 
-import static se.dungeonsandmorons.game.GameData.player;
 
 public class CombatService {
 
-    private final TurnHandler turnHandler = new TurnHandler();
 
-    public boolean engageCombat(Npc enemy, Character player) {
-        while (enemy.isAlive() && player.isAlive()) {
-            IO.println(String.format("- TURN %d -", turnHandler.getTurnCount()));
+    public boolean runCombatLoop(Npc enemy, Character player) {
+        CombatEngine engine = new CombatEngine(player, enemy);
+        engine.startRound();
 
-            IO.println(String.format("%s HP: %d | %s HP: %d", player.getName(), player.getCurrentHealth(), enemy.getName(), enemy.getCurrentHealth()));
-            IO.println("Actions: attack | run");
-            String action = IO.readln("> ");
+        while (!engine.getState().isTerminal()) {
+            IO.println(String.format("""
+                    ---------- ROUND %d ----------
+                    %s HP: %d | %s HP: %d
+                    """,
+                    engine.getRoundCount(),
+                    player.getName(), player.getCurrentHealth(),
+                    enemy.getName(), enemy.getCurrentHealth()));
+            IO.println("Actions: Attack | Cast <skill> | Run");
 
-            switch (action) {
-                case String s when s.toLowerCase().startsWith("cast ") -> {
-                    String spellName = s.substring("cast ".length()).trim();
-                    Skill skill = findPlayerSkillByName(spellName);
-                    if (skill != null) {
-                        turnHandler.handleTurn(enemy, player, CombatAction.CAST, skill);
-                    } else {
-                        IO.println("Error: Skill is Null!");
-                    }
-                }
-                case "attack"   -> turnHandler.handleTurn(enemy, player, CombatAction.ATTACK, null);
-                case "run"      -> turnHandler.handleTurn(enemy, player, CombatAction.RUN, null);
-                default         -> IO.println("Wrong input.");
+            String input = IO.readln("> ");
+            handleUserInput(engine, player, input);
+        }
+
+        return switch (engine.getState()) {
+            case VICTORY -> {
+                IO.println(enemy.getName() + " was defeated.");
+                yield true;
             }
-
-        }
-        if (player.isAlive() && !enemy.isAlive()) {
-            return true;
-        }
-        return false;
+            case DEFEAT -> {
+                IO.println(player.getName() + " was killed.");
+                yield false;
+            }
+            case ESCAPED -> {
+                IO.println("Fled from combat.");
+                yield false;
+            }
+            default -> false;
+        };
     }
 
-    public Skill findPlayerSkillByName(String name) {
-        if (!player.getSkills().isEmpty()) {
-            for (Skill skill : player.getSkills()) {
-                if (skill.getName().equalsIgnoreCase(name)) {
-                    return skill;
+    public void handleUserInput(CombatEngine engine, Character player, String input) {
+
+        String trimmed = input.trim();
+        String[] parts = trimmed.split("\\s+", 2);
+        String action = parts[0].toLowerCase();
+        String skill = parts.length > 1 ? parts[1].trim() : "";
+
+        switch (action) {
+            case "cast" -> {
+                if (skill.isEmpty()) {
+                    IO.println("Cannot cast nothing. Usage: Cast <skill>");
+                    break;
+                }
+
+                if (player.isSkillLearned(skill)) {
+                    engine.executePlayerAction(CombatAction.CAST, SkillRegistry.findSkillByName(skill));
+                } else {
+                    IO.println("Skill not learned.");
                 }
             }
-            IO.println("You have not learned this skill.");
+            case "attack" -> engine.executePlayerAction(CombatAction.ATTACK, player.getSkills().getFirst());
+            case "run" -> engine.executePlayerAction(CombatAction.RUN, null);
+            default -> IO.println("Action not found.");
         }
-        return null;
-    }
-
-
-
-
-    public void escapeFight() {
-        IO.println("NOT IMPLEMENTED! GL :)");
     }
 
 }
