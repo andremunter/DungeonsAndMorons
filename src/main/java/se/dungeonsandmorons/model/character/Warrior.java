@@ -1,5 +1,6 @@
 package se.dungeonsandmorons.model.character;
 
+import se.dungeonsandmorons.exception.AttackingDeadNpcException;
 import se.dungeonsandmorons.model.Attribute;
 import se.dungeonsandmorons.model.combat.Targetable;
 import se.dungeonsandmorons.model.skill.Skill;
@@ -30,8 +31,7 @@ public class Warrior extends Character {
     public void attack(Targetable target, Skill skill) {
 
         if (target.getCurrentHealth() < 1) {
-            IO.println(target.getName() + " is already dead.");
-            return;
+            throw new AttackingDeadNpcException();
         }
 
         int attributeBase = 0;
