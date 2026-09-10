@@ -2,12 +2,11 @@ package se.dungeonsandmorons.model.npc;
 
 import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.combat.Attacker;
-import se.dungeonsandmorons.model.Attribute;
 import se.dungeonsandmorons.model.Flyable;
 import se.dungeonsandmorons.model.combat.Targetable;
-import se.dungeonsandmorons.model.skill.Skill;
+import se.dungeonsandmorons.model.skill.PlayerSkill;
 
-public class Dragon extends Npc implements Attacker, Flyable {
+public class Dragon extends Enemy implements Attacker, Flyable {
 
     public Dragon(String name, int level, int baseHealth, int baseExp, MonsterRarity rarity) {
         super(name, baseHealth, baseExp, level, rarity);
@@ -15,7 +14,7 @@ public class Dragon extends Npc implements Attacker, Flyable {
     }
 
     @Override
-    public void attack(Targetable target, Skill skill) {
+    public void attack(Targetable target, PlayerSkill skill) {
         if (!isAlive()) { return; }
 
         int skillDamage = skill.getBaseDamage();

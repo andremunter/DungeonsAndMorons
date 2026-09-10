@@ -7,7 +7,7 @@ import java.util.List;
 import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.character.Warrior;
 import se.dungeonsandmorons.model.dungeon.Dungeon;
-import se.dungeonsandmorons.model.skill.Skill;
+import se.dungeonsandmorons.model.skill.PlayerSkill;
 import se.dungeonsandmorons.model.skill.SkillRegistry;
 
 public class SaveRepository {
@@ -91,7 +91,7 @@ public class SaveRepository {
                 }
 
                 try (PreparedStatement skillStmt = conn.prepareStatement(skillSql)) {
-                    for (Skill skill : character.getSkills()) {
+                    for (PlayerSkill skill : character.getSkills()) {
                         skillStmt.setInt(1, characterId);
                         skillStmt.setString(2, skill.getName());
                         skillStmt.addBatch();

@@ -3,7 +3,7 @@ package se.dungeonsandmorons.model.dungeon;
 import se.dungeonsandmorons.exception.ListNullOrEmptyException;
 import se.dungeonsandmorons.game.GameData;
 import se.dungeonsandmorons.model.npc.MonsterRarity;
-import se.dungeonsandmorons.model.npc.Npc;
+import se.dungeonsandmorons.model.npc.Enemy;
 import se.dungeonsandmorons.model.npc.NpcFactory;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ public class Dungeon {
     private final String description;
     private final int areaLevel;
 
-    private final List<Npc> monsters = new ArrayList<>();
+    private final List<Enemy> monsters = new ArrayList<>();
 
     public Dungeon(String name, String description, int areaLevel) {
         this.name = name;
@@ -29,7 +29,7 @@ public class Dungeon {
         }
 
         for (NpcFactory recipe : recipes) {
-            Npc spawned = recipe.create(this.areaLevel, MonsterRarity.NORMAL);
+            Enemy spawned = recipe.create(this.areaLevel, MonsterRarity.NORMAL);
             this.monsters.add(spawned);
         }
 
@@ -38,7 +38,7 @@ public class Dungeon {
     public String getName() { return name; }
     public String getDescription() { return description; }
     public int getAreaLevel() { return areaLevel; }
-    public List<Npc> getMonsters() { return monsters; }
+    public List<Enemy> getMonsters() { return monsters; }
 
     @Override
     public String toString() {

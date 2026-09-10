@@ -4,7 +4,7 @@ import se.dungeonsandmorons.exception.AttackingDeadNpcException;
 import se.dungeonsandmorons.exception.SkillNotLearnedException;
 import se.dungeonsandmorons.model.Attribute;
 import se.dungeonsandmorons.model.combat.Targetable;
-import se.dungeonsandmorons.model.skill.Skill;
+import se.dungeonsandmorons.model.skill.PlayerSkill;
 import se.dungeonsandmorons.model.skill.SkillRegistry;
 
 public class Warrior extends Character {
@@ -33,7 +33,7 @@ public class Warrior extends Character {
     }
 
     @Override
-    public void attack(Targetable target, Skill skill) {
+    public void attack(Targetable target, PlayerSkill skill) {
 
         if (target.getCurrentHealth() < 1) {
             throw new AttackingDeadNpcException();

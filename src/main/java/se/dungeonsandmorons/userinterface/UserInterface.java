@@ -6,7 +6,7 @@ import se.dungeonsandmorons.game.GameData;
 import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.character.Warrior;
 import se.dungeonsandmorons.model.dungeon.Dungeon;
-import se.dungeonsandmorons.model.skill.Skill;
+import se.dungeonsandmorons.model.skill.PlayerSkill;
 import se.dungeonsandmorons.service.DungeonService;
 
 import java.util.List;
@@ -193,7 +193,7 @@ public class UserInterface {
     public void listPlayerSkills(Character player) {
         if (!player.getSkills().isEmpty()) {
             IO.println("- Learned Skills -");
-            for (Skill skill : player.getSkills()) {
+            for (PlayerSkill skill : player.getSkills()) {
                 IO.println(skill);
             }
         } else {

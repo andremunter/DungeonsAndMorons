@@ -1,14 +1,14 @@
 package se.dungeonsandmorons.model.combat;
 
 import se.dungeonsandmorons.model.character.Character;
-import se.dungeonsandmorons.model.npc.Npc;
+import se.dungeonsandmorons.model.npc.Enemy;
 import se.dungeonsandmorons.model.skill.SkillRegistry;
 
 
 public class CombatService {
 
 
-    public boolean runCombatLoop(Npc enemy, Character player) {
+    public boolean runCombatLoop(Enemy enemy, Character player) {
         CombatEngine engine = new CombatEngine(player, enemy);
         engine.startRound();
 

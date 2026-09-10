@@ -1,13 +1,12 @@
 package se.dungeonsandmorons.model.npc;
 
-import se.dungeonsandmorons.model.Attribute;
 import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.combat.Attacker;
 import se.dungeonsandmorons.model.combat.Digger;
 import se.dungeonsandmorons.model.combat.Targetable;
-import se.dungeonsandmorons.model.skill.Skill;
+import se.dungeonsandmorons.model.skill.PlayerSkill;
 
-public class Rotworm extends Npc implements Attacker, Targetable, Digger {
+public class Rotworm extends Enemy implements Attacker, Targetable, Digger {
 
 
     public Rotworm(String name, int level, int baseHealth, int baseExp, MonsterRarity rarity) {
@@ -16,7 +15,7 @@ public class Rotworm extends Npc implements Attacker, Targetable, Digger {
     }
 
     @Override
-    public void attack(Targetable target, Skill skill) {
+    public void attack(Targetable target, PlayerSkill skill) {
         if (!isAlive()) { return; }
 
         int skillDamage = skill.getBaseDamage();

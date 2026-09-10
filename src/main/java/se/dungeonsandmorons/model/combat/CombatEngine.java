@@ -1,16 +1,16 @@
 package se.dungeonsandmorons.model.combat;
 
 import se.dungeonsandmorons.model.character.Character;
-import se.dungeonsandmorons.model.npc.Npc;
-import se.dungeonsandmorons.model.skill.Skill;
+import se.dungeonsandmorons.model.npc.Enemy;
+import se.dungeonsandmorons.model.skill.PlayerSkill;
 
 public class CombatEngine {
     private final Character player;
-    private final Npc enemy;
+    private final Enemy enemy;
     private CombatState state;
     private int roundCount;
 
-    public CombatEngine(Character player, Npc enemy) {
+    public CombatEngine(Character player, Enemy enemy) {
         this.player = player;
         this.enemy = enemy;
         this.state = CombatState.ROUND_START;
@@ -27,7 +27,7 @@ public class CombatEngine {
         this.state = CombatState.AWAITING_PLAYER_INPUT;
     }
 
-    public void executePlayerAction(CombatAction action, Skill skill) {
+    public void executePlayerAction(CombatAction action, PlayerSkill skill) {
         if (state != CombatState.AWAITING_PLAYER_INPUT) {
             throw new IllegalStateException("Player action forbidden in state: " + state);
         }
@@ -59,6 +59,7 @@ public class CombatEngine {
             throw new IllegalStateException("Illegal enemy turn in state: " + state);
         }
 
+
         if (enemy instanceof Attacker attacker && enemy.isAlive()) {
             // TODO: Chance-based skill choice, maybe separate Skill-system, NpcSkill/CharacterSkill
             // Example; Dragon has Swipe, Fire Breath, Incinerate. 50% chance to swipe, 30% fire breath, 20% incinerate
@@ -77,7 +78,7 @@ public class CombatEngine {
     public CombatState getState() { return state; }
     public int getRoundCount() { return roundCount; }
     public Character getPlayer() { return player; }
-    public Npc getEnemy() { return enemy; }
+    public Enemy getEnemy() { return enemy; }
 
 
 

@@ -1,13 +1,13 @@
 package se.dungeonsandmorons.model.npc;
 
 import se.dungeonsandmorons.model.combat.Targetable;
-import se.dungeonsandmorons.model.skill.Skill;
+import se.dungeonsandmorons.model.skill.PlayerSkill;
 
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Npc implements Targetable {
+public abstract class Enemy implements Targetable {
     private static final double HP_GROWTH_PER_LEVEL = 0.14;
     private static final double DMG_GROWTH_PER_LEVEL = 0.1;
     private static final double EXP_GROWTH_PER_LEVEL = 0.16;
@@ -19,9 +19,9 @@ public abstract class Npc implements Targetable {
     protected int expOnDeath;
     protected MonsterRarity rarity;
 
-    protected List<Skill> skills = new ArrayList<>();
+    protected List<PlayerSkill> skills = new ArrayList<>();
 
-    Npc(String name, int level, int baseHealth, int baseExp, MonsterRarity rarity) {
+    Enemy(String name, int level, int baseHealth, int baseExp, MonsterRarity rarity) {
         this.name = (rarity != MonsterRarity.NORMAL ? rarity.name() + " " + name : name);
         this.rarity = rarity;
 
@@ -49,7 +49,7 @@ public abstract class Npc implements Targetable {
     public int getCurrentHealth() { return this.currentHealth; }
     public int getDeathExperience() { return this.expOnDeath; }
     public MonsterRarity getRarity() { return this.rarity; }
-    public List<Skill> getSkills() { return this.skills; }
+    public List<PlayerSkill> getSkills() { return this.skills; }
 
     public void setMaxHealth(int maxHealth) { this.maxHealth = maxHealth; }
     public void setDeathExperience(int expOnDeath) { this.expOnDeath = expOnDeath; }

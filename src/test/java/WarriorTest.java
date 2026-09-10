@@ -2,7 +2,7 @@ import org.junit.jupiter.api.Test;
 import se.dungeonsandmorons.model.Attribute;
 import se.dungeonsandmorons.model.character.Warrior;
 import se.dungeonsandmorons.model.character.Character;
-import se.dungeonsandmorons.model.skill.Skill;
+import se.dungeonsandmorons.model.skill.PlayerSkill;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,7 +22,7 @@ public class WarriorTest {
     public void warriorShouldBeAbleToLearnSkill() {
         // Arrange
         Warrior warrior = new Warrior("Test");
-        Skill slash = new Skill("Slash", "Schring", 5, Attribute.AGILITY, 1, 10);
+        PlayerSkill slash = new PlayerSkill("Slash", "Schring", 5, Attribute.AGILITY, 1, 10);
 
         // Act
         warrior.learnSkill(slash);

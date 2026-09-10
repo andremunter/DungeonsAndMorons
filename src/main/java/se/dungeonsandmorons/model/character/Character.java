@@ -4,7 +4,7 @@ import se.dungeonsandmorons.game.GameData;
 import se.dungeonsandmorons.model.combat.Attacker;
 import se.dungeonsandmorons.model.combat.Targetable;
 import se.dungeonsandmorons.model.dungeon.Dungeon;
-import se.dungeonsandmorons.model.skill.Skill;
+import se.dungeonsandmorons.model.skill.PlayerSkill;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +40,7 @@ public abstract class Character implements Attacker, Targetable {
 
     private boolean firstTimeDungeon = true;
 
-    protected List<Skill> skills = new ArrayList<>();
+    protected List<PlayerSkill> skills = new ArrayList<>();
     private List<Dungeon> dungeonsCleared = new ArrayList<>();
 
     Character(String name) {
@@ -139,7 +139,7 @@ public abstract class Character implements Attacker, Targetable {
         }
     }
 
-    public boolean learnSkill(Skill skill) {
+    public boolean learnSkill(PlayerSkill skill) {
         if (skill == null) {
             throw new NullPointerException("skill in learnSkill null");
         }
@@ -159,7 +159,7 @@ public abstract class Character implements Attacker, Targetable {
         return true;
     }
 
-    public boolean isSkillLearned(Skill skill) {
+    public boolean isSkillLearned(PlayerSkill skill) {
         if (getSkills() == null || getSkills().isEmpty()) {
             return false;
         }
@@ -194,7 +194,7 @@ public abstract class Character implements Attacker, Targetable {
     public int getAgility() { return this.agility; }
     public int getIntelligence() { return this.intelligence; }
     public int getVitality() { return this.vitality; }
-    public List<Skill> getSkills() { return skills; }
+    public List<PlayerSkill> getSkills() { return skills; }
     public List<Dungeon> getClearedDungeons() { return dungeonsCleared; }
 
     public void setMaxHealth(int health) { this.maxHealth = health; }

@@ -4,7 +4,7 @@ import se.dungeonsandmorons.model.Flyable;
 import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.combat.Attacker;
 
-public class Bird extends Npc implements Flyable {
+public class Bird extends Enemy implements Flyable {
 
 
     public Bird(String name, int level, int baseHealth, int baseExp, MonsterRarity rarity) {

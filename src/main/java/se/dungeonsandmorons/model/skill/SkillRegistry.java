@@ -7,40 +7,48 @@ import java.util.*;
 
 public class SkillRegistry {
 
-    private static final Map<String, Skill> SKILLS = new HashMap<>();
+    private static final Map<String, PlayerSkill> SKILLS = new HashMap<>();
 
 
     static {
         // WARRIOR SKILLS
-        register(new Skill("Basic Melee Attack", 5, 0,
+        register(new PlayerSkill("Basic Melee Attack", 5, 0,
                 Attribute.STRENGTH, 1, TargetType.SINGLE_TARGET,
-                Set.of(SkillTag.MELEE, SkillTag.PHYSICAL), CharacterClass.WARRIOR));
+                Set.of(SkillTag.MELEE, SkillTag.PHYSICAL), Set.of(
+                        CharacterClass.WARRIOR
+        )));
 
-        register(new Skill("Strike", 9, 5,
+        register(new PlayerSkill("Strike", 9, 5,
                 Attribute.STRENGTH, 1, TargetType.SINGLE_TARGET,
-                Set.of(SkillTag.MELEE, SkillTag.PHYSICAL), CharacterClass.WARRIOR));
+                Set.of(SkillTag.MELEE, SkillTag.PHYSICAL), Set.of(
+                        CharacterClass.WARRIOR
+        )));
 
-         register(new Skill("Raise Shield", 0, 5,
+         register(new PlayerSkill("Raise Shield", 0, 5,
                 Attribute.STRENGTH, 1, TargetType.SELF,
-                Set.of(SkillTag.MELEE, SkillTag.PHYSICAL), CharacterClass.WARRIOR));
+                Set.of(SkillTag.MELEE, SkillTag.PHYSICAL), Set.of(
+                        CharacterClass.WARRIOR
+         )));
 
         // MAGE SKILLS
-        register(new Skill("Basic Magic Attack", 4, 0,
+        register(new PlayerSkill("Basic Magic Attack", 4, 0,
                 Attribute.STRENGTH, 1, TargetType.SINGLE_TARGET,
-                Set.of(SkillTag.RANGED, SkillTag.FIRE), CharacterClass.MAGICIAN));
+                Set.of(SkillTag.RANGED, SkillTag.FIRE), Set.of(
+                        CharacterClass.MAGICIAN
+        )));
 
     }
 
 
-    public static void register(Skill skill) {
+    public static void register(PlayerSkill skill) {
         SKILLS.put(skill.getName().toLowerCase(), skill);
     }
 
-    public static Skill get(String name) {
+    public static PlayerSkill get(String name) {
         return SKILLS.get(name.toLowerCase());
     }
 
-    public static Map<String, Skill> getAll() {
+    public static Map<String, PlayerSkill> getAll() {
         return Collections.unmodifiableMap(SKILLS);
     }
 
