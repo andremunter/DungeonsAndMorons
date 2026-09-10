@@ -1,7 +1,7 @@
 import org.junit.jupiter.api.Test;
-import se.dungeonsandmorons.model.npc.Dragon;
-import se.dungeonsandmorons.model.npc.MonsterRarity;
-import se.dungeonsandmorons.model.npc.Enemy;
+import se.dungeonsandmorons.model.monster.Dragon;
+import se.dungeonsandmorons.model.monster.MonsterRarity;
+import se.dungeonsandmorons.model.monster.Monster;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -10,7 +10,7 @@ public class NpcRarityTest {
     @Test
     public void rareDragonShouldHaveScaledStatsRoundedToInt() {
         // Arrange & Act
-        Enemy rareDragon = new Dragon("Dregor", 10, 100, 20, MonsterRarity.RARE);
+        Monster rareDragon = new Dragon("Dregor", 10, 100, 20, MonsterRarity.RARE);
 
         // Assert
         assertEquals(140, rareDragon.getMaxHealth());

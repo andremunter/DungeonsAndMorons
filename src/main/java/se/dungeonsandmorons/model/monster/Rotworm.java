@@ -1,20 +1,23 @@
-package se.dungeonsandmorons.model.npc;
+package se.dungeonsandmorons.model.monster;
 
 import se.dungeonsandmorons.model.character.Character;
-import se.dungeonsandmorons.model.combat.Attacker;
-import se.dungeonsandmorons.model.Flyable;
-import se.dungeonsandmorons.model.combat.Targetable;
+import se.dungeonsandmorons.model.character.Combatant;
+import se.dungeonsandmorons.model.skill.MonsterAction;
 import se.dungeonsandmorons.model.skill.PlayerSkill;
 
-public class Dragon extends Enemy implements Attacker, Flyable {
+public class Rotworm extends Monster implements Combatant {
 
-    public Dragon(String name, int level, int baseHealth, int baseExp, MonsterRarity rarity) {
+
+    public Rotworm(String name, int level, int baseHealth, int baseExp, MonsterRarity rarity) {
         super(name, baseHealth, baseExp, level, rarity);
-        //this.skills.add(new Skill("Breathe fire", "Ffrsszh", 5, Attribute.NONE, 1, 0));
     }
 
     @Override
-    public void attack(Targetable target, PlayerSkill skill) {
+    public MonsterAction chooseAction() {
+        return null;
+    }
+
+    public void attack(Combatant target, PlayerSkill skill) {
         if (!isAlive()) { return; }
 
         int skillDamage = skill.getBaseDamage();
@@ -22,7 +25,7 @@ public class Dragon extends Enemy implements Attacker, Flyable {
         IO.println(String.format("%s used %s and dealt %d damage to %s(%d health left).", name, skill.getName(), skillDamage, target.getName(), target.getCurrentHealth()));
     }
 
-    public void takeDamage(int amount, Attacker attacker) {
+    public void takeDamage(int amount, Combatant attacker) {
         this.currentHealth = Math.max(0, this.currentHealth - amount);
         if (!isAlive()) {
             IO.println(name + " died!");
@@ -31,11 +34,4 @@ public class Dragon extends Enemy implements Attacker, Flyable {
             }
         }
     }
-
-    @Override
-    public void fly() {
-        IO.println("Dragon flew away");
-    }
-
-
 }

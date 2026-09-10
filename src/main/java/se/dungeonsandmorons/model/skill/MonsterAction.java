@@ -4,24 +4,27 @@ import se.dungeonsandmorons.model.combat.CombatAbility;
 
 import java.util.Set;
 
-public class NpcAction implements CombatAbility {
+public class MonsterAction implements CombatAbility {
     private final String name;
     private final int damage;
+    private final int weight;
     private final Set<SkillTag> tags;
-    private final String combatFlavorText;
+    private final String flavorText;
 
-    public NpcAction(String name, int damage, Set<SkillTag> tags, String combatFlavorText) {
+    public MonsterAction(String name, int damage, int weight, Set<SkillTag> tags, String combatFlavorText) {
         this.name = name;
         this.damage = damage;
+        this.weight = weight;
         this.tags = tags;
-        this.combatFlavorText = combatFlavorText;
+        this.flavorText = combatFlavorText;
     }
 
     @Override public String getName() { return name; }
     @Override public TargetType getTargetType() { return TargetType.SINGLE_TARGET; }
     @Override public Set<SkillTag> getTags() { return tags; }
 
-    public int getDamage() { return damage; }
-    public String getCombatFlavorText() { return combatFlavorText; }
+    public int damage() { return damage; }
+    public int weight() { return weight; }
+    public String flavorText() { return flavorText; }
 
 }

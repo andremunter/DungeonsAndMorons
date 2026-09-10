@@ -1,15 +1,13 @@
 package se.dungeonsandmorons.model.character;
 
 import se.dungeonsandmorons.game.GameData;
-import se.dungeonsandmorons.model.combat.Attacker;
-import se.dungeonsandmorons.model.combat.Targetable;
 import se.dungeonsandmorons.model.dungeon.Dungeon;
 import se.dungeonsandmorons.model.skill.PlayerSkill;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Character implements Attacker, Targetable {
+public abstract class Character implements Combatant {
     protected String name;
     protected int id;
 
@@ -86,7 +84,11 @@ public abstract class Character implements Attacker, Targetable {
         return this.currentHealth > 0;
     }
 
-    public void takeDamage(int amount, Attacker attacker) {
+    public void attack(Combatant attacker, PlayerSkill skill) {
+
+    }
+
+    public void takeDamage(int amount, Combatant attacker) {
         this.currentHealth = Math.max(0, this.currentHealth - amount);
         if (!isAlive()) {
             IO.println(name + " died!");

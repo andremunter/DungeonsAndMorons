@@ -1,4 +1,4 @@
-package se.dungeonsandmorons.model.npc;
+package se.dungeonsandmorons.model.monster;
 
 public enum MonsterRarity {
     NORMAL(1.0, 1.0, 1.0),

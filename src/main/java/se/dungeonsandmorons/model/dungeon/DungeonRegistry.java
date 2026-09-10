@@ -1,8 +1,8 @@
 package se.dungeonsandmorons.model.dungeon;
 
 import se.dungeonsandmorons.exception.CreateNullDungeonException;
-import se.dungeonsandmorons.model.npc.Dragon;
-import se.dungeonsandmorons.model.npc.Rotworm;
+import se.dungeonsandmorons.model.monster.Dragon;
+import se.dungeonsandmorons.model.monster.Rotworm;
 
 import java.util.*;
 import java.util.function.Supplier;

@@ -1,15 +1,15 @@
 package se.dungeonsandmorons.model.combat;
 
 import se.dungeonsandmorons.model.character.Character;
-import se.dungeonsandmorons.model.npc.Enemy;
+import se.dungeonsandmorons.model.monster.Monster;
 import se.dungeonsandmorons.model.skill.SkillRegistry;
 
 
 public class CombatService {
 
 
-    public boolean runCombatLoop(Enemy enemy, Character player) {
-        CombatEngine engine = new CombatEngine(player, enemy);
+    public boolean runCombatLoop(Monster monster, Character player) {
+        CombatEngine engine = new CombatEngine(player, monster);
         engine.startRound();
 
         while (!engine.getState().isTerminal()) {
@@ -19,7 +19,7 @@ public class CombatService {
                     """,
                     engine.getRoundCount(),
                     player.getName(), player.getCurrentHealth(),
-                    enemy.getName(), enemy.getCurrentHealth()));
+                    monster.getName(), monster.getCurrentHealth()));
             IO.println("Actions: Attack | Cast <skill> | Run");
 
             String input = IO.readln("> ");
@@ -28,7 +28,7 @@ public class CombatService {
 
         return switch (engine.getState()) {
             case VICTORY -> {
-                IO.println(enemy.getName() + " was defeated.");
+                IO.println(monster.getName() + " was defeated.");
                 yield true;
             }
             case DEFEAT -> {

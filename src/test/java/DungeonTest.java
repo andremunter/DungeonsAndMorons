@@ -1,8 +1,5 @@
 import org.junit.jupiter.api.Test;
 import se.dungeonsandmorons.model.dungeon.Dungeon;
-import se.dungeonsandmorons.model.npc.NpcFactory;
-
-import java.util.List;
 
 public class DungeonTest {
 

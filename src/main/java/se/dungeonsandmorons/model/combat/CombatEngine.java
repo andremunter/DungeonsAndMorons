@@ -1,18 +1,19 @@
 package se.dungeonsandmorons.model.combat;
 
 import se.dungeonsandmorons.model.character.Character;
-import se.dungeonsandmorons.model.npc.Enemy;
+import se.dungeonsandmorons.model.monster.Monster;
+import se.dungeonsandmorons.model.skill.MonsterAction;
 import se.dungeonsandmorons.model.skill.PlayerSkill;
 
 public class CombatEngine {
     private final Character player;
-    private final Enemy enemy;
+    private final Monster monster;
     private CombatState state;
     private int roundCount;
 
-    public CombatEngine(Character player, Enemy enemy) {
+    public CombatEngine(Character player, Monster monster) {
         this.player = player;
-        this.enemy = enemy;
+        this.monster = monster;
         this.state = CombatState.ROUND_START;
         this.roundCount = 1;
     }
@@ -36,7 +37,7 @@ public class CombatEngine {
 
         switch (action) {
             // TODO: Separate Attack and Cast. Dunno yet how. Cast should be like a magicians Firebolt or a Buff
-            case ATTACK, CAST -> player.attack(enemy, skill);
+            case ATTACK, CAST -> player.attack(monster, skill);
             case RUN    -> {
                 // TODO: Some kind of escape odds calculation?
                 this.state = CombatState.ESCAPED;
@@ -44,7 +45,7 @@ public class CombatEngine {
             }
         }
 
-        if (!enemy.isAlive()) {
+        if (!monster.isAlive()) {
             // TODO: CombatState.VICTORY -> CombatState.LOOT? How to handle looting hmm?
             this.state = CombatState.VICTORY;
         } else {
@@ -60,10 +61,11 @@ public class CombatEngine {
         }
 
 
-        if (enemy instanceof Attacker attacker && enemy.isAlive()) {
-            // TODO: Chance-based skill choice, maybe separate Skill-system, NpcSkill/CharacterSkill
-            // Example; Dragon has Swipe, Fire Breath, Incinerate. 50% chance to swipe, 30% fire breath, 20% incinerate
-            attacker.attack(player, enemy.getSkills().getFirst());
+        if (monster.isAlive()) {
+            MonsterAction action = monster.chooseAction();
+            int damage = action.damage();
+            player.takeDamage(damage, monster);
+            IO.println(String.format("%s used %s for %d damage", monster.getName(), action.getName(), damage));
         }
 
         if (!player.isAlive()) {
@@ -78,7 +80,7 @@ public class CombatEngine {
     public CombatState getState() { return state; }
     public int getRoundCount() { return roundCount; }
     public Character getPlayer() { return player; }
-    public Enemy getEnemy() { return enemy; }
+    public Monster getEnemy() { return monster; }
 
 
 

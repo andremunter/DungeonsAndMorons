@@ -3,7 +3,6 @@ package se.dungeonsandmorons.model.character;
 import se.dungeonsandmorons.exception.AttackingDeadNpcException;
 import se.dungeonsandmorons.exception.SkillNotLearnedException;
 import se.dungeonsandmorons.model.Attribute;
-import se.dungeonsandmorons.model.combat.Targetable;
 import se.dungeonsandmorons.model.skill.PlayerSkill;
 import se.dungeonsandmorons.model.skill.SkillRegistry;
 
@@ -32,8 +31,7 @@ public class Warrior extends Character {
         return CharacterClass.WARRIOR;
     }
 
-    @Override
-    public void attack(Targetable target, PlayerSkill skill) {
+    public void attack(Combatant target, PlayerSkill skill) {
 
         if (target.getCurrentHealth() < 1) {
             throw new AttackingDeadNpcException();

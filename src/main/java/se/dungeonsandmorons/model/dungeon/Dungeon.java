@@ -2,9 +2,9 @@ package se.dungeonsandmorons.model.dungeon;
 
 import se.dungeonsandmorons.exception.ListNullOrEmptyException;
 import se.dungeonsandmorons.game.GameData;
-import se.dungeonsandmorons.model.npc.MonsterRarity;
-import se.dungeonsandmorons.model.npc.Enemy;
-import se.dungeonsandmorons.model.npc.NpcFactory;
+import se.dungeonsandmorons.model.monster.MonsterRarity;
+import se.dungeonsandmorons.model.monster.Monster;
+import se.dungeonsandmorons.model.monster.MonsterFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ public class Dungeon {
     private final String description;
     private final int areaLevel;
 
-    private final List<Enemy> monsters = new ArrayList<>();
+    private final List<Monster> monsters = new ArrayList<>();
 
     public Dungeon(String name, String description, int areaLevel) {
         this.name = name;
@@ -23,13 +23,13 @@ public class Dungeon {
 
     }
 
-    public void populateDungeon(List<NpcFactory> recipes) {
+    public void populateDungeon(List<MonsterFactory> recipes) {
         if (recipes == null || recipes.isEmpty()) {
             throw new ListNullOrEmptyException("Trying to populate dungeon with empty or null List");
         }
 
-        for (NpcFactory recipe : recipes) {
-            Enemy spawned = recipe.create(this.areaLevel, MonsterRarity.NORMAL);
+        for (MonsterFactory recipe : recipes) {
+            Monster spawned = recipe.create(this.areaLevel, MonsterRarity.NORMAL);
             this.monsters.add(spawned);
         }
 
@@ -38,7 +38,7 @@ public class Dungeon {
     public String getName() { return name; }
     public String getDescription() { return description; }
     public int getAreaLevel() { return areaLevel; }
-    public List<Enemy> getMonsters() { return monsters; }
+    public List<Monster> getMonsters() { return monsters; }
 
     @Override
     public String toString() {

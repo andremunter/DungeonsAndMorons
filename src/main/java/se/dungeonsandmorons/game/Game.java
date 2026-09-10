@@ -2,7 +2,7 @@ package se.dungeonsandmorons.game;
 
 import se.dungeonsandmorons.model.combat.CombatService;
 import se.dungeonsandmorons.model.dungeon.Dungeon;
-import se.dungeonsandmorons.model.npc.Enemy;
+import se.dungeonsandmorons.model.monster.Monster;
 import se.dungeonsandmorons.userinterface.UserInterface;
 
 public class Game {
@@ -24,7 +24,7 @@ public class Game {
         while (true) {
             IO.println(dungeon);
             if (!dungeon.getMonsters().isEmpty()) {
-                for (Enemy monsters : dungeon.getMonsters()) {
+                for (Monster monsters : dungeon.getMonsters()) {
                     IO.println(monsters);
                 }
             }
