@@ -57,7 +57,7 @@ public class CombatService {
                     break;
                 }
 
-                if (player.isSkillLearned(skill)) {
+                if (player.isSkillLearned(SkillRegistry.findSkillByName(skill))) {
                     engine.executePlayerAction(CombatAction.CAST, SkillRegistry.findSkillByName(skill));
                 } else {
                     IO.println("Skill not learned.");

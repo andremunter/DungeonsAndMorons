@@ -6,16 +6,11 @@ import se.dungeonsandmorons.model.combat.Targetable;
 import se.dungeonsandmorons.model.dungeon.Dungeon;
 import se.dungeonsandmorons.model.skill.Skill;
 
-import java.awt.image.AreaAveragingScaleFilter;
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Character implements Attacker, Targetable {
     protected String name;
-
-    // id is not set on creating a character, as we do not save it on creation.
-    // it is for the first time set in the database when saving character,
-    // and it is then used to set this id
     protected int id;
 
     protected int level;
@@ -46,7 +41,6 @@ public abstract class Character implements Attacker, Targetable {
     private boolean firstTimeDungeon = true;
 
     protected List<Skill> skills = new ArrayList<>();
-    //protected List<String> skills = new ArrayList<>();
     private List<Dungeon> dungeonsCleared = new ArrayList<>();
 
     Character(String name) {
@@ -145,31 +139,43 @@ public abstract class Character implements Attacker, Targetable {
         }
     }
 
-    public void learnSkill(Skill skill) {
+    public boolean learnSkill(Skill skill) {
+        if (!skill.canBeLearnedBy(this.getCharacterClass())) {
+            IO.println(String.format("A %s cannot learn %s", this.getCharacterClass(), skill.getName()));
+            return false;
+        }
+
+        if (skills.contains(skill)) {
+            IO.println(String.format("%s already know this skill.", name));
+            return false;
+        }
+
         skills.add(skill);
+        IO.println(String.format("%s learned %s!", name, skill.getName()));
+        return true;
     }
 
-    public boolean isSkillLearned(String skillName) {
+    public boolean isSkillLearned(Skill skill) {
         if (getSkills() == null || getSkills().isEmpty()) {
             return false;
         }
 
-        for (Skill skill : getSkills()) {
-            if (skill.getName().equalsIgnoreCase(skillName)) {
-                return true;
-            }
+        if (!skills.contains(skill)) {
+            return false;
         }
-        return false;
+        return true;
     }
 
     public void clearDungeon(String dungeonName) {
-        for (Dungeon dungeon : GameData.dungeons) {
+        for (Dungeon dungeon : GameData.DUNGEONS) {
             if (dungeon.getName().equalsIgnoreCase(dungeonName)) {
                 addClearedDungeon(dungeon);
                 firstTimeDungeon = false;
             }
         }
     }
+
+    public abstract CharacterClass getCharacterClass();
 
     public String getName() { return this.name; }
     public int getMaxHealth(){

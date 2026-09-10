@@ -1,4 +1,4 @@
-package se.dungeonsandmorons.main;
+package se.dungeonsandmorons;
 
 import se.dungeonsandmorons.game.Game;
 import se.dungeonsandmorons.model.combat.CombatService;
@@ -10,7 +10,6 @@ public class Main {
     private static final Game game = new Game();
     private final UserInterface userInterface = new UserInterface();
     private final CombatService combatService = new CombatService();
-    private final Initialization init = new Initialization();
 
 
     void main(String[] args) {

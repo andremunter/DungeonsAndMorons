@@ -14,18 +14,19 @@ public class Warrior extends Character {
         this.agilityPerLevel = 3;
         this.intelligencePerLevel = 1;
         this.vitalityPerLevel = 3;
-
-        learnDefaultSkill();
     }
 
     public Warrior(String name, int level) {
         super(name, level);
-        learnDefaultSkill();
     }
 
     public Warrior(int id, String name, int level, int experience, int strength, int agility, int intelligence, int vitality, int currentHealth, int maxHealth, int currentMana, int maxMana) {
         super(id, name, level, experience, strength, agility, intelligence, vitality, currentHealth, maxHealth, currentMana, maxMana);
-        learnDefaultSkill();
+    }
+
+    @Override
+    public CharacterClass getCharacterClass() {
+        return CharacterClass.WARRIOR;
     }
 
     @Override
@@ -35,12 +36,12 @@ public class Warrior extends Character {
             throw new AttackingDeadNpcException();
         }
 
-        if (skill == null || !isSkillLearned(skill.getName())) {
+        if (skill == null || !isSkillLearned(skill)) {
             throw new SkillNotLearnedException("Trying to cast a skill that is not learned!");
         }
 
         int attributeBase = 0;
-        switch (skill.getAttribute()) {
+        switch (skill.getScalingAttribute()) {
             case Attribute.STRENGTH -> attributeBase = this.getStrength();
             case Attribute.AGILITY -> attributeBase = this.getAgility();
             case Attribute.INTELLIGENCE -> attributeBase = this.getIntelligence();
@@ -60,7 +61,4 @@ public class Warrior extends Character {
         target.takeDamage(skillDamage, this);
     }
 
-    private void learnDefaultSkill() {
-        this.skills.add(new Skill("Swing", "swosch", 10, Attribute.STRENGTH, 2, 0));
-    }
 }

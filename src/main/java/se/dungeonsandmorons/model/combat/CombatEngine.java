@@ -45,11 +45,13 @@ public class CombatEngine {
         }
 
         if (!enemy.isAlive()) {
+            // TODO: CombatState.VICTORY -> CombatState.LOOT? How to handle looting hmm?
             this.state = CombatState.VICTORY;
         } else {
             this.state = CombatState.RESOLVING_ENEMY_ACTION;
             resolveEnemyTurn();
         }
+
     }
 
     public void resolveEnemyTurn() {
