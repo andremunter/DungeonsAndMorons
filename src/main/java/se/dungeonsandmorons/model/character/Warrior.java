@@ -16,7 +16,7 @@ public class Warrior extends Character {
         this.intelligencePerLevel = 1;
         this.vitalityPerLevel = 3;
 
-        learnSkill(SkillRegistry.findSkillByName("Basic Melee Attack"));
+        learnSkill(SkillRegistry.get("Basic Melee Attack"));
     }
 
     public Warrior(String name, int level) {

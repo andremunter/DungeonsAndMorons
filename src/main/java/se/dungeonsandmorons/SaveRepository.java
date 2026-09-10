@@ -155,7 +155,7 @@ public class SaveRepository {
                         skillStmt.setInt(1, characterId);
                         try (ResultSet skillRs = skillStmt.executeQuery()) {
                             while (skillRs.next()) {
-                                player.learnSkill(SkillRegistry.findSkillByName(skillRs.getString("skill_name")));
+                                player.learnSkill(SkillRegistry.get(skillRs.getString("skill_name")));
                             }
                         }
                     }

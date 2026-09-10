@@ -44,8 +44,4 @@ public class SkillRegistry {
         return Collections.unmodifiableMap(SKILLS);
     }
 
-    public static Skill findSkillByName(String name) {
-        return SKILLS.get(name);
-    }
-
 }
