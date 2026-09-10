@@ -11,7 +11,7 @@ public class Dragon extends Npc implements Attacker, Flyable {
 
     public Dragon(String name, int level, int baseHealth, int baseExp, MonsterRarity rarity) {
         super(name, baseHealth, baseExp, level, rarity);
-        this.skills.add(new Skill("Breathe fire", "Ffrsszh", 5, Attribute.NONE, 1, 0));
+        //this.skills.add(new Skill("Breathe fire", "Ffrsszh", 5, Attribute.NONE, 1, 0));
     }
 
     @Override

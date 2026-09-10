@@ -12,7 +12,7 @@ public class Rotworm extends Npc implements Attacker, Targetable, Digger {
 
     public Rotworm(String name, int level, int baseHealth, int baseExp, MonsterRarity rarity) {
         super(name, baseHealth, baseExp, level, rarity);
-        this.skills.add(new Skill("Bite", "Slurp", 5, Attribute.NONE, 1, 0));
+        //this.skills.add(new Skill("Bite", "Slurp", 5, Attribute.NONE, 1, 0));
     }
 
     @Override

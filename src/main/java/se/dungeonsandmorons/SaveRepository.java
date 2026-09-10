@@ -7,6 +7,8 @@ import java.util.List;
 import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.character.Warrior;
 import se.dungeonsandmorons.model.dungeon.Dungeon;
+import se.dungeonsandmorons.model.skill.Skill;
+import se.dungeonsandmorons.model.skill.SkillRegistry;
 
 public class SaveRepository {
     //private static final String URL = "jdbc:postgresql://localhost:5432/dungeonsandmorons";
@@ -44,16 +46,21 @@ public class SaveRepository {
                 ON CONFLICT (character_id, dungeon_name) DO NOTHING;
                 """;
 
+        String skillSql = """
+                INSERT INTO character_skills_learned (character_id, skill_name)
+                VALUES (?, ?)
+                ON CONFLICT (character_id, skill_name) DO NOTHING;
+                """;
+
         try (Connection conn = getConnection()) {
             conn.setAutoCommit(false);
 
             int characterId;
 
-
              try (PreparedStatement charStmt = conn.prepareStatement(playerSql)) {
 
                 charStmt.setString(1, character.getName());
-                charStmt.setString(2, character.getClass().getSimpleName());
+                charStmt.setString(2, character.getCharacterClass().toString());
                 charStmt.setInt(3, character.getLevel());
                 charStmt.setInt(4, character.getExperience());
                 charStmt.setInt(5, character.getStrength());
@@ -83,6 +90,15 @@ public class SaveRepository {
                     dungeonStmt.executeBatch();
                 }
 
+                try (PreparedStatement skillStmt = conn.prepareStatement(skillSql)) {
+                    for (Skill skill : character.getSkills()) {
+                        skillStmt.setInt(1, characterId);
+                        skillStmt.setString(2, skill.getName());
+                        skillStmt.addBatch();
+                    }
+                    skillStmt.executeBatch();
+                }
+
                 conn.commit();
                 IO.println(String.format("Saved %s and cleared dungeons to database.", character.getName()));
             }
@@ -92,8 +108,9 @@ public class SaveRepository {
     }
 
     public static Character load(String name) {
-        String playerSql = "SELECT id, character_class, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana FROM character_saves WHERE name = ?";
-        String dungeonSql = "SELECT dungeon_name FROM character_dungeons_cleared WHERE character_id = ?";
+        String playerSql    = "SELECT id, character_class, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana FROM character_saves WHERE name = ?";
+        String dungeonSql   = "SELECT dungeon_name FROM character_dungeons_cleared WHERE character_id = ?";
+        String skillSql     = "SELECT skill_name FROM character_skills_learned WHERE character_id = ?";
 
         try (Connection conn = getConnection();
                 PreparedStatement playerStmt = conn.prepareStatement(playerSql)) {
@@ -118,9 +135,9 @@ public class SaveRepository {
                     int mana            = rs.getInt("mana");
                     int max_mana        = rs.getInt("max_mana");
 
-                    Character player = switch (className) {
-                        case "Warrior" -> new Warrior(characterId, name, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana);
-                        //case "Magician" -> new Magician(name, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana);
+                    Character player = switch (className.toLowerCase()) {
+                        case "warrior" -> new Warrior(characterId, name, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana);
+                        //case "Magician" -> new Magician(characterId, name, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana);
 
                         default -> throw new IllegalArgumentException("Unknown class: " + className);
                     };
@@ -130,6 +147,15 @@ public class SaveRepository {
                         try (ResultSet dungeonRs = dungeonStmt.executeQuery()) {
                             while (dungeonRs.next()) {
                                 player.clearDungeon(dungeonRs.getString("dungeon_name"));
+                            }
+                        }
+                    }
+
+                    try (PreparedStatement skillStmt = conn.prepareStatement(skillSql)) {
+                        skillStmt.setInt(1, characterId);
+                        try (ResultSet skillRs = skillStmt.executeQuery()) {
+                            while (skillRs.next()) {
+                                player.learnSkill(SkillRegistry.findSkillByName(skillRs.getString("skill_name")));
                             }
                         }
                     }
@@ -152,10 +178,10 @@ public class SaveRepository {
 
             while (rs.next()) {
                 String name             = rs.getString("name");
-                String characterClazz   = rs.getString("character_class");
+                String characterClass   = rs.getString("character_class");
                 int level               = rs.getInt("level");
 
-                switch (characterClazz) {
+                switch (characterClass) {
                     case "Warrior"      -> characters.add(new Warrior(name, level));
                    // case "Magician"     -> characters.add(new Magician());
                    // case "Archer"       -> characters.add(new Archer());

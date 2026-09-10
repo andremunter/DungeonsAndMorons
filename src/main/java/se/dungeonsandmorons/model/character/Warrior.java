@@ -5,6 +5,7 @@ import se.dungeonsandmorons.exception.SkillNotLearnedException;
 import se.dungeonsandmorons.model.Attribute;
 import se.dungeonsandmorons.model.combat.Targetable;
 import se.dungeonsandmorons.model.skill.Skill;
+import se.dungeonsandmorons.model.skill.SkillRegistry;
 
 public class Warrior extends Character {
 
@@ -14,6 +15,8 @@ public class Warrior extends Character {
         this.agilityPerLevel = 3;
         this.intelligencePerLevel = 1;
         this.vitalityPerLevel = 3;
+
+        learnSkill(SkillRegistry.findSkillByName("Basic Melee Attack"));
     }
 
     public Warrior(String name, int level) {

@@ -140,6 +140,10 @@ public abstract class Character implements Attacker, Targetable {
     }
 
     public boolean learnSkill(Skill skill) {
+        if (skill == null) {
+            throw new NullPointerException("skill in learnSkill null");
+        }
+
         if (!skill.canBeLearnedBy(this.getCharacterClass())) {
             IO.println(String.format("A %s cannot learn %s", this.getCharacterClass(), skill.getName()));
             return false;
