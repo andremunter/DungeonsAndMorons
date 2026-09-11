@@ -17,15 +17,20 @@ public class Game {
    }
 
     public void enterDungeon(Dungeon dungeon) {
-        if (GameData.PLAYER.isFirstTimeDungeon()) {
+       /*
+       if (GameData.PLAYER.isFirstTimeDungeon()) {
             userInterface.dungeonTutorial();
         }
+        */
 
-        while (true) {
+        while (dungeon != null && !dungeon.getMonsters().isEmpty()) {
             IO.println(dungeon);
+            IO.println("Monsters in dungeon: " + dungeon.getMonsters().size());
             if (!dungeon.getMonsters().isEmpty()) {
-                for (Monster monsters : dungeon.getMonsters()) {
-                    IO.println(monsters);
+                int monsterIndex = 1;
+                for (Monster monster : dungeon.getMonsters()) {
+                    IO.println(String.format("%d. %s, HP: %d, Exp Reward: %d", monsterIndex, monster, monster.getCurrentHealth(), monster.getDeathExperience()));
+                    monsterIndex++;
                 }
             }
 
@@ -33,19 +38,10 @@ public class Game {
                 dungeon.getMonsters().removeFirst();
             }
 
-            /*
-            if (combatService.engageCombat(dungeon.getMonsters().getFirst(), GameData.player)) {
-                dungeon.getMonsters().removeFirst();
-            }
-            */
-
             if (dungeon.getMonsters().isEmpty()) {
                 GameData.PLAYER.addClearedDungeon(dungeon);
                 IO.println(String.format("%s cleared!", dungeon.getName()));
-                return;
             }
-
-
         }
     }
 

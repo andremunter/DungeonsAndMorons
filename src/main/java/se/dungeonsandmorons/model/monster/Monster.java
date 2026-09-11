@@ -78,7 +78,7 @@ public abstract class Monster implements Combatant {
 
     @Override
     public String toString() {
-        return String.format("%s", name);
+        return String.format("%s %s", rarity, name);
     }
 
 }

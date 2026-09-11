@@ -1,6 +1,6 @@
 package se.dungeonsandmorons.model.character;
 
-import se.dungeonsandmorons.exception.AttackingDeadNpcException;
+import se.dungeonsandmorons.exception.AttackingDeadTargetException;
 import se.dungeonsandmorons.exception.SkillNotLearnedException;
 import se.dungeonsandmorons.model.Attribute;
 import se.dungeonsandmorons.model.skill.PlayerSkill;
@@ -34,7 +34,7 @@ public class Warrior extends Character {
     public void attack(Combatant target, PlayerSkill skill) {
 
         if (target.getCurrentHealth() < 1) {
-            throw new AttackingDeadNpcException();
+            throw new AttackingDeadTargetException();
         }
 
         if (skill == null || !isSkillLearned(skill)) {
