@@ -4,25 +4,22 @@ import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.character.Combatant;
 import se.dungeonsandmorons.model.skill.MonsterAction;
 import se.dungeonsandmorons.model.skill.PlayerSkill;
+import se.dungeonsandmorons.model.skill.SkillTag;
+
+import java.util.Set;
 
 public class Rotworm extends Monster implements Combatant {
 
 
     public Rotworm(String name, int level, int baseHealth, int baseExp, MonsterRarity rarity) {
         super(name, baseHealth, baseExp, level, rarity);
-    }
 
-    @Override
-    public MonsterAction chooseAction() {
-        return null;
-    }
+        actions.add(new MonsterAction(
+                "Bite", 5, 100,
+                Set.of(SkillTag.MELEE, SkillTag.PHYSICAL),
+                "Bites"
+        ));
 
-    public void attack(Combatant target, PlayerSkill skill) {
-        if (!isAlive()) { return; }
-
-        int skillDamage = skill.getBaseDamage();
-        target.takeDamage(skillDamage, this);
-        IO.println(String.format("%s used %s and dealt %d damage to %s(%d health left).", name, skill.getName(), skillDamage, target.getName(), target.getCurrentHealth()));
     }
 
     public void takeDamage(int amount, Combatant attacker) {

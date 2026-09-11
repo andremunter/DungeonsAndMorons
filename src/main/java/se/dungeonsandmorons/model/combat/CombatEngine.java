@@ -63,6 +63,11 @@ public class CombatEngine {
 
         if (monster.isAlive()) {
             MonsterAction action = monster.chooseAction();
+
+            if (action == null) {
+                throw new NullPointerException(String.format("%s have no actions registered.", monster.getName()));
+            }
+
             int damage = action.damage();
             player.takeDamage(damage, monster);
             IO.println(String.format("%s used %s for %d damage", monster.getName(), action.getName(), damage));
