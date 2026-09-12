@@ -8,6 +8,7 @@ public enum GameEvent {
     LEAVE_NPC,
     REST,
     ENTER_DUNGEON,
+    SELECT_DUNGEON,
     ENCOUNTER_MONSTER,
     FLEE,
     COMBAT_RESOLVED,

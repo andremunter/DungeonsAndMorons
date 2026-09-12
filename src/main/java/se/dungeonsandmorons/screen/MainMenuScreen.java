@@ -1,7 +1,12 @@
 package se.dungeonsandmorons.screen;
 
+import se.dungeonsandmorons.SaveRepository;
 import se.dungeonsandmorons.game.GameContext;
 import se.dungeonsandmorons.game.GameEvent;
+import se.dungeonsandmorons.model.character.Warrior;
+import se.dungeonsandmorons.model.character.Character;
+
+import java.util.List;
 
 public class MainMenuScreen implements Screen {
 
@@ -19,9 +24,65 @@ public class MainMenuScreen implements Screen {
     @Override
     public void handleInput(String input, GameContext context) {
         switch (input.trim().toLowerCase()) {
-            case "new game"     -> context.getStateMachine().transition(GameEvent.CREATE_CHARACTER);
-            case "load"         -> context.getStateMachine().transition(GameEvent.LOAD_GAME);
+            case "new game"     -> {
+                createCharacter(input, context);
+                context.getStateMachine().transition(GameEvent.CREATE_CHARACTER);
+            }
+            case "load"         -> {
+                loadCharacter(context);
+                context.getStateMachine().transition(GameEvent.LOAD_GAME);
+            }
             case "quit"         -> System.exit(0);
+        }
+    }
+
+    private void createCharacter(String input, GameContext context) {
+        IO.println("- Character Creation -");
+        IO.println("Enter your name:");
+
+        String characterName = IO.readln().trim();
+
+        IO.print("""
+                Choose class by typing one of the following:
+                Warrior
+                Magician
+                Archer
+                """);
+        String characterClass = IO.readln("> ");
+
+        switch (characterClass.trim().toLowerCase()) {
+            case "warrior" -> context.setPlayer(new Warrior(characterName));
+            //case "magician" -> context.setPlayer(new Warrior(characterName));
+            //case "archer" -> context.setPlayer(new Warrior(characterName));
+            default -> {
+                IO.println("Class does not exist.");
+            }
+        }
+    }
+
+    private void loadCharacter(GameContext context) {
+
+        listSaves(context);
+
+        IO.println("Load character by typing its name(case-sensitive)");
+        String charName = IO.readln("> ");
+
+        Character savedPlayer = context.getSaveRepository().load(charName);
+        if (savedPlayer != null) {
+            context.setPlayer(savedPlayer);
+        }
+
+    }
+
+    private static void listSaves(GameContext context) {
+        List<Character> characters = context.getSaveRepository().fetchSaves();
+        if (characters != null && !characters.isEmpty()) {
+            IO.println("- Saved Characters -");
+            for (Character character : characters) {
+                IO.println(String.format("%s, %s, level: %d", character.getName(), character.getClass().getSimpleName(), character.getLevel()));
+            }
+        } else {
+            IO.println("No saved characters");
         }
     }
 

@@ -17,7 +17,7 @@ public class TownScreen implements Screen {
             case "stats"        -> context.getPlayer().getStats();
             case "skills"       -> context.getSkillService().listSkills(context.getPlayer());
             case "dungeon", "explore dungeons", "dungeons"
-                                -> context.getStateMachine().transition(GameEvent.ENTER_DUNGEON);
+                                -> context.getStateMachine().transition(GameEvent.SELECT_DUNGEON);
             case "save"         -> context.getSaveRepository().save(context.getPlayer());
             case "help"         -> displayHelp();
             case "main menu"    -> context.getStateMachine().transition(GameEvent.LOAD_GAME);
@@ -31,7 +31,6 @@ public class TownScreen implements Screen {
             stats              - Shows player stats
             skills             - Lists learned skills
             dungeons           - Lists available dungeons
-            load               - Lists and loads saved characters
             save               - Saves current character progress
             help               - Lists all available commands
             main menu          - Goes back to Main Menu

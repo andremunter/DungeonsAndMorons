@@ -1,7 +1,6 @@
 package se.dungeonsandmorons.model.dungeon;
 
 import se.dungeonsandmorons.exception.ListNullOrEmptyException;
-import se.dungeonsandmorons.game.GameData;
 import se.dungeonsandmorons.model.monster.MonsterRarity;
 import se.dungeonsandmorons.model.monster.Monster;
 import se.dungeonsandmorons.model.monster.MonsterFactory;
@@ -13,6 +12,7 @@ public class Dungeon {
     private final String name;
     private final String description;
     private final int areaLevel;
+    private boolean cleared;
 
     private final List<Monster> monsters = new ArrayList<>();
 
@@ -20,6 +20,7 @@ public class Dungeon {
         this.name = name;
         this.description = description;
         this.areaLevel = areaLevel;
+        this.cleared = false;
     }
 
     public void populateDungeon(List<MonsterFactory> recipes) {
@@ -38,22 +39,13 @@ public class Dungeon {
     public String getDescription() { return description; }
     public int getAreaLevel() { return areaLevel; }
     public List<Monster> getMonsters() { return monsters; }
+    public boolean isCleared() { return cleared; }
+
+    public void setCleared(boolean cleared) { this.cleared = cleared; }
 
     @Override
     public String toString() {
-        return String.format("%s, '%s', Area Level: %d%s" , name, description, areaLevel, hasPlayerClearedDungeon() ? " (Cleared)" : "");
-    }
-
-    boolean hasPlayerClearedDungeon() {
-        List<Dungeon> cDungeons = GameData.PLAYER.getClearedDungeons();
-        if (!cDungeons.isEmpty()) {
-            for (Dungeon dung : cDungeons) {
-                if (this.name.equalsIgnoreCase(dung.getName())) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return String.format("%s, '%s', Area Level: %d%s" , name, description, areaLevel, cleared ? " (Cleared)" : "");
     }
 
 }

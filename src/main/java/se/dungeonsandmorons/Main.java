@@ -1,23 +1,24 @@
 package se.dungeonsandmorons;
 
-import se.dungeonsandmorons.game.Game;
+import se.dungeonsandmorons.game.GameContext;
+import se.dungeonsandmorons.game.GameLoop;
 import se.dungeonsandmorons.game.GameStateMachine;
 import se.dungeonsandmorons.model.combat.CombatService;
-import se.dungeonsandmorons.userinterface.UserInterface;
+import se.dungeonsandmorons.model.skill.SkillService;
+import se.dungeonsandmorons.service.DungeonService;
 
 public class Main {
 
-
-    private final UserInterface userInterface = new UserInterface();
-    private final GameStateMachine stateMachine = new GameStateMachine();
-    private final CombatService combatService = new CombatService();
-    private final Game game = new Game(userInterface, stateMachine, combatService);
-
-
     void main(String[] args) {
 
-        game.startGame();
-
+        GameLoop gameLoop = new GameLoop(
+                new GameContext(
+                        new GameStateMachine(),
+                        new DungeonService(),
+                        new SkillService(),
+                        new SaveRepository()
+                ));
+        gameLoop.run();
 
     }
 

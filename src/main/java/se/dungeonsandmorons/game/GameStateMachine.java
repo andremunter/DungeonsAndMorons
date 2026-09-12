@@ -15,13 +15,19 @@ public class GameStateMachine {
 
             case IN_TOWN -> switch (event) {
                 case INTERACT_NPC       -> GameState.TALKING_TO_NPC;
-                case ENTER_DUNGEON      -> GameState.EXPLORING_DUNGEON;
+                case SELECT_DUNGEON     -> GameState.SELECTING_DUNGEON;
                 case REST               -> GameState.IN_TOWN;
                 default                 -> throw invalidTransition(currentState, event);
             };
 
             case TALKING_TO_NPC -> switch (event) {
                 case LEAVE_NPC, ENTER_TOWN  -> GameState.IN_TOWN;
+                default                     -> throw invalidTransition(currentState, event);
+            };
+
+            case SELECTING_DUNGEON -> switch (event) {
+                case ENTER_DUNGEON          -> GameState.EXPLORING_DUNGEON;
+                case ENTER_TOWN             -> GameState.IN_TOWN;
                 default                     -> throw invalidTransition(currentState, event);
             };
 

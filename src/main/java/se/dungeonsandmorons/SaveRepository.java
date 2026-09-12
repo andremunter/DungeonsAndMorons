@@ -17,11 +17,11 @@ public class SaveRepository {
     private static final String USER = "neondb_owner";
     private static final String PASSWORD = "npg_pTFZ0keKunD1";
 
-    private static Connection getConnection() throws SQLException {
+    private Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
-    public static void save(Character character) {
+    public void save(Character character) {
         String playerSql = """
                 INSERT INTO character_saves (name, character_class, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana, updated_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
@@ -83,9 +83,9 @@ public class SaveRepository {
                 }
 
                 try (PreparedStatement dungeonStmt = conn.prepareStatement(dungeonSql)) {
-                    for (Dungeon dungeon : character.getClearedDungeons()) {
+                    for (String dungeon : character.getClearedDungeons()) {
                         dungeonStmt.setInt(1, characterId);
-                        dungeonStmt.setString(2, dungeon.getName());
+                        dungeonStmt.setString(2, dungeon);
                         dungeonStmt.addBatch();
                     }
                     dungeonStmt.executeBatch();
@@ -108,7 +108,7 @@ public class SaveRepository {
         }
     }
 
-    public static Character load(String name) {
+    public Character load(String name) {
         String playerSql    = "SELECT id, character_class, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana FROM character_saves WHERE name = ?";
         String dungeonSql   = "SELECT dungeon_name FROM character_dungeons_cleared WHERE character_id = ?";
         String skillSql     = "SELECT skill_name FROM character_skills_learned WHERE character_id = ?";
@@ -143,12 +143,14 @@ public class SaveRepository {
                         default -> throw new IllegalArgumentException("Unknown class: " + className);
                     };
 
+                    List<String> clearedDungeons = new ArrayList<>();
                     try (PreparedStatement dungeonStmt = conn.prepareStatement(dungeonSql)) {
                         dungeonStmt.setInt(1, characterId);
                         try (ResultSet dungeonRs = dungeonStmt.executeQuery()) {
                             while (dungeonRs.next()) {
-                                player.clearDungeon(dungeonRs.getString("dungeon_name"));
+                                clearedDungeons.add(dungeonRs.getString("dungeon_name"));
                             }
+                            player.setClearedDungeons(clearedDungeons);
                         }
                     }
 
@@ -170,7 +172,7 @@ public class SaveRepository {
         }
     }
 
-    public static List<Character> fetchSaves() {
+    public List<Character> fetchSaves() {
         List<Character> characters = new ArrayList<>();
         String sql = "SELECT name, character_class, level FROM character_saves WHERE id >= 0";
         try (Connection conn = getConnection();

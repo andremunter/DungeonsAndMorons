@@ -1,7 +1,5 @@
 package se.dungeonsandmorons.model.character;
 
-import se.dungeonsandmorons.game.GameData;
-import se.dungeonsandmorons.model.dungeon.Dungeon;
 import se.dungeonsandmorons.model.skill.Skill;
 
 import java.util.ArrayList;
@@ -39,7 +37,7 @@ public abstract class Character implements Combatant {
     private boolean firstTimeDungeon = true;
 
     protected List<Skill> skills = new ArrayList<>();
-    private List<Dungeon> dungeonsCleared = new ArrayList<>();
+    private List<String> clearedDungeons = new ArrayList<>();
 
     Character(String name) {
         this.name = name;
@@ -172,13 +170,8 @@ public abstract class Character implements Combatant {
         return true;
     }
 
-    public void clearDungeon(String dungeonName) {
-        for (Dungeon dungeon : GameData.DUNGEONS) {
-            if (dungeon.getName().equalsIgnoreCase(dungeonName)) {
-                addClearedDungeon(dungeon);
-                firstTimeDungeon = false;
-            }
-        }
+    public void setClearedDungeons(List<String> dungeons) {
+        this.clearedDungeons.addAll(dungeons);
     }
 
     public abstract CharacterClass getCharacterClass();
@@ -197,7 +190,7 @@ public abstract class Character implements Combatant {
     public int getIntelligence() { return this.intelligence; }
     public int getVitality() { return this.vitality; }
     public List<Skill> getSkills() { return skills; }
-    public List<Dungeon> getClearedDungeons() { return dungeonsCleared; }
+    public List<String> getClearedDungeons() { return clearedDungeons; }
 
     public void setMaxHealth(int health) { this.maxHealth = health; }
     public void setCurrentHealth(int health) { this.currentHealth = health; }
@@ -214,6 +207,6 @@ public abstract class Character implements Combatant {
     public void addAgility(int amount) { this.agility += amount; }
     public void addIntelligence(int amount) { this.intelligence += amount; }
     public void addVitality(int amount) { this.vitality += amount; }
-    public void addClearedDungeon(Dungeon dungeon) { this.dungeonsCleared.add(dungeon); }
+    public void addClearedDungeon(String dungeon) { this.clearedDungeons.add(dungeon); }
 
 }
