@@ -1,6 +1,5 @@
 package se.dungeonsandmorons.screen;
 
-import se.dungeonsandmorons.SaveRepository;
 import se.dungeonsandmorons.game.GameContext;
 import se.dungeonsandmorons.game.GameEvent;
 import se.dungeonsandmorons.model.character.Warrior;
@@ -25,18 +24,23 @@ public class MainMenuScreen implements Screen {
     public void handleInput(String input, GameContext context) {
         switch (input.trim().toLowerCase()) {
             case "new game"     -> {
-                createCharacter(input, context);
+                createCharacter(context);
                 context.getStateMachine().transition(GameEvent.CREATE_CHARACTER);
             }
             case "load"         -> {
-                loadCharacter(context);
-                context.getStateMachine().transition(GameEvent.LOAD_GAME);
+                if (loadCharacter(context)) {
+                    IO.println("Successfully loaded " + context.getPlayer().getName());
+                    context.getStateMachine().transition(GameEvent.LOAD_GAME);
+                } else {
+                    IO.println("Failed to load character.");
+                    context.getStateMachine().transition(GameEvent.LOAD_GAME_FAIL);
+                }
             }
             case "quit"         -> System.exit(0);
         }
     }
 
-    private void createCharacter(String input, GameContext context) {
+    private void createCharacter(GameContext context) {
         IO.println("- Character Creation -");
         IO.println("Enter your name:");
 
@@ -60,7 +64,7 @@ public class MainMenuScreen implements Screen {
         }
     }
 
-    private void loadCharacter(GameContext context) {
+    private boolean loadCharacter(GameContext context) {
 
         listSaves(context);
 
@@ -70,8 +74,9 @@ public class MainMenuScreen implements Screen {
         Character savedPlayer = context.getSaveRepository().load(charName);
         if (savedPlayer != null) {
             context.setPlayer(savedPlayer);
+            return true;
         }
-
+        return false;
     }
 
     private static void listSaves(GameContext context) {

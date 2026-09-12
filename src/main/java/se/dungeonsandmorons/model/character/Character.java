@@ -3,6 +3,7 @@ package se.dungeonsandmorons.model.character;
 import se.dungeonsandmorons.model.skill.Skill;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class Character implements Combatant {
@@ -37,7 +38,7 @@ public abstract class Character implements Combatant {
     private boolean firstTimeDungeon = true;
 
     protected List<Skill> skills = new ArrayList<>();
-    private List<String> clearedDungeons = new ArrayList<>();
+    private final List<String> clearedDungeons = new ArrayList<>();
 
     Character(String name) {
         this.name = name;
@@ -189,7 +190,7 @@ public abstract class Character implements Combatant {
     public int getAgility() { return this.agility; }
     public int getIntelligence() { return this.intelligence; }
     public int getVitality() { return this.vitality; }
-    public List<Skill> getSkills() { return skills; }
+    public List<Skill> getSkills() { return Collections.unmodifiableList(skills); }
     public List<String> getClearedDungeons() { return clearedDungeons; }
 
     public void setMaxHealth(int health) { this.maxHealth = health; }

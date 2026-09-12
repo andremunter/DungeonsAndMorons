@@ -1,7 +1,6 @@
 package se.dungeonsandmorons.model.monster;
 
 import se.dungeonsandmorons.model.character.Combatant;
-import se.dungeonsandmorons.model.skill.MonsterAction;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -10,12 +10,14 @@ public class GameStateMachine {
             case MAIN_MENU -> switch (event) {
                 case LOAD_GAME, ENTER_TOWN, CREATE_CHARACTER
                                         -> GameState.IN_TOWN;
+                case LOAD_GAME_FAIL     -> GameState.MAIN_MENU;
                 default                 -> throw invalidTransition(currentState, event);
             };
 
             case IN_TOWN -> switch (event) {
                 case INTERACT_NPC       -> GameState.TALKING_TO_NPC;
                 case SELECT_DUNGEON     -> GameState.SELECTING_DUNGEON;
+                case LOAD_GAME          -> GameState.MAIN_MENU;
                 case REST               -> GameState.IN_TOWN;
                 default                 -> throw invalidTransition(currentState, event);
             };

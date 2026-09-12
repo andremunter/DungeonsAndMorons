@@ -2,7 +2,7 @@ package se.dungeonsandmorons.model.combat;
 
 import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.monster.Monster;
-import se.dungeonsandmorons.model.skill.MonsterAction;
+import se.dungeonsandmorons.model.monster.MonsterAction;
 import se.dungeonsandmorons.model.skill.Skill;
 
 public class CombatEngine {

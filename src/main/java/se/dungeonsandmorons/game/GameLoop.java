@@ -32,11 +32,9 @@ public class GameLoop {
                 throw new IllegalStateException("No screen mapped for state: " + currentScreen);
             }
 
-            IO.println(context.getStateMachine().getCurrentState());
             currentScreen.display(context);
             String input = IO.readln("> ");
             currentScreen.handleInput(input, context);
-            IO.println(context.getStateMachine().getCurrentState());
         }
     }
 

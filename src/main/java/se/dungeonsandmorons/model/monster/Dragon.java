@@ -2,7 +2,6 @@ package se.dungeonsandmorons.model.monster;
 
 import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.character.Combatant;
-import se.dungeonsandmorons.model.skill.MonsterAction;
 import se.dungeonsandmorons.model.skill.SkillTag;
 
 import java.util.Set;
