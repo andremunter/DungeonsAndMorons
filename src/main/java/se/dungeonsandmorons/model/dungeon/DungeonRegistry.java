@@ -43,7 +43,7 @@ public class DungeonRegistry {
     public static Dungeon create(String name) {
         Supplier<Dungeon> factory = REGISTRY.get(name.toLowerCase());
         if (factory == null) {
-            throw new CreateNullDungeonException("Trying to create a null dungeon is illegal");
+            throw new CreateNullDungeonException("Trying to create a null dungeon");
         }
 
         return factory.get();

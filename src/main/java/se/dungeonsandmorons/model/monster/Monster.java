@@ -65,9 +65,7 @@ public abstract class Monster implements Combatant {
     public boolean isAlive() { return this.currentHealth > 0; }
 
     public String getName() { return this.name;}
-    public int getMaxHealth(){
-        return this.maxHealth;
-    }
+    public int getMaxHealth(){ return this.maxHealth; }
     public int getCurrentHealth() { return this.currentHealth; }
     public int getDeathExperience() { return this.expOnDeath; }
     public MonsterRarity getRarity() { return this.rarity; }

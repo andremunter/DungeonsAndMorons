@@ -1,5 +1,3 @@
 package se.dungeonsandmorons.model.npc;
 
-public class Npc {
-    String dialogue;
-}
+public record Npc(String name, String role, String dialogue) {}

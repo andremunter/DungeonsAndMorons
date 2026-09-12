@@ -20,7 +20,6 @@ public class Dungeon {
         this.name = name;
         this.description = description;
         this.areaLevel = areaLevel;
-
     }
 
     public void populateDungeon(List<MonsterFactory> recipes) {

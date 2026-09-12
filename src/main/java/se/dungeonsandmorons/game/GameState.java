@@ -1,10 +1,10 @@
 package se.dungeonsandmorons.game;
 
 public enum GameState {
+    MAIN_MENU,
     IN_TOWN,
+    TALKING_TO_NPC,
     EXPLORING_DUNGEON,
-    COMBAT_PLAYER_TURN,
-    COMBAT_ENEMY_TURN,
-    VICTORY,
+    IN_COMBAT,
     GAME_OVER,
 }

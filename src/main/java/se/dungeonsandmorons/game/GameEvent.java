@@ -1,17 +1,15 @@
 package se.dungeonsandmorons.game;
 
 public enum GameEvent {
-    ENTER_DUNGEON,
-    LEAVE_DUNGEON,
-    ENCOUNTER_MONSTER,
-
-    ATTACK,
-    CAST,
-    FLEE,
+    LOAD_GAME,
+    ENTER_TOWN,
+    INTERACT_NPC,
+    LEAVE_NPC,
     REST,
-
-    ENEMY_ATTACKED,
+    ENTER_DUNGEON,
+    ENCOUNTER_MONSTER,
+    FLEE,
+    COMBAT_RESOLVED,
+    LEAVE_DUNGEON,
     PLAYER_DIED,
-    ENEMY_DIED,
-    LOOT_COLLECTED,
 }
