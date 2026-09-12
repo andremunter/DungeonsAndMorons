@@ -8,8 +8,9 @@ public class GameStateMachine {
         this.currentState =  switch (currentState) {
 
             case MAIN_MENU -> switch (event) {
-                case LOAD_GAME, ENTER_TOWN  -> GameState.IN_TOWN;
-                default                     -> throw invalidTransition(currentState, event);
+                case LOAD_GAME, ENTER_TOWN, CREATE_CHARACTER
+                                        -> GameState.IN_TOWN;
+                default                 -> throw invalidTransition(currentState, event);
             };
 
             case IN_TOWN -> switch (event) {

@@ -3,7 +3,7 @@ package se.dungeonsandmorons.model.combat;
 import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.monster.Monster;
 import se.dungeonsandmorons.model.skill.MonsterAction;
-import se.dungeonsandmorons.model.skill.PlayerSkill;
+import se.dungeonsandmorons.model.skill.Skill;
 
 public class CombatEngine {
     private final Character player;
@@ -28,7 +28,7 @@ public class CombatEngine {
         this.state = CombatState.AWAITING_PLAYER_INPUT;
     }
 
-    public void executePlayerAction(CombatAction action, PlayerSkill skill) {
+    public void executePlayerAction(CombatAction action, Skill skill) {
         if (state != CombatState.AWAITING_PLAYER_INPUT) {
             throw new IllegalStateException("Player action forbidden in state: " + state);
         }

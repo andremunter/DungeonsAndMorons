@@ -6,7 +6,7 @@ import se.dungeonsandmorons.model.combat.CombatAbility;
 
 import java.util.Set;
 
-public class PlayerSkill implements CombatAbility {
+public class Skill implements CombatAbility {
     private final String name;
     private final int resourceCost;
     private final int baseDamage;
@@ -17,9 +17,9 @@ public class PlayerSkill implements CombatAbility {
     private final Set<CharacterClass> allowedClasses;
 
 
-    public PlayerSkill(String name, int baseDamage, int resourceCost,
-                       Attribute attribute, int attributeDamageMultiplier,
-                       TargetType targetType, Set<SkillTag> tags, Set<CharacterClass> allowedClasses) {
+    public Skill(String name, int baseDamage, int resourceCost,
+                 Attribute attribute, int attributeDamageMultiplier,
+                 TargetType targetType, Set<SkillTag> tags, Set<CharacterClass> allowedClasses) {
         this.name = name;
         this.resourceCost = resourceCost;
         this.baseDamage = baseDamage;

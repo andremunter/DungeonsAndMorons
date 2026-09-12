@@ -1,6 +1,7 @@
 package se.dungeonsandmorons.game;
 
 public enum GameEvent {
+    CREATE_CHARACTER,
     LOAD_GAME,
     ENTER_TOWN,
     INTERACT_NPC,

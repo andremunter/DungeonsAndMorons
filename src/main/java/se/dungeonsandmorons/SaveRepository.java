@@ -7,9 +7,10 @@ import java.util.List;
 import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.character.Warrior;
 import se.dungeonsandmorons.model.dungeon.Dungeon;
-import se.dungeonsandmorons.model.skill.PlayerSkill;
+import se.dungeonsandmorons.model.skill.Skill;
 import se.dungeonsandmorons.model.skill.SkillRegistry;
 
+// TODO: Change SaveRepository to non-static
 public class SaveRepository {
     //private static final String URL = "jdbc:postgresql://localhost:5432/dungeonsandmorons";
     private static final String URL = "jdbc:postgresql://ep-cool-art-b2km85jl-pooler.c-6.eu-central-1.aws.neon.tech/neondb?sslmode=require";
@@ -91,7 +92,7 @@ public class SaveRepository {
                 }
 
                 try (PreparedStatement skillStmt = conn.prepareStatement(skillSql)) {
-                    for (PlayerSkill skill : character.getSkills()) {
+                    for (Skill skill : character.getSkills()) {
                         skillStmt.setInt(1, characterId);
                         skillStmt.setString(2, skill.getName());
                         skillStmt.addBatch();

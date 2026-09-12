@@ -8,15 +8,28 @@ import se.dungeonsandmorons.userinterface.UserInterface;
 public class Game {
 
     private UserInterface userInterface;
-    public static CombatService combatService;
+    private GameStateMachine stateMachine;
+    public CombatService combatService;
 
-   public void startGame(UserInterface userInterface, CombatService cService) {
-       this.userInterface = userInterface;
-       combatService = cService;
+    public Game(
+            UserInterface userInterface,
+            GameStateMachine stateMachine,
+            CombatService combatService
+    ) {
+        this.userInterface = userInterface;
+        this.stateMachine = stateMachine;
+        this.combatService = combatService;
+    }
+
+   public void startGame() {
        userInterface.mainMenu(this);
    }
 
+
     public void enterDungeon(Dungeon dungeon) {
+
+
+
        /*
        if (GameData.PLAYER.isFirstTimeDungeon()) {
             userInterface.dungeonTutorial();
