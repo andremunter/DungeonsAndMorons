@@ -14,6 +14,10 @@ public class TownScreen implements Screen {
     @Override
     public void handleInput(String input, GameContext context) {
         switch (input.trim().toLowerCase()) {
+            case "talk"         -> {
+                // TODO: blala talk contains <NpcName> find Npc, trigger blalalal
+                context.getStateMachine().transition(GameEvent.INTERACT_NPC);
+            }
             case "stats"        -> context.getPlayer().getStats();
             case "skills"       -> context.getSkillService().listSkills(context.getPlayer());
             case "dungeon", "explore dungeons", "dungeons"
