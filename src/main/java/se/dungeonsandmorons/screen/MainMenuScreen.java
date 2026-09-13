@@ -29,15 +29,7 @@ public class MainMenuScreen implements Screen {
                 context.setActiveTown(TownRegistry.get("Densewood")); // FIRST Town a new player encounters
                 context.getStateMachine().transition(GameEvent.CREATE_CHARACTER);
             }
-            case "load"         -> {
-                if (loadCharacter(context)) {
-                    IO.println("Successfully loaded " + context.getPlayer().getName());
-                    context.getStateMachine().transition(GameEvent.LOAD_GAME);
-                } else {
-                    IO.println("Failed to load character.");
-                    context.getStateMachine().transition(GameEvent.LOAD_GAME_FAIL);
-                }
-            }
+            case "load"         -> loadCharacter(context);
             case "quit"         -> System.exit(0);
         }
     }
@@ -66,22 +58,23 @@ public class MainMenuScreen implements Screen {
         }
     }
 
-    private boolean loadCharacter(GameContext context) {
+    private void loadCharacter(GameContext context) {
 
         listSaves(context);
 
-        IO.println("Load character by typing its name(case-sensitive)");
+        IO.println("Enter character name to load(case-sensitive):");
         String charName = IO.readln("> ");
 
-        Character savedPlayer = context.getSaveRepository().load(charName);
-        if (savedPlayer != null) {
-            context.setPlayer(savedPlayer);
-            return true;
+        boolean success = context.getSaveRepository().load(context, charName);
+        if (success) {
+            context.getStateMachine().transition(GameEvent.LOAD_GAME);
+        } else {
+            IO.println("Could not find save.");
+            context.getStateMachine().transition(GameEvent.LOAD_GAME_FAIL);
         }
-        return false;
     }
 
-    private static void listSaves(GameContext context) {
+    private void listSaves(GameContext context) {
         List<Character> characters = context.getSaveRepository().fetchSaves();
         if (characters != null && !characters.isEmpty()) {
             IO.println("- Saved Characters -");

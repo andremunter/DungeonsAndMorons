@@ -8,7 +8,6 @@ import se.dungeonsandmorons.model.npc.Npc;
 import se.dungeonsandmorons.model.skill.SkillService;
 import se.dungeonsandmorons.service.DungeonService;
 import se.dungeonsandmorons.town.Town;
-import se.dungeonsandmorons.town.TownRegistry;
 
 public class GameContext {
     private Character player;

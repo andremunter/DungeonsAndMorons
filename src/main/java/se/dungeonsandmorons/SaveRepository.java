@@ -10,6 +10,7 @@ import se.dungeonsandmorons.model.character.Warrior;
 import se.dungeonsandmorons.model.dungeon.Dungeon;
 import se.dungeonsandmorons.model.skill.Skill;
 import se.dungeonsandmorons.model.skill.SkillRegistry;
+import se.dungeonsandmorons.town.TownRegistry;
 
 // TODO: Change SaveRepository to non-static
 public class SaveRepository {
@@ -55,63 +56,90 @@ public class SaveRepository {
                 ON CONFLICT (character_id, skill_name) DO NOTHING;
                 """;
 
-        try (Connection conn = getConnection()) {
+        Connection conn = null;
+        try {
+            conn = getConnection();
             conn.setAutoCommit(false);
 
             int characterId;
 
              try (PreparedStatement charStmt = conn.prepareStatement(playerSql)) {
 
-                charStmt.setString(1, context.getPlayer().getName());
-                charStmt.setString(2, context.getPlayer().getCharacterClass().toString());
-                charStmt.setInt(3, context.getPlayer().getLevel());
-                charStmt.setInt(4, context.getPlayer().getExperience());
-                charStmt.setInt(5, context.getPlayer().getStrength());
-                charStmt.setInt(6, context.getPlayer().getAgility());
-                charStmt.setInt(7, context.getPlayer().getIntelligence());
-                charStmt.setInt(8, context.getPlayer().getVitality());
-                charStmt.setInt(9, context.getPlayer().getCurrentHealth());
-                charStmt.setInt(10, context.getPlayer().getMaxHealth());
-                charStmt.setInt(11, context.getPlayer().getCurrentMana());
-                charStmt.setInt(12, context.getPlayer().getMaxMana());
-                charStmt.setString(13, context.getActiveTown().getName());
+                 charStmt.setString(1, context.getPlayer().getName());
+                 charStmt.setString(2, context.getPlayer().getCharacterClass().toString());
+                 charStmt.setInt(3, context.getPlayer().getLevel());
+                 charStmt.setInt(4, context.getPlayer().getExperience());
+                 charStmt.setInt(5, context.getPlayer().getStrength());
+                 charStmt.setInt(6, context.getPlayer().getAgility());
+                 charStmt.setInt(7, context.getPlayer().getIntelligence());
+                 charStmt.setInt(8, context.getPlayer().getVitality());
+                 charStmt.setInt(9, context.getPlayer().getCurrentHealth());
+                 charStmt.setInt(10, context.getPlayer().getMaxHealth());
+                 charStmt.setInt(11, context.getPlayer().getCurrentMana());
+                 charStmt.setInt(12, context.getPlayer().getMaxMana());
 
-                try (ResultSet rs = charStmt.executeQuery()) {
-                    if (rs.next()) {
-                        characterId = rs.getInt("id");
-                    } else {
-                        conn.rollback();
-                        return;
-                    }
-                }
+                 String townName = context.getActiveTown() != null ? context.getActiveTown().getName() : "Densewood";
+                 charStmt.setString(13, townName);
 
-                try (PreparedStatement dungeonStmt = conn.prepareStatement(dungeonSql)) {
-                    for (String dungeon : context.getPlayer().getClearedDungeons()) {
-                        dungeonStmt.setInt(1, characterId);
-                        dungeonStmt.setString(2, dungeon);
-                        dungeonStmt.addBatch();
-                    }
-                    dungeonStmt.executeBatch();
-                }
+                 try (ResultSet rs = charStmt.executeQuery()) {
+                     if (rs.next()) {
+                         characterId = rs.getInt("id");
+                     } else {
+                         conn.rollback();
+                         return;
+                     }
+                 }
+             }
 
-                try (PreparedStatement skillStmt = conn.prepareStatement(skillSql)) {
-                    for (Skill skill : context.getPlayer().getSkills()) {
-                        skillStmt.setInt(1, characterId);
-                        skillStmt.setString(2, skill.getName());
-                        skillStmt.addBatch();
-                    }
-                    skillStmt.executeBatch();
-                }
+             if (context.getPlayer().getClearedDungeons() != null && !context.getPlayer().getClearedDungeons().isEmpty()) {
 
-                conn.commit();
-                IO.println(String.format("Saved %s and cleared dungeons to database.", context.getPlayer().getName()));
-            }
+                 try (PreparedStatement dungeonStmt = conn.prepareStatement(dungeonSql)) {
+                     for (String dungeon : context.getPlayer().getClearedDungeons()) {
+                         dungeonStmt.setInt(1, characterId);
+                         dungeonStmt.setString(2, dungeon);
+                         dungeonStmt.addBatch();
+                     }
+                     dungeonStmt.executeBatch();
+                 }
+             }
+
+             if (context.getPlayer().getSkills() != null && !context.getPlayer().getSkills().isEmpty()) {
+
+                 try (PreparedStatement skillStmt = conn.prepareStatement(skillSql)) {
+                     for (Skill skill : context.getPlayer().getSkills()) {
+                         skillStmt.setInt(1, characterId);
+                         skillStmt.setString(2, skill.getName());
+                         skillStmt.addBatch();
+                     }
+                     skillStmt.executeBatch();
+                 }
+             }
+
+             conn.commit();
+             IO.println(String.format("Successfully saved '%s'.", context.getPlayer().getName()));
+
         } catch (SQLException e) {
             System.err.println("Failed to save character: " + e.getMessage());
+
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException rollbackEx) {
+                    System.err.println("Rollback failed: " + rollbackEx.getMessage());
+                }
+            }
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException closeEx) {
+                    System.err.println("Failed to close connection: " + closeEx.getMessage());
+                }
+            }
         }
     }
 
-    public Character load(String name) {
+    public boolean load(GameContext context, String name) {
         String playerSql    = "SELECT id, character_class, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana, last_town_visited FROM character_saves WHERE name = ?";
         String dungeonSql   = "SELECT dungeon_name FROM character_dungeons_cleared WHERE character_id = ?";
         String skillSql     = "SELECT skill_name FROM character_skills_learned WHERE character_id = ?";
@@ -123,7 +151,7 @@ public class SaveRepository {
 
                 try (ResultSet rs = playerStmt.executeQuery()) {
                     if (!rs.next()) {
-                        return null;
+                        return false;
                     }
 
                     int characterId             = rs.getInt("id");
@@ -147,6 +175,7 @@ public class SaveRepository {
                         default -> throw new IllegalArgumentException("Unknown class: " + className);
                     };
 
+
                     List<String> clearedDungeons = new ArrayList<>();
                     try (PreparedStatement dungeonStmt = conn.prepareStatement(dungeonSql)) {
                         dungeonStmt.setInt(1, characterId);
@@ -166,12 +195,20 @@ public class SaveRepository {
                             }
                         }
                     }
-                    return player;
+
+                    context.setPlayer(player);
+                    if (last_town_visited != null) {
+                        context.setActiveTown(TownRegistry.get(last_town_visited));
+                    } else {
+                        context.setActiveTown(TownRegistry.get("Densewood"));
+                    }
+
+                    return true;
                 }
 
         } catch (SQLException e) {
             System.err.println("Failed to load character: " + e.getMessage());
-            return null;
+            return false;
         }
     }
 
@@ -187,10 +224,10 @@ public class SaveRepository {
                 String characterClass   = rs.getString("character_class");
                 int level               = rs.getInt("level");
 
-                switch (characterClass) {
-                    case "Warrior"      -> characters.add(new Warrior(name, level));
-                   // case "Magician"     -> characters.add(new Magician());
-                   // case "Archer"       -> characters.add(new Archer());
+                switch (characterClass.toLowerCase()) {
+                    case "warrior"      -> characters.add(new Warrior(name, level));
+                   // case "magician"     -> characters.add(new Magician());
+                   // case "archer"       -> characters.add(new Archer());
 
                 }
 
