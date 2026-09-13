@@ -53,7 +53,6 @@ public class GameStateMachine {
             };
         };
 
-        IO.println(String.format("Transition to state: %s", currentState));
     }
 
     private IllegalStateException invalidTransition(GameState state, GameEvent event) {

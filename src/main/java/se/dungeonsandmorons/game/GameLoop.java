@@ -14,6 +14,7 @@ public class GameLoop {
         this.screens = Map.of(
                 GameState.MAIN_MENU, new MainMenuScreen(),
                 GameState.IN_TOWN, new TownScreen(),
+                GameState.TALKING_TO_NPC, new TalkingToNpcScreen(),
                 GameState.SELECTING_DUNGEON, new DungeonSelectScreen(),
                 GameState.EXPLORING_DUNGEON, new ExploringDungeonScreen(),
                 GameState.IN_COMBAT, new CombatScreen()

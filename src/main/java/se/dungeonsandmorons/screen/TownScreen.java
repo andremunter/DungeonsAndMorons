@@ -2,22 +2,40 @@ package se.dungeonsandmorons.screen;
 
 import se.dungeonsandmorons.game.GameContext;
 import se.dungeonsandmorons.game.GameEvent;
+import se.dungeonsandmorons.model.npc.Npc;
 
 public class TownScreen implements Screen {
 
     @Override
     public void display(GameContext context) {
-        IO.println("- Town -");
+        IO.println(String.format("- %s -", context.getActiveTown().getName()));
+
+        for (Npc npc : context.getActiveTown().getNpcs()) {
+            IO.println(String.format("%s - %s", npc.name(), npc.role()));
+        }
+
         IO.println("Type 'help' for available commands.");
     }
 
     @Override
     public void handleInput(String input, GameContext context) {
+
         switch (input.trim().toLowerCase()) {
-            case "talk"         -> {
+            case String s when s.startsWith("talk ") -> {
                 // TODO: blala talk contains <NpcName> find Npc, trigger blalalal
-                context.getStateMachine().transition(GameEvent.INTERACT_NPC);
+
+                String target = s.substring("talk ".length()).trim();
+
+                Npc targetNpc = context.getActiveTown().findNpc(target);
+                if (targetNpc != null) {
+                    context.setActiveNpc(targetNpc);
+                    context.getStateMachine().transition(GameEvent.INTERACT_NPC);
+                } else {
+                    IO.println(String.format("Could not find '%s'.", target));
+                }
+
             }
+            case "talk"         -> IO.println("Specify who to talk to. Example: 'talk Flint Blunt' or 'talk blacksmith'");
             case "stats"        -> context.getPlayer().getStats();
             case "skills"       -> context.getSkillService().listSkills(context.getPlayer());
             case "dungeon", "explore dungeons", "dungeons"

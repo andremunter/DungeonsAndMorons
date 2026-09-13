@@ -16,7 +16,17 @@ public class Town {
         this.npcs = npcs;
     }
 
+    public Npc findNpc(String query) {
+        for (Npc npc : npcs) {
+            if (npc.matches(query)) {
+                return npc;
+            }
+        }
+        return null;
+    }
+
     public String getName() { return name; }
     public String getDescription() { return description; }
     public List<Npc> getNpcs() { return npcs; }
+
 }

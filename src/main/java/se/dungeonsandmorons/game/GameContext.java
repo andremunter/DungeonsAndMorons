@@ -4,6 +4,7 @@ import se.dungeonsandmorons.SaveRepository;
 import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.combat.CombatEngine;
 import se.dungeonsandmorons.model.dungeon.Dungeon;
+import se.dungeonsandmorons.model.npc.Npc;
 import se.dungeonsandmorons.model.skill.SkillService;
 import se.dungeonsandmorons.service.DungeonService;
 import se.dungeonsandmorons.town.Town;
@@ -12,6 +13,7 @@ import se.dungeonsandmorons.town.TownRegistry;
 public class GameContext {
     private Character player;
     private Town activeTown;
+    private Npc activeNpc;
     private Dungeon activeDungeon;
     private CombatEngine activeCombat;
     private final GameStateMachine stateMachine;
@@ -35,6 +37,9 @@ public class GameContext {
 
     public Town getActiveTown() { return activeTown; }
     public void setActiveTown(Town activeTown) { this.activeTown = activeTown; }
+
+    public Npc getActiveNpc() { return activeNpc; }
+    public void setActiveNpc(Npc activeNpc) { this.activeNpc = activeNpc; }
 
     public Dungeon getActiveDungeon() { return activeDungeon; }
     public void setActiveDungeon(Dungeon dungeon) { this.activeDungeon = dungeon; }
