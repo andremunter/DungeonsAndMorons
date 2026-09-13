@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import se.dungeonsandmorons.game.GameContext;
 import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.character.Warrior;
 import se.dungeonsandmorons.model.dungeon.Dungeon;
@@ -21,10 +22,10 @@ public class SaveRepository {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
-    public void save(Character character) {
+    public void save(GameContext context) {
         String playerSql = """
-                INSERT INTO character_saves (name, character_class, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+                INSERT INTO character_saves (name, character_class, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana, last_town_visited, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
                 ON CONFLICT (name)
                 DO UPDATE SET
                 level = EXCLUDED.level,
@@ -37,6 +38,7 @@ public class SaveRepository {
                 max_health = EXCLUDED.max_health,
                 mana = EXCLUDED.mana,
                 max_mana = EXCLUDED.max_mana,
+                last_town_visited = EXCLUDED.last_town_visited,
                 updated_at = CURRENT_TIMESTAMP
                 RETURNING id;
                 """;
@@ -60,18 +62,19 @@ public class SaveRepository {
 
              try (PreparedStatement charStmt = conn.prepareStatement(playerSql)) {
 
-                charStmt.setString(1, character.getName());
-                charStmt.setString(2, character.getCharacterClass().toString());
-                charStmt.setInt(3, character.getLevel());
-                charStmt.setInt(4, character.getExperience());
-                charStmt.setInt(5, character.getStrength());
-                charStmt.setInt(6, character.getAgility());
-                charStmt.setInt(7, character.getIntelligence());
-                charStmt.setInt(8, character.getVitality());
-                charStmt.setInt(9, character.getCurrentHealth());
-                charStmt.setInt(10, character.getMaxHealth());
-                charStmt.setInt(11, character.getCurrentMana());
-                charStmt.setInt(12, character.getMaxMana());
+                charStmt.setString(1, context.getPlayer().getName());
+                charStmt.setString(2, context.getPlayer().getCharacterClass().toString());
+                charStmt.setInt(3, context.getPlayer().getLevel());
+                charStmt.setInt(4, context.getPlayer().getExperience());
+                charStmt.setInt(5, context.getPlayer().getStrength());
+                charStmt.setInt(6, context.getPlayer().getAgility());
+                charStmt.setInt(7, context.getPlayer().getIntelligence());
+                charStmt.setInt(8, context.getPlayer().getVitality());
+                charStmt.setInt(9, context.getPlayer().getCurrentHealth());
+                charStmt.setInt(10, context.getPlayer().getMaxHealth());
+                charStmt.setInt(11, context.getPlayer().getCurrentMana());
+                charStmt.setInt(12, context.getPlayer().getMaxMana());
+                charStmt.setString(13, context.getActiveTown().getName());
 
                 try (ResultSet rs = charStmt.executeQuery()) {
                     if (rs.next()) {
@@ -83,7 +86,7 @@ public class SaveRepository {
                 }
 
                 try (PreparedStatement dungeonStmt = conn.prepareStatement(dungeonSql)) {
-                    for (String dungeon : character.getClearedDungeons()) {
+                    for (String dungeon : context.getPlayer().getClearedDungeons()) {
                         dungeonStmt.setInt(1, characterId);
                         dungeonStmt.setString(2, dungeon);
                         dungeonStmt.addBatch();
@@ -92,7 +95,7 @@ public class SaveRepository {
                 }
 
                 try (PreparedStatement skillStmt = conn.prepareStatement(skillSql)) {
-                    for (Skill skill : character.getSkills()) {
+                    for (Skill skill : context.getPlayer().getSkills()) {
                         skillStmt.setInt(1, characterId);
                         skillStmt.setString(2, skill.getName());
                         skillStmt.addBatch();
@@ -101,7 +104,7 @@ public class SaveRepository {
                 }
 
                 conn.commit();
-                IO.println(String.format("Saved %s and cleared dungeons to database.", character.getName()));
+                IO.println(String.format("Saved %s and cleared dungeons to database.", context.getPlayer().getName()));
             }
         } catch (SQLException e) {
             System.err.println("Failed to save character: " + e.getMessage());
@@ -109,7 +112,7 @@ public class SaveRepository {
     }
 
     public Character load(String name) {
-        String playerSql    = "SELECT id, character_class, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana FROM character_saves WHERE name = ?";
+        String playerSql    = "SELECT id, character_class, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana, last_town_visited FROM character_saves WHERE name = ?";
         String dungeonSql   = "SELECT dungeon_name FROM character_dungeons_cleared WHERE character_id = ?";
         String skillSql     = "SELECT skill_name FROM character_skills_learned WHERE character_id = ?";
 
@@ -123,18 +126,19 @@ public class SaveRepository {
                         return null;
                     }
 
-                    int characterId     = rs.getInt("id");
-                    String className    = rs.getString("character_class");
-                    int level           = rs.getInt("level");
-                    int experience      = rs.getInt("experience");
-                    int strength        = rs.getInt("strength");
-                    int agility         = rs.getInt("agility");
-                    int intelligence    = rs.getInt("intelligence");
-                    int vitality        = rs.getInt("vitality");
-                    int health          = rs.getInt("health");
-                    int max_health      = rs.getInt("max_health");
-                    int mana            = rs.getInt("mana");
-                    int max_mana        = rs.getInt("max_mana");
+                    int characterId             = rs.getInt("id");
+                    String className            = rs.getString("character_class");
+                    int level                   = rs.getInt("level");
+                    int experience              = rs.getInt("experience");
+                    int strength                = rs.getInt("strength");
+                    int agility                 = rs.getInt("agility");
+                    int intelligence            = rs.getInt("intelligence");
+                    int vitality                = rs.getInt("vitality");
+                    int health                  = rs.getInt("health");
+                    int max_health              = rs.getInt("max_health");
+                    int mana                    = rs.getInt("mana");
+                    int max_mana                = rs.getInt("max_mana");
+                    String last_town_visited    = rs.getString("last_town_visited");
 
                     Character player = switch (className.toLowerCase()) {
                         case "warrior" -> new Warrior(characterId, name, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana);
@@ -162,7 +166,6 @@ public class SaveRepository {
                             }
                         }
                     }
-
                     return player;
                 }
 

@@ -4,6 +4,7 @@ import se.dungeonsandmorons.game.GameContext;
 import se.dungeonsandmorons.game.GameEvent;
 import se.dungeonsandmorons.model.character.Warrior;
 import se.dungeonsandmorons.model.character.Character;
+import se.dungeonsandmorons.town.TownRegistry;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class MainMenuScreen implements Screen {
         switch (input.trim().toLowerCase()) {
             case "new game"     -> {
                 createCharacter(context);
+                context.setActiveTown(TownRegistry.get("Densewood")); // FIRST Town a new player encounters
                 context.getStateMachine().transition(GameEvent.CREATE_CHARACTER);
             }
             case "load"         -> {

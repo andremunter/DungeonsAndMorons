@@ -1,6 +1,7 @@
 package se.dungeonsandmorons.model.character;
 
 import se.dungeonsandmorons.model.skill.Skill;
+import se.dungeonsandmorons.town.TownRegistry;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,6 +54,7 @@ public abstract class Character implements Combatant {
         agility = 0;
         intelligence = 0;
         vitality = 0;
+
     }
 
     Character(String name, int level) {

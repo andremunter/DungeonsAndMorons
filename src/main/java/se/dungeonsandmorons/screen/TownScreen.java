@@ -22,7 +22,7 @@ public class TownScreen implements Screen {
             case "skills"       -> context.getSkillService().listSkills(context.getPlayer());
             case "dungeon", "explore dungeons", "dungeons"
                                 -> context.getStateMachine().transition(GameEvent.SELECT_DUNGEON);
-            case "save"         -> context.getSaveRepository().save(context.getPlayer());
+            case "save"         -> context.getSaveRepository().save(context);
             case "help"         -> displayHelp();
             case "main menu"    -> context.getStateMachine().transition(GameEvent.LOAD_GAME);
             default             -> IO.println("Unknown town command. Type 'help' for options.");

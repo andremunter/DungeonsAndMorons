@@ -9,9 +9,6 @@ import java.util.function.Supplier;
 
 public class DungeonRegistry {
 
-    // Reminder to self why im using LinkedHashMap:
-    // REGISTRY.keySet() outputs in the same order as they were input.
-    // This way we can register top-bottom = easy-harder
     private static final Map<String, Supplier<Dungeon>> REGISTRY = new LinkedHashMap<>();
 
     static {
