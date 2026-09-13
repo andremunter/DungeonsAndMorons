@@ -6,6 +6,7 @@ import se.dungeonsandmorons.model.monster.Monster;
 import se.dungeonsandmorons.model.monster.MonsterFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Dungeon {
@@ -25,7 +26,7 @@ public class Dungeon {
 
     public void populateDungeon(List<MonsterFactory> recipes) {
         if (recipes == null || recipes.isEmpty()) {
-            throw new ListNullOrEmptyException("Trying to populate dungeon with empty or null List");
+            throw new ListNullOrEmptyException("Trying to populate dungeon with null or empty List");
         }
 
         for (MonsterFactory recipe : recipes) {
@@ -38,7 +39,7 @@ public class Dungeon {
     public String getName() { return name; }
     public String getDescription() { return description; }
     public int getAreaLevel() { return areaLevel; }
-    public List<Monster> getMonsters() { return monsters; }
+    public List<Monster> getMonsters() { return Collections.unmodifiableList(monsters); }
     public boolean isCleared() { return cleared; }
 
     public void setCleared(boolean cleared) { this.cleared = cleared; }

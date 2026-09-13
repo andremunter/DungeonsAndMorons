@@ -1,8 +1,5 @@
 package se.dungeonsandmorons.game;
 
-import se.dungeonsandmorons.model.combat.CombatService;
-import se.dungeonsandmorons.model.dungeon.Dungeon;
-import se.dungeonsandmorons.model.monster.Monster;
 import se.dungeonsandmorons.screen.*;
 
 import java.util.Map;

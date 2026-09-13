@@ -27,16 +27,22 @@ public class DungeonSelectScreen implements Screen {
 
     @Override
     public void handleInput(String input, GameContext context) {
-        if (context.getDungeonService().getAvailableDungeonNames().contains(input.trim().toLowerCase())) {
-            IO.println(String.format("Entering %s... Proceed?(enter), 'back' to cancel.", CapitalizeWords.capitalizeWords(input.trim())));
+        String fInput = input.trim().toLowerCase();
+        if (context.getDungeonService().getAvailableDungeonNames().contains(fInput)) {
+            context.setActiveDungeon(context.getDungeonService().findDungeonByName(fInput));
+
+            IO.println(String.format("Entering %s... Proceed?(enter), 'back' to cancel.", context.getActiveDungeon().getName()));
             String enter = IO.readln(">");
 
             switch (enter.trim().toLowerCase()) {
-                case "enter", "", " "   -> context.getStateMachine().transition(GameEvent.ENTER_DUNGEON);
-                case "back", "cancel"   -> context.getStateMachine().transition(GameEvent.ENTER_TOWN);
+                case "enter", "", " " -> {
+                    context.getStateMachine().transition(GameEvent.ENTER_DUNGEON);
+                }
+                case "back", "cancel" -> context.getStateMachine().transition(GameEvent.ENTER_TOWN);
             }
-
         }
+
+
 
 
         switch (input.trim().toLowerCase()) {
