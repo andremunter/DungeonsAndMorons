@@ -2,6 +2,8 @@ package se.dungeonsandmorons.screen;
 
 import se.dungeonsandmorons.game.GameContext;
 import se.dungeonsandmorons.game.GameEvent;
+import se.dungeonsandmorons.game.GameState;
+import se.dungeonsandmorons.model.combat.CombatEngine;
 
 public class ExploringDungeonScreen implements Screen {
 
@@ -16,7 +18,10 @@ public class ExploringDungeonScreen implements Screen {
         switch (input.trim().toLowerCase()) {
 
             case "explore"                      -> {
-                // TODO: 'DUNGEON_EVENT' > Calc if ENCOUNTER_MOSNTER, ENCOUNTER_DUNGEON_EVENT? _CHEST etc?
+                // TODO: 'DUNGEON_EVENT' > Calc if ENCOUNTER_MONSTER, ENCOUNTER_DUNGEON_EVENT? _CHEST etc?
+                CombatEngine combat = new CombatEngine(context.getPlayer(), context.getActiveDungeon().getMonsters().getFirst());
+                combat.startRound();
+                context.setActiveCombat(combat);
                 context.getStateMachine().transition(GameEvent.ENCOUNTER_MONSTER);
             }
             case "back", "town", "leave"        -> {

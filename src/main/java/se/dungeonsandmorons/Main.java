@@ -3,7 +3,6 @@ package se.dungeonsandmorons;
 import se.dungeonsandmorons.game.GameContext;
 import se.dungeonsandmorons.game.GameLoop;
 import se.dungeonsandmorons.game.GameStateMachine;
-import se.dungeonsandmorons.model.combat.CombatService;
 import se.dungeonsandmorons.model.skill.SkillService;
 import se.dungeonsandmorons.service.DungeonService;
 

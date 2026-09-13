@@ -2,6 +2,7 @@ package se.dungeonsandmorons.game;
 
 import se.dungeonsandmorons.SaveRepository;
 import se.dungeonsandmorons.model.character.Character;
+import se.dungeonsandmorons.model.combat.CombatEngine;
 import se.dungeonsandmorons.model.dungeon.Dungeon;
 import se.dungeonsandmorons.model.skill.SkillService;
 import se.dungeonsandmorons.service.DungeonService;
@@ -9,6 +10,7 @@ import se.dungeonsandmorons.service.DungeonService;
 public class GameContext {
     private Character player;
     private Dungeon activeDungeon;
+    private CombatEngine activeCombat;
     private final GameStateMachine stateMachine;
 
     private final DungeonService dungeonService;
@@ -31,8 +33,12 @@ public class GameContext {
     public Dungeon getActiveDungeon() { return activeDungeon; }
     public void setActiveDungeon(Dungeon dungeon) { this.activeDungeon = dungeon; }
 
+    public CombatEngine getActiveCombat() { return activeCombat; }
+    public void setActiveCombat(CombatEngine activeCombat) { this.activeCombat = activeCombat; }
+
     public GameStateMachine getStateMachine() { return stateMachine; }
     public DungeonService getDungeonService() { return dungeonService; }
+
     public SkillService getSkillService() { return skillService; }
     public SaveRepository getSaveRepository() { return saveRepository; }
 

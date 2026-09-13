@@ -40,10 +40,10 @@ public class GameStateMachine {
             };
 
             case IN_COMBAT -> switch (event) {
-                case COMBAT_RESOLVED    -> GameState.EXPLORING_DUNGEON;
-                case FLEE               -> GameState.EXPLORING_DUNGEON;
-                case PLAYER_DIED        -> GameState.GAME_OVER;
-                default                 -> throw invalidTransition(currentState, event);
+                case LEAVE_DUNGEON              -> GameState.IN_TOWN;
+                case COMBAT_RESOLVED, FLEE      -> GameState.EXPLORING_DUNGEON;
+                case PLAYER_DIED                -> GameState.GAME_OVER;
+                default                         -> throw invalidTransition(currentState, event);
             };
 
             case GAME_OVER -> switch (event) {
@@ -52,6 +52,8 @@ public class GameStateMachine {
                 default                 -> throw invalidTransition(currentState, event);
             };
         };
+
+        IO.println(String.format("Transition to state: %s", currentState));
     }
 
     private IllegalStateException invalidTransition(GameState state, GameEvent event) {

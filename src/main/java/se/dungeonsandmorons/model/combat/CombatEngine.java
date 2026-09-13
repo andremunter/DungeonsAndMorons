@@ -79,6 +79,7 @@ public class CombatEngine {
         } else {
             this.roundCount++;
             this.state = CombatState.ROUND_START;
+            startRound();
         }
     }
 

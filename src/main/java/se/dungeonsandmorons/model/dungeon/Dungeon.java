@@ -42,6 +42,10 @@ public class Dungeon {
     public List<Monster> getMonsters() { return Collections.unmodifiableList(monsters); }
     public boolean isCleared() { return cleared; }
 
+    public void removeMonster(Monster monster) {
+        monsters.remove(monster);
+    }
+
     public void setCleared(boolean cleared) { this.cleared = cleared; }
 
     @Override

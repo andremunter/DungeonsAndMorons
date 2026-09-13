@@ -18,8 +18,8 @@ public class DungeonRegistry {
         register("Rotworm Cave", () -> {
             Dungeon rotwormCave = new Dungeon("Rotworm Cave", "Cave of only Rottenwurmen", 8);
             rotwormCave.populateDungeon(List.of(
-                    (lvl, rarity) -> new Rotworm("Rotworm", lvl, 60, 20, rarity),
-                    (lvl, rarity) -> new Rotworm("Rotworm", lvl, 60, 20, rarity)
+                    (lvl, rarity) -> new Rotworm("Rotworm", lvl, 1, 20, rarity),
+                    (lvl, rarity) -> new Rotworm("Rotworm", lvl, 1, 20, rarity)
             ));
             return rotwormCave;
         });
