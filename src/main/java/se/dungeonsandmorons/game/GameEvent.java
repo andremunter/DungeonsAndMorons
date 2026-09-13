@@ -1,7 +1,8 @@
 package se.dungeonsandmorons.game;
 
 public enum GameEvent {
-    CREATE_CHARACTER,
+    START_CREATE_CHARACTER,
+    OPEN_LOAD_MENU,
     LOAD_GAME,
     LOAD_GAME_FAIL,
     ENTER_TOWN,
@@ -15,4 +16,5 @@ public enum GameEvent {
     COMBAT_RESOLVED,
     LEAVE_DUNGEON,
     PLAYER_DIED,
+    CANCEL,
 }

@@ -2,87 +2,31 @@ package se.dungeonsandmorons.screen;
 
 import se.dungeonsandmorons.game.GameContext;
 import se.dungeonsandmorons.game.GameEvent;
-import se.dungeonsandmorons.model.character.Warrior;
-import se.dungeonsandmorons.model.character.Character;
-import se.dungeonsandmorons.town.TownRegistry;
 
-import java.util.List;
 
 public class MainMenuScreen implements Screen {
 
     @Override
     public void display(GameContext context) {
-        IO.println("Welcome to Dungeons and Morons!");
         IO.print("""
-                    Choose by typing:
-                    New Game
-                    Load
-                    Quit
-                    """);
+                
+                === Dungeons and Morons ===
+                
+                """);
+        IO.print("""
+                1. New Game
+                2. Load
+                3. Quit
+                
+                """);
     }
 
     @Override
     public void handleInput(String input, GameContext context) {
         switch (input.trim().toLowerCase()) {
-            case "new game"     -> {
-                createCharacter(context);
-                context.setActiveTown(TownRegistry.get("Densewood")); // FIRST Town a new player encounters
-                context.getStateMachine().transition(GameEvent.CREATE_CHARACTER);
-            }
-            case "load"         -> loadCharacter(context);
-            case "quit"         -> System.exit(0);
-        }
-    }
-
-    private void createCharacter(GameContext context) {
-        IO.println("- Character Creation -");
-        IO.println("Enter your name:");
-
-        String characterName = IO.readln().trim();
-
-        IO.print("""
-                Choose class by typing one of the following:
-                Warrior
-                Magician
-                Archer
-                """);
-        String characterClass = IO.readln("> ");
-
-        switch (characterClass.trim().toLowerCase()) {
-            case "warrior" -> context.setPlayer(new Warrior(characterName));
-            //case "magician" -> context.setPlayer(new Warrior(characterName));
-            //case "archer" -> context.setPlayer(new Warrior(characterName));
-            default -> {
-                IO.println("Class does not exist.");
-            }
-        }
-    }
-
-    private void loadCharacter(GameContext context) {
-
-        listSaves(context);
-
-        IO.println("Enter character name to load(case-sensitive):");
-        String charName = IO.readln("> ");
-
-        boolean success = context.getSaveRepository().load(context, charName);
-        if (success) {
-            context.getStateMachine().transition(GameEvent.LOAD_GAME);
-        } else {
-            IO.println("Could not find save.");
-            context.getStateMachine().transition(GameEvent.LOAD_GAME_FAIL);
-        }
-    }
-
-    private void listSaves(GameContext context) {
-        List<Character> characters = context.getSaveRepository().fetchSaves();
-        if (characters != null && !characters.isEmpty()) {
-            IO.println("- Saved Characters -");
-            for (Character character : characters) {
-                IO.println(String.format("%s, %s, level: %d", character.getName(), character.getClass().getSimpleName(), character.getLevel()));
-            }
-        } else {
-            IO.println("No saved characters");
+            case "1", "new game" -> context.getStateMachine().transition(GameEvent.START_CREATE_CHARACTER);
+            case "2", "load" -> context.getStateMachine().transition(GameEvent.OPEN_LOAD_MENU);
+            case "3", "quit" -> System.exit(0);
         }
     }
 

@@ -13,6 +13,8 @@ public class GameLoop {
         this.context = context;
         this.screens = Map.of(
                 GameState.MAIN_MENU, new MainMenuScreen(),
+                GameState.LOAD_MENU, new LoadScreen(),
+                GameState.CHARACTER_CREATION, new CreateCharacterScreen(),
                 GameState.IN_TOWN, new TownScreen(),
                 GameState.TALKING_TO_NPC, new TalkingToNpcScreen(),
                 GameState.SELECTING_DUNGEON, new DungeonSelectScreen(),

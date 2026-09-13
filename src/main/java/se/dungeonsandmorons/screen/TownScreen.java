@@ -8,13 +8,21 @@ public class TownScreen implements Screen {
 
     @Override
     public void display(GameContext context) {
-        IO.println(String.format("- %s -", context.getActiveTown().getName()));
+        IO.print(String.format("""
+                
+                === %s ===
+                
+                """, context.getActiveTown().getName()));
 
         for (Npc npc : context.getActiveTown().getNpcs()) {
             IO.println(String.format("%s - %s", npc.name(), npc.role()));
         }
 
-        IO.println("Type 'help' for available commands.");
+        IO.print("""
+                
+                Type 'help' for available commands.
+                
+                """);
     }
 
     @Override
