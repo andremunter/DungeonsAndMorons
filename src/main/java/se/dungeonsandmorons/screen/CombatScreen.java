@@ -53,8 +53,11 @@ public class CombatScreen implements Screen {
                     IO.println("Skill not learned.");
                 }
             }
-            case "attack" -> engine.executePlayerAction(CombatAction.ATTACK, player.getSkills().getFirst());
-            case "run" -> engine.executePlayerAction(CombatAction.RUN, null);
+            case "attack"   -> engine.executePlayerAction(CombatAction.ATTACK, player.getSkills().getFirst());
+            case "run"      -> {
+                // TODO: Calc odds of escaping
+                engine.executePlayerAction(CombatAction.RUN, null);
+            }
             default -> IO.println("Action not found.");
         }
 
@@ -81,7 +84,6 @@ public class CombatScreen implements Screen {
                 context.getStateMachine().transition(GameEvent.PLAYER_DIED);
             }
             case ESCAPED -> {
-                // TODO: Calc odds of escaping
                 IO.println("Fled from combat.");
                 context.setActiveCombat(null);
                 context.getStateMachine().transition(GameEvent.FLEE);
