@@ -1,11 +1,11 @@
 package se.dungeonsandmorons;
 
+import se.dungeonsandmorons.database.SaveRepository;
 import se.dungeonsandmorons.game.GameContext;
 import se.dungeonsandmorons.game.GameLoop;
 import se.dungeonsandmorons.game.GameStateMachine;
 import se.dungeonsandmorons.model.skill.SkillService;
 import se.dungeonsandmorons.service.DungeonService;
-import se.dungeonsandmorons.town.TownRegistry;
 
 public class Main {
 

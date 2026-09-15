@@ -1,5 +1,6 @@
 package se.dungeonsandmorons.screen;
 
+import se.dungeonsandmorons.database.CharacterSummary;
 import se.dungeonsandmorons.game.GameContext;
 import se.dungeonsandmorons.game.GameEvent;
 import se.dungeonsandmorons.model.character.Character;
@@ -15,11 +16,11 @@ public class LoadScreen implements Screen {
                 === Saved Characters ===
                 
                 """));
-        List<Character> characters = context.getSaveRepository().fetchSaves();
+        List<CharacterSummary> saves = context.getSaveRepository().fetchSaves();
 
-        if (characters != null && !characters.isEmpty()) {
-            for (Character character : characters) {
-                IO.println(String.format("- %s, %s, level: %d", character.getName(), character.getCharacterClass(), character.getLevel()));
+        if (saves != null && !saves.isEmpty()) {
+            for (CharacterSummary save : saves) {
+                IO.println(save);
             }
         } else {
             IO.println("No saved characters");

@@ -1,13 +1,14 @@
-package se.dungeonsandmorons;
+package se.dungeonsandmorons.database;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import se.dungeonsandmorons.game.GameContext;
 import se.dungeonsandmorons.model.character.Character;
 import se.dungeonsandmorons.model.character.Warrior;
-import se.dungeonsandmorons.model.dungeon.Dungeon;
 import se.dungeonsandmorons.model.skill.Skill;
 import se.dungeonsandmorons.model.skill.SkillRegistry;
 import se.dungeonsandmorons.town.TownRegistry;
@@ -212,32 +213,27 @@ public class SaveRepository {
         }
     }
 
-    public List<Character> fetchSaves() {
-        List<Character> characters = new ArrayList<>();
+    public List<CharacterSummary> fetchSaves() {
+        List<CharacterSummary> saves = new ArrayList<>();
+
         String sql = "SELECT name, character_class, level FROM character_saves WHERE id >= 0";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                String name             = rs.getString("name");
-                String characterClass   = rs.getString("character_class");
-                int level               = rs.getInt("level");
-
-                switch (characterClass.toLowerCase()) {
-                    case "warrior"      -> characters.add(new Warrior(name, level));
-                   // case "magician"     -> characters.add(new Magician());
-                   // case "archer"       -> characters.add(new Archer());
-
-                }
-
+                saves.add(new CharacterSummary(
+                        rs.getString("name"),
+                        rs.getString("character_class"),
+                        rs.getInt("level")
+                ));
             }
 
         } catch (SQLException e) {
                  System.err.println("Failed to fetch characters: " + e.getMessage());
         }
 
-        return characters;
+        return saves;
     }
 
 
