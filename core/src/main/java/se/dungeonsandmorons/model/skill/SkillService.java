@@ -12,11 +12,14 @@ public class SkillService {
             return;
         }
 
-        for (Skill skill : skills) {
-            IO.println(String.format(
-                    "Skill{name=%s, baseDamage=%d, resourceCost=%d, attribute=%s, targetType=%s, tags=N/A, allowedClasses=N/A}",
-                    skill.getName(), skill.getBaseDamage(), skill.getResourceCost(), skill.getScalingAttribute(), skill.getTargetType()));
-        }
+        skills.forEach(skill ->
+                IO.println(String.format(
+                        "Skill{name=%s, baseDamage=%d, resourceCost=%d, attribute=%s, targetType=%s, tags=N/A, allowedClasses=N/A}",
+                        skill.getName(),
+                        skill.getBaseDamage(),
+                        skill.getResourceCost(),
+                        skill.getScalingAttribute(),
+                        skill.getTargetType()))
+        );
     }
-
 }

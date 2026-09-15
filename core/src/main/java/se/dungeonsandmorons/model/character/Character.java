@@ -152,7 +152,7 @@ public abstract class Character implements Combatant {
             return false;
         }
 
-        if (skills.contains(skill)) {
+        if (isSkillLearned(skill)) {
             IO.println(String.format("%s already know this skill.", name));
             return false;
         }
@@ -167,10 +167,7 @@ public abstract class Character implements Combatant {
             return false;
         }
 
-        if (!skills.contains(skill)) {
-            return false;
-        }
-        return true;
+        return skills.contains(skill);
     }
 
     public void setClearedDungeons(List<String> dungeons) {

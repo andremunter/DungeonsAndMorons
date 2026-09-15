@@ -52,4 +52,6 @@ public class SkillRegistry {
         return Collections.unmodifiableMap(SKILLS);
     }
 
+
+
 }
