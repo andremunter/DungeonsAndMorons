@@ -149,7 +149,7 @@ public class Kharacter implements Combatant {
 
     public boolean learnSkill(Skill skill) {
         if (skill == null) {
-            throw new NullPointerException("skill in learnSkill null");
+            throw new NullPointerException("Trying to learn Null skill");
         }
 
         if (!skill.canBeLearnedBy(this.getCharacterClass())) {
