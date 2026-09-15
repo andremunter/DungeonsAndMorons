@@ -1,17 +1,17 @@
 package se.dungeonsandmorons.model.combat;
 
-import se.dungeonsandmorons.model.character.Character;
+import se.dungeonsandmorons.model.character.Kharacter;
 import se.dungeonsandmorons.model.monster.Monster;
 import se.dungeonsandmorons.model.monster.MonsterAction;
 import se.dungeonsandmorons.model.skill.Skill;
 
 public class CombatEngine {
-    private final Character player;
+    private final Kharacter player;
     private final Monster monster;
     private CombatState state;
     private int roundCount;
 
-    public CombatEngine(Character player, Monster monster) {
+    public CombatEngine(Kharacter player, Monster monster) {
         this.player = player;
         this.monster = monster;
         this.state = CombatState.ROUND_START;
@@ -85,7 +85,7 @@ public class CombatEngine {
 
     public CombatState getState() { return state; }
     public int getRoundCount() { return roundCount; }
-    public Character getPlayer() { return player; }
+    public Kharacter getPlayer() { return player; }
     public Monster getEnemy() { return monster; }
 
 

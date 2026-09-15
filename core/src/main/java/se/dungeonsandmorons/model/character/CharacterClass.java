@@ -1,6 +1,5 @@
 package se.dungeonsandmorons.model.character;
 
-import org.w3c.dom.Attr;
 import se.dungeonsandmorons.model.Attribute;
 
 public enum CharacterClass {
@@ -25,20 +24,21 @@ public enum CharacterClass {
     );
 
     private final Attribute primaryAttribute;
-    private final int unallocatedStats;
+    private final int statPointGain;
     private final int hpPerVitality;
     private final int manaPerIntelligence;
 
 
-    CharacterClass(Attribute primaryAttribute, int unallocatedStats, int hpPerVitality, int manaPerIntelligence) {
+    CharacterClass(Attribute primaryAttribute, int statPointGain, int hpPerVitality, int manaPerIntelligence) {
         this.primaryAttribute = primaryAttribute;
-        this.unallocatedStats = unallocatedStats;
+        this.statPointGain = statPointGain;
         this.hpPerVitality = hpPerVitality;
         this.manaPerIntelligence = manaPerIntelligence;
     }
 
     public Attribute getPrimaryAttribute() { return primaryAttribute; }
-    public int getUnallocatedStats() { return unallocatedStats; }
+    public int getUnallocatedStats() { return statPointGain; }
     public int getHpPerVitality() { return hpPerVitality; }
     public int getManaPerIntelligence() { return manaPerIntelligence; }
+    public int getStatPointGain() { return statPointGain; }
 }

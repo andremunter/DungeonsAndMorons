@@ -1,6 +1,6 @@
 package se.dungeonsandmorons.model.monster;
 
-import se.dungeonsandmorons.model.character.Character;
+import se.dungeonsandmorons.model.character.Kharacter;
 import se.dungeonsandmorons.model.character.Combatant;
 import se.dungeonsandmorons.model.skill.SkillTag;
 
@@ -36,7 +36,7 @@ public class Dragon extends Monster {
         this.currentHealth = Math.max(0, this.currentHealth - amount);
         if (!isAlive()) {
             IO.println(name + " died!");
-            if(attacker instanceof Character atker) {
+            if(attacker instanceof Kharacter atker) {
                 atker.addExperience(expOnDeath);
             }
         }

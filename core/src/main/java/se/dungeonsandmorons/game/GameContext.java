@@ -1,7 +1,7 @@
 package se.dungeonsandmorons.game;
 
 import se.dungeonsandmorons.database.SaveRepository;
-import se.dungeonsandmorons.model.character.Character;
+import se.dungeonsandmorons.model.character.Kharacter;
 import se.dungeonsandmorons.model.combat.CombatEngine;
 import se.dungeonsandmorons.model.dungeon.Dungeon;
 import se.dungeonsandmorons.model.npc.Npc;
@@ -10,7 +10,7 @@ import se.dungeonsandmorons.service.DungeonService;
 import se.dungeonsandmorons.town.Town;
 
 public class GameContext {
-    private Character player;
+    private Kharacter player;
     private Town activeTown;
     private Npc activeNpc;
     private Dungeon activeDungeon;
@@ -31,8 +31,8 @@ public class GameContext {
         this.saveRepository = saveRepository;
     }
 
-    public Character getPlayer() { return player; }
-    public void setPlayer(Character player) { this.player = player; }
+    public Kharacter getPlayer() { return player; }
+    public void setPlayer(Kharacter player) { this.player = player; }
 
     public Town getActiveTown() { return activeTown; }
     public void setActiveTown(Town activeTown) { this.activeTown = activeTown; }

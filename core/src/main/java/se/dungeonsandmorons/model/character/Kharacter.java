@@ -1,14 +1,14 @@
 package se.dungeonsandmorons.model.character;
 
 import se.dungeonsandmorons.model.skill.Skill;
-import se.dungeonsandmorons.town.TownRegistry;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class Character implements Combatant {
+public class Kharacter implements Combatant {
     protected String name;
+    protected CharacterClass characterClass;
     protected int id;
 
     protected int level;
@@ -20,6 +20,8 @@ public abstract class Character implements Combatant {
 
     private int maxMana;
     private int currentMana;
+
+    private int unallocatedStatPoints;
 
     private int strength;
     private int agility;
@@ -41,8 +43,9 @@ public abstract class Character implements Combatant {
     protected List<Skill> skills = new ArrayList<>();
     private final List<String> clearedDungeons = new ArrayList<>();
 
-    Character(String name) {
+    public Kharacter(String name, CharacterClass characterClass) {
         this.name = name;
+        this.characterClass = characterClass;
         this.level = 0;
         this.experience = 0;
         this.expPerLevel = 45;
@@ -57,16 +60,18 @@ public abstract class Character implements Combatant {
 
     }
 
-    Character(String name, int level) {
+    Kharacter(String name, int level) {
         this.name = name;
         this.level = level;
     }
 
-    Character(int id, String name, int level, int experience, int strength, int agility, int intelligence, int vitality, int currentHealth, int maxHealth, int currentMana, int maxMana) {
+    public Kharacter(int id, String name, CharacterClass characterClass, int level, int experience, int unallocatedStatPoints, int strength, int agility, int intelligence, int vitality, int currentHealth, int maxHealth, int currentMana, int maxMana) {
         this.id = id;
         this.name = name;
+        this.characterClass = characterClass;
         this.level = level;
         this.experience = experience;
+        this.unallocatedStatPoints = unallocatedStatPoints;
         this.strength = strength;
         this.agility = agility;
         this.intelligence = intelligence;
@@ -99,11 +104,11 @@ public abstract class Character implements Combatant {
     public void levelUp() {
         IO.println(String.format("%s leveled up from level %d to level %d.", name, level, level+1));
 
-        addLevel(1);
-        addStrength(strengthPerLevel);
-        addAgility(agilityPerLevel);
-        addIntelligence(intelligencePerLevel);
-        addVitality(vitalityPerLevel);
+        this.level++;
+        this.unallocatedStatPoints += characterClass.getStatPointGain();
+
+        this.currentHealth = maxHealth;
+        this.currentMana = maxMana;
 
         updateStats();
     }
@@ -129,7 +134,7 @@ public abstract class Character implements Combatant {
                 Agility: %d,
                 Intelligence: %d,
                 Vitality: %d
-                """, name, getClass().getSimpleName(), level, experience, maxHealth, maxMana, strength, agility, intelligence, vitality));
+                """, name, characterClass, level, experience, maxHealth, maxMana, strength, agility, intelligence, vitality));
     }
 
     public void addExperience(int amount) {
@@ -174,21 +179,20 @@ public abstract class Character implements Combatant {
         this.clearedDungeons.addAll(dungeons);
     }
 
-    public abstract CharacterClass getCharacterClass();
 
-    public String getName() { return this.name; }
-    public int getMaxHealth(){
-        return this.maxHealth;
-    }
-    public int getCurrentHealth() { return this.currentHealth; }
-    public int getMaxMana() { return this.maxMana; }
-    public int getCurrentMana() { return this.currentMana; }
-    public int getLevel() { return this.level; }
-    public int getExperience() { return this.experience; }
-    public int getStrength() { return this.strength; }
-    public int getAgility() { return this.agility; }
-    public int getIntelligence() { return this.intelligence; }
-    public int getVitality() { return this.vitality; }
+    public CharacterClass getCharacterClass() { return characterClass; }
+    public String getName() { return name; }
+    public int getMaxHealth() { return maxHealth; }
+    public int getCurrentHealth() { return currentHealth; }
+    public int getMaxMana() { return maxMana; }
+    public int getCurrentMana() { return currentMana; }
+    public int getLevel() { return level; }
+    public int getExperience() { return experience; }
+    public int getUnallocatedStatPoints() { return unallocatedStatPoints; }
+    public int getStrength() { return strength; }
+    public int getAgility() { return agility; }
+    public int getIntelligence() { return intelligence; }
+    public int getVitality() { return vitality; }
     public List<Skill> getSkills() { return Collections.unmodifiableList(skills); }
     public List<String> getClearedDungeons() { return clearedDungeons; }
 

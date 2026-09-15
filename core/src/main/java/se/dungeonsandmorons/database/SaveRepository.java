@@ -2,13 +2,12 @@ package se.dungeonsandmorons.database;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import se.dungeonsandmorons.exception.CorruptedSaveException;
 import se.dungeonsandmorons.game.GameContext;
-import se.dungeonsandmorons.model.character.Character;
-import se.dungeonsandmorons.model.character.Warrior;
+import se.dungeonsandmorons.model.character.Kharacter;
+import se.dungeonsandmorons.model.character.CharacterClass;
 import se.dungeonsandmorons.model.skill.Skill;
 import se.dungeonsandmorons.model.skill.SkillRegistry;
 import se.dungeonsandmorons.town.TownRegistry;
@@ -26,8 +25,8 @@ public class SaveRepository {
 
     public void save(GameContext context) {
         String playerSql = """
-                INSERT INTO character_saves (name, character_class, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana, last_town_visited, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+                INSERT INTO character_saves (name, character_class, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana, last_town_visited, unallocated_stat_points, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
                 ON CONFLICT (name)
                 DO UPDATE SET
                 level = EXCLUDED.level,
@@ -41,6 +40,7 @@ public class SaveRepository {
                 mana = EXCLUDED.mana,
                 max_mana = EXCLUDED.max_mana,
                 last_town_visited = EXCLUDED.last_town_visited,
+                unallocated_stat_points = EXCLUDED.unallocated_stat_points,
                 updated_at = CURRENT_TIMESTAMP
                 RETURNING id;
                 """;
@@ -81,6 +81,7 @@ public class SaveRepository {
 
                  String townName = context.getActiveTown() != null ? context.getActiveTown().getName() : "Densewood";
                  charStmt.setString(13, townName);
+                 charStmt.setInt(14, context.getPlayer().getUnallocatedStatPoints());
 
                  try (ResultSet rs = charStmt.executeQuery()) {
                      if (rs.next()) {
@@ -141,7 +142,7 @@ public class SaveRepository {
     }
 
     public boolean load(GameContext context, String name) {
-        String playerSql    = "SELECT id, character_class, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana, last_town_visited FROM character_saves WHERE name = ?";
+        String playerSql    = "SELECT id, character_class, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana, last_town_visited, unallocated_stat_points FROM character_saves WHERE name = ?";
         String dungeonSql   = "SELECT dungeon_name FROM character_dungeons_cleared WHERE character_id = ?";
         String skillSql     = "SELECT skill_name FROM character_skills_learned WHERE character_id = ?";
 
@@ -156,26 +157,37 @@ public class SaveRepository {
                     }
 
                     int characterId             = rs.getInt("id");
-                    String className            = rs.getString("character_class");
                     int level                   = rs.getInt("level");
+                    String className            = rs.getString("character_class");
                     int experience              = rs.getInt("experience");
                     int strength                = rs.getInt("strength");
                     int agility                 = rs.getInt("agility");
                     int intelligence            = rs.getInt("intelligence");
                     int vitality                = rs.getInt("vitality");
                     int health                  = rs.getInt("health");
-                    int max_health              = rs.getInt("max_health");
+                    int maxHealth              = rs.getInt("max_health");
                     int mana                    = rs.getInt("mana");
-                    int max_mana                = rs.getInt("max_mana");
+                    int maxMana                = rs.getInt("max_mana");
+                    int unallocated_stat_points = rs.getInt("unallocated_stat_points");
                     String last_town_visited    = rs.getString("last_town_visited");
 
-                    Character player = switch (className.toLowerCase()) {
-                        case "warrior" -> new Warrior(characterId, name, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana);
-                        //case "Magician" -> new Magician(characterId, name, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana);
+                    CharacterClass characterClass;
+                    try {
+                        if (className == null) {
+                            throw new IllegalArgumentException("Class name in database is null");
+                        }
+                        characterClass = CharacterClass.valueOf(className.toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                        throw new CorruptedSaveException(
+                                String.format("Failed to load character '%s': Unknown or invalid class '%s'",
+                                        name, className), e
+                        );
+                    }
 
-                        default -> throw new IllegalArgumentException("Unknown class: " + className);
-                    };
-
+                    Kharacter player = new Kharacter(
+                            characterId, name, characterClass, level, experience,
+                            unallocated_stat_points, strength, agility, intelligence,
+                            vitality, health, maxHealth, mana, maxMana);
 
                     List<String> clearedDungeons = new ArrayList<>();
                     try (PreparedStatement dungeonStmt = conn.prepareStatement(dungeonSql)) {

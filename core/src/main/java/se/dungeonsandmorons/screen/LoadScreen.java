@@ -1,9 +1,9 @@
 package se.dungeonsandmorons.screen;
 
 import se.dungeonsandmorons.database.CharacterSummary;
+import se.dungeonsandmorons.exception.CorruptedSaveException;
 import se.dungeonsandmorons.game.GameContext;
 import se.dungeonsandmorons.game.GameEvent;
-import se.dungeonsandmorons.model.character.Character;
 
 import java.util.List;
 
@@ -43,12 +43,18 @@ public class LoadScreen implements Screen {
             return;
         }
 
-        boolean success = context.getSaveRepository().load(context, trimmed);
-        if (success) {
-            IO.println(String.format("Successfully loaded %s.", trimmed));
-            context.getStateMachine().transition(GameEvent.LOAD_GAME);
-        } else {
-            IO.println(String.format("Could not find save named '%s'", trimmed));
+        try {
+            boolean success = context.getSaveRepository().load(context, trimmed);
+            if (success) {
+                IO.println(String.format("Successfully loaded %s.", trimmed));
+                context.getStateMachine().transition(GameEvent.LOAD_GAME);
+            } else {
+                IO.println(String.format("Could not find save named '%s'", trimmed));
+                context.getStateMachine().transition(GameEvent.LOAD_GAME_FAIL);
+            }
+        } catch (CorruptedSaveException e) {
+            IO.println("Error: " + e.getMessage());
+            IO.println("Returning to Main Menu...");
             context.getStateMachine().transition(GameEvent.LOAD_GAME_FAIL);
         }
 

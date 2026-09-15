@@ -1,11 +1,11 @@
 package se.dungeonsandmorons.model.skill;
-import se.dungeonsandmorons.model.character.Character;
+import se.dungeonsandmorons.model.character.Kharacter;
 
 import java.util.List;
 
 public class SkillService {
 
-    public void listSkills(Character player) {
+    public void listSkills(Kharacter player) {
         List<Skill> skills = player.getSkills();
         if (skills == null || skills.isEmpty()) {
             IO.println(String.format("%s has not learned any skills.", player.getName()));

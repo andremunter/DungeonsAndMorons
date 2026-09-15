@@ -2,7 +2,7 @@ package se.dungeonsandmorons.screen;
 
 import se.dungeonsandmorons.game.GameContext;
 import se.dungeonsandmorons.game.GameEvent;
-import se.dungeonsandmorons.model.character.Character;
+import se.dungeonsandmorons.model.character.Kharacter;
 import se.dungeonsandmorons.model.combat.CombatAction;
 import se.dungeonsandmorons.model.combat.CombatEngine;
 import se.dungeonsandmorons.model.monster.Monster;
@@ -14,7 +14,7 @@ public class CombatScreen implements Screen {
     public void display(GameContext context) {
 
         CombatEngine engine = context.getActiveCombat();
-        Character player = context.getPlayer();
+        Kharacter player = context.getPlayer();
         Monster monster = context.getActiveDungeon().getMonsters().getFirst();
 
         IO.println(String.format("""
@@ -32,7 +32,7 @@ public class CombatScreen implements Screen {
     public void handleInput(String input, GameContext context) {
 
         CombatEngine engine = context.getActiveCombat();
-        Character player = context.getPlayer();
+        Kharacter player = context.getPlayer();
         Monster monster = context.getActiveDungeon().getMonsters().getFirst();
 
         String trimmed = input.trim();
