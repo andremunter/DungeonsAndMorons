@@ -14,12 +14,14 @@ public class SkillService {
 
         skills.forEach(skill ->
                 IO.println(String.format(
-                        "Skill{name=%s, baseDamage=%d, resourceCost=%d, attribute=%s, targetType=%s, tags=N/A, allowedClasses=N/A}",
-                        skill.getName(),
-                        skill.getBaseDamage(),
-                        skill.getResourceCost(),
-                        skill.getScalingAttribute(),
-                        skill.getTargetType()))
+                "Skill{name=%s, baseDamage=%d, resourceCost=%d, attribute=%s, targetType=%s, tags=N/A, allowedClasses=N/A}",
+                skill.getName(),
+                skill.getBaseDamage(),
+                skill.getResourceCost(),
+                skill.getScalingAttribute(),
+                skill.getTargetType()))
         );
+
     }
+
 }

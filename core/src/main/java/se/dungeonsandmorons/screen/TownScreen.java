@@ -44,7 +44,7 @@ public class TownScreen implements Screen {
 
             }
             case "talk"         -> IO.println("Specify who to talk to. Example: 'talk Flint Blunt' or 'talk blacksmith'");
-            case "stats"        -> context.getPlayer().getStats();
+            case "stats"        -> context.getStateMachine().transition(GameEvent.OPEN_STAT_MANAGEMENT);
             case "skills"       -> context.getSkillService().listSkills(context.getPlayer());
             case "dungeon", "explore dungeons", "dungeons"
                                 -> context.getStateMachine().transition(GameEvent.SELECT_DUNGEON);

@@ -1,5 +1,6 @@
 package se.dungeonsandmorons.model.character;
 
+import se.dungeonsandmorons.model.Attribute;
 import se.dungeonsandmorons.model.skill.Skill;
 
 import java.util.ArrayList;
@@ -82,6 +83,22 @@ public class Kharacter implements Combatant {
         this.maxMana = maxMana;
     }
 
+    public boolean allocateStat(Attribute attribute, int points) {
+        if (points <= 0 || points > this.unallocatedStatPoints) {
+            return false;
+        }
+
+        switch (attribute) {
+            case STRENGTH       -> this.strength += points;
+            case AGILITY        -> this.agility += points;
+            case INTELLIGENCE   -> this.intelligence += points;
+            case VITALITY       -> this.vitality += points;
+        }
+
+        this.unallocatedStatPoints -= points;
+        return true;
+    }
+
     public boolean isFirstTimeDungeon() {
         return firstTimeDungeon;
     }
@@ -115,11 +132,7 @@ public class Kharacter implements Combatant {
 
     private void updateStats() {
         maxHealth += (level * healthPerLevel) + (healthPerVitality * (vitality * vitalityPerLevel));
-        maxMana += (level * manaPerLevel) + (manaPerIntelligence * (intelligence * intelligencePerLevel)) ;
-
-        currentHealth = maxHealth;
-        currentMana = maxMana;
-
+        maxMana += (level * manaPerLevel) + (manaPerIntelligence * (intelligence * intelligencePerLevel));
     }
 
     public void getStats() {
@@ -134,7 +147,9 @@ public class Kharacter implements Combatant {
                 Agility: %d,
                 Intelligence: %d,
                 Vitality: %d
-                """, name, characterClass, level, experience, maxHealth, maxMana, strength, agility, intelligence, vitality));
+                Unallocated Stat Points: %d
+                """,
+                name, characterClass, level, experience, maxHealth, maxMana, strength, agility, intelligence, vitality, unallocatedStatPoints));
     }
 
     public void addExperience(int amount) {

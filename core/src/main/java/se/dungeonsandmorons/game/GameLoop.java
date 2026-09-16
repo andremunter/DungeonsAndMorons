@@ -19,7 +19,8 @@ public class GameLoop {
                 GameState.TALKING_TO_NPC, new TalkingToNpcScreen(),
                 GameState.SELECTING_DUNGEON, new DungeonSelectScreen(),
                 GameState.EXPLORING_DUNGEON, new ExploringDungeonScreen(),
-                GameState.IN_COMBAT, new CombatScreen()
+                GameState.IN_COMBAT, new CombatScreen(),
+                GameState.STAT_MANAGEMENT, new AllocateStatsScreen()
         );
     }
 

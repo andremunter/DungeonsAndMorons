@@ -28,15 +28,21 @@ public class GameStateMachine {
             };
 
             case IN_TOWN -> switch (event) {
-                case INTERACT_NPC       -> GameState.TALKING_TO_NPC;
-                case SELECT_DUNGEON     -> GameState.SELECTING_DUNGEON;
-                case LOAD_GAME          -> GameState.MAIN_MENU;
-                case REST               -> GameState.IN_TOWN;
-                default                 -> throw invalidTransition(currentState, event);
+                case INTERACT_NPC           -> GameState.TALKING_TO_NPC;
+                case SELECT_DUNGEON         -> GameState.SELECTING_DUNGEON;
+                case LOAD_GAME              -> GameState.MAIN_MENU;
+                case REST                   -> GameState.IN_TOWN;
+                case OPEN_STAT_MANAGEMENT   -> GameState.STAT_MANAGEMENT;
+                default                     -> throw invalidTransition(currentState, event);
             };
 
             case TALKING_TO_NPC -> switch (event) {
                 case LEAVE_NPC, ENTER_TOWN  -> GameState.IN_TOWN;
+                default                     -> throw invalidTransition(currentState, event);
+            };
+
+            case STAT_MANAGEMENT -> switch (event) {
+                case CANCEL, ENTER_TOWN     -> GameState.IN_TOWN;
                 default                     -> throw invalidTransition(currentState, event);
             };
 

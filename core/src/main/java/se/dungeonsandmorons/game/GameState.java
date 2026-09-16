@@ -10,4 +10,5 @@ public enum GameState {
     EXPLORING_DUNGEON,
     IN_COMBAT,
     GAME_OVER,
+    STAT_MANAGEMENT,
 }
