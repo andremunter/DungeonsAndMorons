@@ -23,14 +23,15 @@ public class SaveService {
     }
 
     public boolean loadGame(GameContext context, String playerName) {
-        return repository.findByName(playerName).map(saveData -> {
-            context.setPlayer(saveData.player());
-            String town = saveData.lastTownVisited() != null
-                    ? saveData.lastTownVisited()
-                    : "Densewood";
-            context.setActiveTown(TownRegistry.get(town));
-            return true;
-        }).orElse(false);
+        return repository.findByName(playerName)
+                .map(saveData -> {
+                    context.setPlayer(saveData.player());
+                    String town = saveData.lastTownVisited() != null
+                            ? saveData.lastTownVisited()
+                            : "Densewood";
+                    context.setActiveTown(TownRegistry.get(town));
+                    return true;
+                }).orElse(false);
     }
 
     public List<CharacterSummary> getAvailableSaves() {
