@@ -6,6 +6,7 @@ import se.dungeonsandmorons.model.skill.Skill;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Kharacter implements Combatant {
     protected String name;
@@ -208,7 +209,12 @@ public class Kharacter implements Combatant {
     public int getAgility() { return agility; }
     public int getIntelligence() { return intelligence; }
     public int getVitality() { return vitality; }
-    public List<Skill> getSkills() { return Collections.unmodifiableList(skills); }
+    public List<Skill> getSkills() { return List.copyOf(skills); }
+    public List<String> getSkillNames() {
+        return skills.stream()
+                .map(Skill::getName)
+                .toList();
+    }
     public List<String> getClearedDungeons() { return clearedDungeons; }
 
     public void setMaxHealth(int health) { this.maxHealth = health; }
