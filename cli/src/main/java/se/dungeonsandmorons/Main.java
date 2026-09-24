@@ -1,6 +1,5 @@
 package se.dungeonsandmorons;
 
-import se.dungeonsandmorons.repository.CharacterRepository;
 import se.dungeonsandmorons.repository.PostgresCharacterRepository;
 import se.dungeonsandmorons.game.GameContext;
 import se.dungeonsandmorons.game.GameLoop;

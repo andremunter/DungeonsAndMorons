@@ -1,6 +1,5 @@
 package se.dungeonsandmorons.game;
 
-import se.dungeonsandmorons.repository.PostgresCharacterRepository;
 import se.dungeonsandmorons.model.character.Kharacter;
 import se.dungeonsandmorons.model.combat.CombatEngine;
 import se.dungeonsandmorons.model.dungeon.Dungeon;

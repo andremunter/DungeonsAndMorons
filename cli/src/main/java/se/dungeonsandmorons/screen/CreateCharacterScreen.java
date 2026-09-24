@@ -52,6 +52,11 @@ public class CreateCharacterScreen implements Screen {
             return;
         }
 
+        if (context.getSaveService().saveExists(characterName)) {
+            IO.println(String.format("Character with name '%s' already exists!", characterName));
+            return;
+        }
+
         switch (characterClass.toLowerCase()) {
             case "warrior"  -> {
                 context.setPlayer(new Kharacter(characterName, CharacterClass.WARRIOR));

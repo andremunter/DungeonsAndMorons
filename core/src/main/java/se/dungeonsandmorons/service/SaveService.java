@@ -1,11 +1,13 @@
 package se.dungeonsandmorons.service;
 
-import se.dungeonsandmorons.game.GameContext;
+import se.dungeonsandmorons.model.character.Kharacter;
 import se.dungeonsandmorons.repository.CharacterRepository;
+import se.dungeonsandmorons.repository.CharacterSaveData;
 import se.dungeonsandmorons.repository.CharacterSummary;
 import se.dungeonsandmorons.town.TownRegistry;
 
 import java.util.List;
+import java.util.Optional;
 
 public class SaveService {
     private final CharacterRepository repository;
@@ -14,24 +16,20 @@ public class SaveService {
         this.repository = repository;
     }
 
-    public void saveGame(GameContext context) {
-        String townName = context.getActiveTown() != null
-                ? context.getActiveTown().getName()
-                : "Densewood";
-
-        repository.save(context.getPlayer(), townName);
+    public void saveGame(Kharacter player, String townName) {
+        repository.save(player, townName);
     }
 
-    public boolean loadGame(GameContext context, String playerName) {
-        return repository.findByName(playerName)
-                .map(saveData -> {
-                    context.setPlayer(saveData.player());
-                    String town = saveData.lastTownVisited() != null
-                            ? saveData.lastTownVisited()
-                            : "Densewood";
-                    context.setActiveTown(TownRegistry.get(town));
-                    return true;
-                }).orElse(false);
+    public Optional<CharacterSaveData> loadGame(String playerName) {
+        return repository.findByName(playerName);
+    }
+
+    public boolean deleteSave(String playerName) {
+        return repository.deleteByName(playerName);
+    }
+
+    public boolean saveExists(String playerName) {
+        return repository.existsByName(playerName);
     }
 
     public List<CharacterSummary> getAvailableSaves() {

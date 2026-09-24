@@ -2,8 +2,6 @@ package se.dungeonsandmorons.screen;
 
 import se.dungeonsandmorons.game.GameContext;
 import se.dungeonsandmorons.game.GameEvent;
-import se.dungeonsandmorons.helper.CapitalizeWords;
-import se.dungeonsandmorons.model.dungeon.Dungeon;
 
 import java.util.List;
 

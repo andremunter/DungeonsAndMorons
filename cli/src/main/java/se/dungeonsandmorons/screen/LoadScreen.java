@@ -4,6 +4,7 @@ import se.dungeonsandmorons.repository.CharacterSummary;
 import se.dungeonsandmorons.exception.CorruptedSaveException;
 import se.dungeonsandmorons.game.GameContext;
 import se.dungeonsandmorons.game.GameEvent;
+import se.dungeonsandmorons.town.TownRegistry;
 
 import java.util.List;
 
@@ -44,14 +45,12 @@ public class LoadScreen implements Screen {
         }
 
         try {
-            boolean success = context.getSaveService().loadGame(context, trimmed);
-            if (success) {
-                IO.println(String.format("Successfully loaded %s.", trimmed));
-                context.getStateMachine().transition(GameEvent.LOAD_GAME);
-            } else {
-                IO.println(String.format("Could not find save named '%s'", trimmed));
-                context.getStateMachine().transition(GameEvent.LOAD_GAME_FAIL);
-            }
+            context.getSaveService().loadGame(trimmed).ifPresentOrElse(saveData -> {
+                context.setPlayer(saveData.player());
+                String townName = saveData.lastTownVisited() != null ? saveData.lastTownVisited() : "Densewood";
+                context.setActiveTown(TownRegistry.get(townName));
+                IO.println("Character loaded successfully!");
+            }, () -> IO.println("Failed to load character"));
         } catch (CorruptedSaveException e) {
             IO.println("Error: " + e.getMessage());
             IO.println("Returning to Main Menu...");
