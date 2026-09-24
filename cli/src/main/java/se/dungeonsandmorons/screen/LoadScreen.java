@@ -47,9 +47,13 @@ public class LoadScreen implements Screen {
         try {
             context.getSaveService().loadGame(trimmed).ifPresentOrElse(saveData -> {
                 context.setPlayer(saveData.player());
-                String townName = saveData.lastTownVisited() != null ? saveData.lastTownVisited() : "Densewood";
+                String townName = saveData.lastTownVisited() != null
+                        ? saveData.lastTownVisited()
+                        : "Densewood";
                 context.setActiveTown(TownRegistry.get(townName));
+
                 IO.println("Character loaded successfully!");
+                context.getStateMachine().transition(GameEvent.ENTER_TOWN);
             }, () -> IO.println("Failed to load character"));
         } catch (CorruptedSaveException e) {
             IO.println("Error: " + e.getMessage());

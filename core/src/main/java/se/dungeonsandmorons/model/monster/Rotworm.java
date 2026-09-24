@@ -20,13 +20,13 @@ public class Rotworm extends Monster implements Combatant {
 
     }
 
-    public void takeDamage(int amount, Combatant attacker) {
+    public boolean takeDamage(int amount, Combatant attacker) {
         this.currentHealth = Math.max(0, this.currentHealth - amount);
         if (!isAlive()) {
-            IO.println(name + " died!");
             if(attacker instanceof Kharacter atker) {
                 atker.addExperience(expOnDeath);
             }
         }
+        return isDead();
     }
 }

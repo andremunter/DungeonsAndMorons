@@ -112,15 +112,13 @@ public class Kharacter implements Combatant {
 
     }
 
-    public void takeDamage(int amount, Combatant attacker) {
+    public boolean takeDamage(int amount, Combatant attacker) {
         this.currentHealth = Math.max(0, this.currentHealth - amount);
-        if (!isAlive()) {
-            IO.println(name + " died!");
-        }
+        return isDead();
     }
 
     public void levelUp() {
-        IO.println(String.format("%s leveled up from level %d to level %d.", name, level, level+1));
+        System.out.println(String.format("%s leveled up from level %d to level %d.", name, level, level+1));
 
         this.level++;
         this.unallocatedStatPoints += characterClass.getStatPointGain();
@@ -137,7 +135,7 @@ public class Kharacter implements Combatant {
     }
 
     public void getStats() {
-        IO.print(String.format("""
+        System.out.print(String.format("""
                 Name: %s
                 Class: %s
                 Level: %d,
@@ -159,7 +157,7 @@ public class Kharacter implements Combatant {
             this.experience = 0;
         } else {
             this.experience += amount;
-            IO.println(String.format("%s gained %d experience.", name, amount));
+            System.out.println(String.format("%s gained %d experience.", name, amount));
         }
     }
 
@@ -169,17 +167,17 @@ public class Kharacter implements Combatant {
         }
 
         if (!skill.canBeLearnedBy(this.getCharacterClass())) {
-            IO.println(String.format("A %s cannot learn %s", this.getCharacterClass(), skill.getName()));
+            System.out.println(String.format("A %s cannot learn %s", this.getCharacterClass(), skill.getName()));
             return false;
         }
 
         if (isSkillLearned(skill)) {
-            IO.println(String.format("%s already know this skill.", name));
+            System.out.println(String.format("%s already know this skill.", name));
             return false;
         }
 
         skills.add(skill);
-        IO.println(String.format("%s learned %s!", name, skill.getName()));
+        System.out.println(String.format("%s learned %s!", name, skill.getName()));
         return true;
     }
 

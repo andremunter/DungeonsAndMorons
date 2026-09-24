@@ -1,6 +1,7 @@
 package se.dungeonsandmorons.game;
 
 import se.dungeonsandmorons.screen.*;
+import se.dungeonsandmorons.screen.IO;
 
 import java.util.Map;
 

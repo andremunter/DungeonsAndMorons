@@ -14,7 +14,7 @@ public class DungeonService {
     public Dungeon findDungeonByName(String name) {
         Dungeon dungeon = DungeonRegistry.create(name);
         if (dungeon == null) {
-            IO.println("Could not find specified dungeon.");
+            System.out.println("Could not find specified dungeon.");
             return null;
         }
         return dungeon;

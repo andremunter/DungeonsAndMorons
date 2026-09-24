@@ -1,6 +1,11 @@
 plugins {
     id("org.springframework.boot")
     id("io.spring.dependency-management")
+    java
+}
+
+springBoot {
+    mainClass.set("se.dungeonsandmorons.web.DungeonsAndMoronsApplication")
 }
 
 dependencies {
