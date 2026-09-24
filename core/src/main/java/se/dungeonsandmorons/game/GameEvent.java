@@ -17,4 +17,5 @@ public enum GameEvent {
     LEAVE_DUNGEON,
     PLAYER_DIED,
     CANCEL,
+    OPEN_STAT_MANAGEMENT,
 }

@@ -2,7 +2,8 @@ package se.dungeonsandmorons.screen;
 
 import se.dungeonsandmorons.game.GameContext;
 import se.dungeonsandmorons.game.GameEvent;
-import se.dungeonsandmorons.model.character.Warrior;
+import se.dungeonsandmorons.model.character.CharacterClass;
+import se.dungeonsandmorons.model.character.Kharacter;
 import se.dungeonsandmorons.town.TownRegistry;
 
 public class CreateCharacterScreen implements Screen {
@@ -53,13 +54,25 @@ public class CreateCharacterScreen implements Screen {
 
         switch (characterClass.toLowerCase()) {
             case "warrior"  -> {
-                context.setPlayer(new Warrior(characterName));
+                context.setPlayer(new Kharacter(characterName, CharacterClass.WARRIOR));
                 context.setActiveTown(TownRegistry.get("Densewood"));
                 IO.println(String.format("Character created: %s the Warrior!", characterName));
                 context.getStateMachine().transition(GameEvent.ENTER_TOWN);
             }
-            // case "magician" ->
-            // case "archer" ->
+
+            case "archer"  -> {
+                context.setPlayer(new Kharacter(characterName, CharacterClass.ARCHER));
+                context.setActiveTown(TownRegistry.get("Densewood"));
+                IO.println(String.format("Character created: %s the Archer!", characterName));
+                context.getStateMachine().transition(GameEvent.ENTER_TOWN);
+            }
+
+            case "magician"  -> {
+                context.setPlayer(new Kharacter(characterName, CharacterClass.MAGICIAN));
+                context.setActiveTown(TownRegistry.get("Densewood"));
+                IO.println(String.format("Character created: %s the Magician!", characterName));
+                context.getStateMachine().transition(GameEvent.ENTER_TOWN);
+            }
             default         -> IO.println(String.format("Unknown class '%s'.", characterClass));
         }
 

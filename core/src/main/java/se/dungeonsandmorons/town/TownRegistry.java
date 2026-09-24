@@ -1,6 +1,5 @@
 package se.dungeonsandmorons.town;
 
-import se.dungeonsandmorons.exception.CreateNullTownException;
 import se.dungeonsandmorons.model.npc.Npc;
 
 import java.util.LinkedHashMap;

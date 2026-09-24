@@ -3,22 +3,25 @@ package se.dungeonsandmorons.game;
 public class GameStateMachine {
     private GameState currentState = GameState.MAIN_MENU;
 
-    public void transition(GameEvent event) {
+    public GameState findNextState(GameEvent event) {
+        return findNextState(this.currentState, event);
+    }
 
-        this.currentState =  switch (currentState) {
+    public GameState findNextState(GameState fromState, GameEvent event) {
+
+        return switch (fromState) {
 
             case MAIN_MENU -> switch (event) {
                 case START_CREATE_CHARACTER -> GameState.CHARACTER_CREATION;
                 case OPEN_LOAD_MENU         -> GameState.LOAD_MENU;
                 case ENTER_TOWN             -> GameState.IN_TOWN;
-                case LOAD_GAME_FAIL         -> GameState.MAIN_MENU;
                 default                     -> throw invalidTransition(currentState, event);
             };
 
             case LOAD_MENU -> switch (event) {
-                case LOAD_GAME          -> GameState.IN_TOWN;
-                case CANCEL             -> GameState.MAIN_MENU;
-                default                 -> throw invalidTransition(currentState, event);
+                case LOAD_GAME              -> GameState.IN_TOWN;
+                case LOAD_GAME_FAIL, CANCEL -> GameState.MAIN_MENU;
+                default                     -> throw invalidTransition(currentState, event);
             };
 
             case CHARACTER_CREATION -> switch (event) {
@@ -28,15 +31,20 @@ public class GameStateMachine {
             };
 
             case IN_TOWN -> switch (event) {
-                case INTERACT_NPC       -> GameState.TALKING_TO_NPC;
-                case SELECT_DUNGEON     -> GameState.SELECTING_DUNGEON;
-                case LOAD_GAME          -> GameState.MAIN_MENU;
-                case REST               -> GameState.IN_TOWN;
-                default                 -> throw invalidTransition(currentState, event);
+                case INTERACT_NPC           -> GameState.TALKING_TO_NPC;
+                case SELECT_DUNGEON         -> GameState.SELECTING_DUNGEON;
+                case REST                   -> GameState.IN_TOWN;
+                case OPEN_STAT_MANAGEMENT   -> GameState.STAT_MANAGEMENT;
+                default                     -> throw invalidTransition(currentState, event);
             };
 
             case TALKING_TO_NPC -> switch (event) {
                 case LEAVE_NPC, ENTER_TOWN  -> GameState.IN_TOWN;
+                default                     -> throw invalidTransition(currentState, event);
+            };
+
+            case STAT_MANAGEMENT -> switch (event) {
+                case CANCEL, ENTER_TOWN     -> GameState.IN_TOWN;
                 default                     -> throw invalidTransition(currentState, event);
             };
 
@@ -67,6 +75,20 @@ public class GameStateMachine {
         };
 
     }
+
+    public void transition(GameEvent event) {
+        this.currentState = findNextState(this.currentState, event);
+    }
+
+    public boolean canTransition(GameEvent event) {
+        try {
+            findNextState(event);
+            return true;
+        } catch (IllegalStateException e) {
+            return false;
+        }
+    }
+
 
     private IllegalStateException invalidTransition(GameState state, GameEvent event) {
         return new IllegalStateException("Cannot trigger event " + event + " while in state " + state);

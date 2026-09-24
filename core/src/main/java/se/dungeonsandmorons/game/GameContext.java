@@ -1,16 +1,17 @@
 package se.dungeonsandmorons.game;
 
-import se.dungeonsandmorons.SaveRepository;
-import se.dungeonsandmorons.model.character.Character;
+import se.dungeonsandmorons.repository.PostgresCharacterRepository;
+import se.dungeonsandmorons.model.character.Kharacter;
 import se.dungeonsandmorons.model.combat.CombatEngine;
 import se.dungeonsandmorons.model.dungeon.Dungeon;
 import se.dungeonsandmorons.model.npc.Npc;
 import se.dungeonsandmorons.model.skill.SkillService;
 import se.dungeonsandmorons.service.DungeonService;
+import se.dungeonsandmorons.service.SaveService;
 import se.dungeonsandmorons.town.Town;
 
 public class GameContext {
-    private Character player;
+    private Kharacter player;
     private Town activeTown;
     private Npc activeNpc;
     private Dungeon activeDungeon;
@@ -19,20 +20,20 @@ public class GameContext {
 
     private final DungeonService dungeonService;
     private final SkillService skillService;
-    private final SaveRepository saveRepository;
+    private final SaveService saveService;
 
     public GameContext(GameStateMachine stateMachine,
                        DungeonService dungeonService,
                        SkillService skillService,
-                       SaveRepository saveRepository) {
+                       SaveService saveService) {
         this.stateMachine = stateMachine;
         this.dungeonService = dungeonService;
         this.skillService = skillService;
-        this.saveRepository = saveRepository;
+        this.saveService = saveService;
     }
 
-    public Character getPlayer() { return player; }
-    public void setPlayer(Character player) { this.player = player; }
+    public Kharacter getPlayer() { return player; }
+    public void setPlayer(Kharacter player) { this.player = player; }
 
     public Town getActiveTown() { return activeTown; }
     public void setActiveTown(Town activeTown) { this.activeTown = activeTown; }
@@ -50,7 +51,7 @@ public class GameContext {
     public DungeonService getDungeonService() { return dungeonService; }
 
     public SkillService getSkillService() { return skillService; }
-    public SaveRepository getSaveRepository() { return saveRepository; }
+    public SaveService getSaveService() { return saveService; }
 
 
 }
