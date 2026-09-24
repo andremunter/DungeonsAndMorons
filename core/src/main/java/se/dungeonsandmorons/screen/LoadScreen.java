@@ -16,7 +16,7 @@ public class LoadScreen implements Screen {
                 === Saved Characters ===
                 
                 """));
-        List<CharacterSummary> saves = context.getSaveRepository().fetchSaves();
+        List<CharacterSummary> saves = context.getSaveService().getAvailableSaves();
 
         if (saves != null && !saves.isEmpty()) {
             for (CharacterSummary save : saves) {

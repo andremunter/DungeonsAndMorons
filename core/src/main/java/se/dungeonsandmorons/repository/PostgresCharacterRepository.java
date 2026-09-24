@@ -3,6 +3,7 @@ package se.dungeonsandmorons.repository;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import se.dungeonsandmorons.exception.CorruptedSaveException;
 import se.dungeonsandmorons.game.GameContext;
@@ -12,17 +13,37 @@ import se.dungeonsandmorons.model.skill.Skill;
 import se.dungeonsandmorons.model.skill.SkillRegistry;
 import se.dungeonsandmorons.town.TownRegistry;
 
-public class SaveRepository {
+public class PostgresCharacterRepository implements CharacterRepository {
     //private static final String URL = "jdbc:postgresql://localhost:5432/dungeonsandmorons";
     private static final String URL = "jdbc:postgresql://ep-cool-art-b2km85jl-pooler.c-6.eu-central-1.aws.neon.tech/neondb?sslmode=require";
     private static final String USER = "neondb_owner";
     private static final String PASSWORD = "npg_pTFZ0keKunD1";
 
+    private static final String SELECT_PLAYER_SQL = """
+            SELECT id, character_class, level, experience, strength, agility, intelligence,
+            vitality, health, max_health, mana, max_mana, last_town_visited, unallocated_stat_points
+            FROM character_saves
+            WHERE name = ?;
+            """;
+
+    private static final String SELECT_DUNGEONS_SQL = """
+            SELECT dungeon_name
+            FROM character_dungeons_cleared
+            WHERE character_id = ?
+            """;
+
+    private static final String SELECT_SKILLS_SQL = """
+            SELECT skill_name
+            FROM character_skills_learned
+            WHERE character_id = ?;
+            """;
+
     private Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
-    public void save(GameContext context) {
+    @Override
+    public void save(Kharacter player, String lastTownVisited) {
         String playerSql = """
                 INSERT INTO character_saves (name, character_class, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana, last_town_visited, unallocated_stat_points, updated_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
@@ -65,22 +86,21 @@ public class SaveRepository {
 
              try (PreparedStatement charStmt = conn.prepareStatement(playerSql)) {
 
-                 charStmt.setString(1, context.getPlayer().getName());
-                 charStmt.setString(2, context.getPlayer().getCharacterClass().toString());
-                 charStmt.setInt(3, context.getPlayer().getLevel());
-                 charStmt.setInt(4, context.getPlayer().getExperience());
-                 charStmt.setInt(5, context.getPlayer().getStrength());
-                 charStmt.setInt(6, context.getPlayer().getAgility());
-                 charStmt.setInt(7, context.getPlayer().getIntelligence());
-                 charStmt.setInt(8, context.getPlayer().getVitality());
-                 charStmt.setInt(9, context.getPlayer().getCurrentHealth());
-                 charStmt.setInt(10, context.getPlayer().getMaxHealth());
-                 charStmt.setInt(11, context.getPlayer().getCurrentMana());
-                 charStmt.setInt(12, context.getPlayer().getMaxMana());
+                 charStmt.setString(1,  player.getName());
+                 charStmt.setString(2,  player.getCharacterClass().toString());
+                 charStmt.setInt(3,     player.getLevel());
+                 charStmt.setInt(4,     player.getExperience());
+                 charStmt.setInt(5,     player.getStrength());
+                 charStmt.setInt(6,     player.getAgility());
+                 charStmt.setInt(7,     player.getIntelligence());
+                 charStmt.setInt(8,     player.getVitality());
+                 charStmt.setInt(9,     player.getCurrentHealth());
+                 charStmt.setInt(10,    player.getMaxHealth());
+                 charStmt.setInt(11,    player.getCurrentMana());
+                 charStmt.setInt(12,    player.getMaxMana());
+                 charStmt.setInt(14,    player.getUnallocatedStatPoints());
 
-                 String townName = context.getActiveTown() != null ? context.getActiveTown().getName() : "Densewood";
-                 charStmt.setString(13, townName);
-                 charStmt.setInt(14, context.getPlayer().getUnallocatedStatPoints());
+                 charStmt.setString(13, lastTownVisited);
 
                  try (ResultSet rs = charStmt.executeQuery()) {
                      if (rs.next()) {
@@ -92,10 +112,10 @@ public class SaveRepository {
                  }
              }
 
-             if (context.getPlayer().getClearedDungeons() != null && !context.getPlayer().getClearedDungeons().isEmpty()) {
+             if (player.getClearedDungeons() != null && !player.getClearedDungeons().isEmpty()) {
 
                  try (PreparedStatement dungeonStmt = conn.prepareStatement(dungeonSql)) {
-                     for (String dungeon : context.getPlayer().getClearedDungeons()) {
+                     for (String dungeon : player.getClearedDungeons()) {
                          dungeonStmt.setInt(1, characterId);
                          dungeonStmt.setString(2, dungeon);
                          dungeonStmt.addBatch();
@@ -104,10 +124,10 @@ public class SaveRepository {
                  }
              }
 
-             if (context.getPlayer().getSkills() != null && !context.getPlayer().getSkills().isEmpty()) {
+             if (player.getSkills() != null && !player.getSkills().isEmpty()) {
 
                  try (PreparedStatement skillStmt = conn.prepareStatement(skillSql)) {
-                     for (Skill skill : context.getPlayer().getSkills()) {
+                     for (Skill skill : player.getSkills()) {
                          skillStmt.setInt(1, characterId);
                          skillStmt.setString(2, skill.getName());
                          skillStmt.addBatch();
@@ -117,7 +137,7 @@ public class SaveRepository {
              }
 
              conn.commit();
-             IO.println(String.format("Successfully saved '%s'.", context.getPlayer().getName()));
+             IO.println(String.format("Successfully saved '%s'.", player.getName()));
 
         } catch (SQLException e) {
             System.err.println("Failed to save character: " + e.getMessage());
@@ -140,91 +160,97 @@ public class SaveRepository {
         }
     }
 
-    public boolean load(GameContext context, String name) {
-        String playerSql    = "SELECT id, character_class, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana, last_town_visited, unallocated_stat_points FROM character_saves WHERE name = ?";
-        String dungeonSql   = "SELECT dungeon_name FROM character_dungeons_cleared WHERE character_id = ?";
-        String skillSql     = "SELECT skill_name FROM character_skills_learned WHERE character_id = ?";
+    @Override
+    public Optional<CharacterSaveData> findByName(String name) {
 
         try (Connection conn = getConnection();
-                PreparedStatement playerStmt = conn.prepareStatement(playerSql)) {
+                PreparedStatement playerStmt = conn.prepareStatement(SELECT_PLAYER_SQL)) {
 
                 playerStmt.setString(1, name);
 
                 try (ResultSet rs = playerStmt.executeQuery()) {
                     if (!rs.next()) {
-                        return false;
+                        return Optional.empty();
                     }
 
-                    int characterId             = rs.getInt("id");
-                    int level                   = rs.getInt("level");
-                    String className            = rs.getString("character_class");
-                    int experience              = rs.getInt("experience");
-                    int strength                = rs.getInt("strength");
-                    int agility                 = rs.getInt("agility");
-                    int intelligence            = rs.getInt("intelligence");
-                    int vitality                = rs.getInt("vitality");
-                    int health                  = rs.getInt("health");
-                    int maxHealth              = rs.getInt("max_health");
-                    int mana                    = rs.getInt("mana");
-                    int maxMana                = rs.getInt("max_mana");
-                    int unallocated_stat_points = rs.getInt("unallocated_stat_points");
-                    String last_town_visited    = rs.getString("last_town_visited");
+                    int characterId             = rs.getInt(    "id");
+                    int level                   = rs.getInt(    "level");
+                    String className            = rs.getString( "character_class");
+                    int experience              = rs.getInt(    "experience");
+                    int strength                = rs.getInt(    "strength");
+                    int agility                 = rs.getInt(    "agility");
+                    int intelligence            = rs.getInt(    "intelligence");
+                    int vitality                = rs.getInt(    "vitality");
+                    int health                  = rs.getInt(    "health");
+                    int maxHealth               = rs.getInt(    "max_health");
+                    int mana                    = rs.getInt(    "mana");
+                    int maxMana                 = rs.getInt(    "max_mana");
+                    int unallocatedStatPoints = rs.getInt(    "unallocated_stat_points");
+                    String lastTownVisited    = rs.getString( "last_town_visited");
 
-                    CharacterClass characterClass;
-                    try {
-                        if (className == null) {
-                            throw new IllegalArgumentException("Class name in database is null");
-                        }
-                        characterClass = CharacterClass.valueOf(className.toUpperCase());
-                    } catch (IllegalArgumentException e) {
-                        throw new CorruptedSaveException(
-                                String.format("Failed to load character '%s': Unknown or invalid class '%s'",
-                                        name, className), e
-                        );
-                    }
+                    CharacterClass characterClass = parseCharacterClass(name, className);
 
                     Kharacter player = new Kharacter(
                             characterId, name, characterClass, level, experience,
-                            unallocated_stat_points, strength, agility, intelligence,
-                            vitality, health, maxHealth, mana, maxMana);
+                            unallocatedStatPoints, strength, agility, intelligence,
+                            vitality, health, maxHealth, mana, maxMana
+                    );
 
-                    List<String> clearedDungeons = new ArrayList<>();
-                    try (PreparedStatement dungeonStmt = conn.prepareStatement(dungeonSql)) {
-                        dungeonStmt.setInt(1, characterId);
-                        try (ResultSet dungeonRs = dungeonStmt.executeQuery()) {
-                            while (dungeonRs.next()) {
-                                clearedDungeons.add(dungeonRs.getString("dungeon_name"));
-                            }
-                            player.setClearedDungeons(clearedDungeons);
-                        }
-                    }
+                    player.setClearedDungeons(loadClearedDungeons(conn, characterId, player));
+                    loadLearnedSkills(conn, characterId, player);
 
-                    try (PreparedStatement skillStmt = conn.prepareStatement(skillSql)) {
-                        skillStmt.setInt(1, characterId);
-                        try (ResultSet skillRs = skillStmt.executeQuery()) {
-                            while (skillRs.next()) {
-                                player.learnSkill(SkillRegistry.get(skillRs.getString("skill_name")));
-                            }
-                        }
-                    }
-
-                    context.setPlayer(player);
-                    if (last_town_visited != null) {
-                        context.setActiveTown(TownRegistry.get(last_town_visited));
-                    } else {
-                        context.setActiveTown(TownRegistry.get("Densewood"));
-                    }
-
-                    return true;
+                    return Optional.of(new CharacterSaveData(player, lastTownVisited));
                 }
 
         } catch (SQLException e) {
             System.err.println("Failed to load character: " + e.getMessage());
-            return false;
+            return Optional.empty();
         }
     }
 
-    public List<CharacterSummary> fetchSaves() {
+
+
+
+    private static void loadLearnedSkills(Connection conn, int characterId, Kharacter player) throws SQLException {
+        try (PreparedStatement skillStmt = conn.prepareStatement(SELECT_SKILLS_SQL)) {
+            skillStmt.setInt(1, characterId);
+            try (ResultSet skillRs = skillStmt.executeQuery()) {
+                while (skillRs.next()) {
+                    player.learnSkill(SkillRegistry.get(skillRs.getString("skill_name")));
+                }
+            }
+        }
+    }
+
+    private List<String> loadClearedDungeons(Connection conn, int characterId, Kharacter player) throws SQLException {
+        List<String> clearedDungeons = new ArrayList<>();
+        try (PreparedStatement dungeonStmt = conn.prepareStatement(SELECT_DUNGEONS_SQL)) {
+            dungeonStmt.setInt(1, characterId);
+            try (ResultSet dungeonRs = dungeonStmt.executeQuery()) {
+                while (dungeonRs.next()) {
+                    clearedDungeons.add(dungeonRs.getString("dungeon_name"));
+                }
+            }
+        }
+        return clearedDungeons;
+    }
+
+    private CharacterClass parseCharacterClass(String name, String className) {
+        if (className == null) {
+            throw new IllegalArgumentException("Class name in database is null");
+        }
+
+        try {
+            return CharacterClass.valueOf(className.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new CorruptedSaveException(
+                    String.format("Failed to load character '%s': Unknown or invalid class '%s'",
+                            name, className), e
+            );
+        }
+    }
+
+    public List<CharacterSummary> findAllSummaries() {
         List<CharacterSummary> saves = new ArrayList<>();
 
         String sql = "SELECT name, character_class, level FROM character_saves WHERE id >= 0";
