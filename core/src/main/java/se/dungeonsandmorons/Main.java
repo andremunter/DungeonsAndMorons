@@ -1,6 +1,6 @@
 package se.dungeonsandmorons;
 
-import se.dungeonsandmorons.database.SaveRepository;
+import se.dungeonsandmorons.repository.SaveRepository;
 import se.dungeonsandmorons.game.GameContext;
 import se.dungeonsandmorons.game.GameLoop;
 import se.dungeonsandmorons.game.GameStateMachine;

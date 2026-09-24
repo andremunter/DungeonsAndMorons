@@ -1,4 +1,4 @@
-package se.dungeonsandmorons.database;
+package se.dungeonsandmorons.repository;
 
 public record CharacterSummary(String name, String characterClass, int level) {
     @Override

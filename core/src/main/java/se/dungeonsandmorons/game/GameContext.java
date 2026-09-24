@@ -1,6 +1,6 @@
 package se.dungeonsandmorons.game;
 
-import se.dungeonsandmorons.database.SaveRepository;
+import se.dungeonsandmorons.repository.SaveRepository;
 import se.dungeonsandmorons.model.character.Kharacter;
 import se.dungeonsandmorons.model.combat.CombatEngine;
 import se.dungeonsandmorons.model.dungeon.Dungeon;

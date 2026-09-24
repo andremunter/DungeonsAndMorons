@@ -1,6 +1,6 @@
 package se.dungeonsandmorons.screen;
 
-import se.dungeonsandmorons.database.CharacterSummary;
+import se.dungeonsandmorons.repository.CharacterSummary;
 import se.dungeonsandmorons.exception.CorruptedSaveException;
 import se.dungeonsandmorons.game.GameContext;
 import se.dungeonsandmorons.game.GameEvent;

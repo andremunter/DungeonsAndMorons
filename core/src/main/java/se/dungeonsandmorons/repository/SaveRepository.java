@@ -1,4 +1,4 @@
-package se.dungeonsandmorons.database;
+package se.dungeonsandmorons.repository;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,7 +12,6 @@ import se.dungeonsandmorons.model.skill.Skill;
 import se.dungeonsandmorons.model.skill.SkillRegistry;
 import se.dungeonsandmorons.town.TownRegistry;
 
-// TODO: Change SaveRepository to non-static
 public class SaveRepository {
     //private static final String URL = "jdbc:postgresql://localhost:5432/dungeonsandmorons";
     private static final String URL = "jdbc:postgresql://ep-cool-art-b2km85jl-pooler.c-6.eu-central-1.aws.neon.tech/neondb?sslmode=require";

@@ -30,7 +30,7 @@ public class GameLoop {
             Screen currentScreen = screens.get(currentState);
 
             if (currentScreen == null) {
-                throw new IllegalStateException("No screen mapped for state: NULL");
+                throw new IllegalStateException("No screen mapped for state: " + currentState);
             }
 
             currentScreen.display(context);
