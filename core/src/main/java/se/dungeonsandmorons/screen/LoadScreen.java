@@ -11,11 +11,11 @@ public class LoadScreen implements Screen {
 
     @Override
     public void display(GameContext context) {
-        IO.print(String.format("""
+        IO.print("""
                 
                 === Saved Characters ===
                 
-                """));
+                """);
         List<CharacterSummary> saves = context.getSaveService().getAvailableSaves();
 
         if (saves != null && !saves.isEmpty()) {
@@ -44,7 +44,7 @@ public class LoadScreen implements Screen {
         }
 
         try {
-            boolean success = context.getSaveRepository().load(context, trimmed);
+            boolean success = context.getSaveService().loadGame(context, trimmed);
             if (success) {
                 IO.println(String.format("Successfully loaded %s.", trimmed));
                 context.getStateMachine().transition(GameEvent.LOAD_GAME);

@@ -3,6 +3,7 @@ package se.dungeonsandmorons.service;
 import se.dungeonsandmorons.game.GameContext;
 import se.dungeonsandmorons.repository.CharacterRepository;
 import se.dungeonsandmorons.repository.CharacterSummary;
+import se.dungeonsandmorons.town.TownRegistry;
 
 import java.util.List;
 
@@ -21,12 +22,19 @@ public class SaveService {
         repository.save(context.getPlayer(), townName);
     }
 
-    public List<CharacterSummary> getAvailableSaves() {
-        return repository.findAllSummaries();
+    public boolean loadGame(GameContext context, String playerName) {
+        return repository.findByName(playerName).map(saveData -> {
+            context.setPlayer(saveData.player());
+            String town = saveData.lastTownVisited() != null
+                    ? saveData.lastTownVisited()
+                    : "Densewood";
+            context.setActiveTown(TownRegistry.get(town));
+            return true;
+        }).orElse(false);
     }
 
-    public boolean loadGame(GameContext context, String playerName) {
-
+    public List<CharacterSummary> getAvailableSaves() {
+        return repository.findAllSummaries();
     }
 
 }
