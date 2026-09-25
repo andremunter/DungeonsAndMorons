@@ -10,8 +10,13 @@ springBoot {
 
 dependencies {
     implementation(project(":core"))
+
+    implementation(platform("org.springframework.boot:spring-boot-dependencies:3.4.0"))
+
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
+
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.0")
+
     runtimeOnly("org.postgresql:postgresql")
 }

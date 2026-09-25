@@ -1,5 +1,7 @@
 package se.dungeonsandmorons.web.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,7 @@ import se.dungeonsandmorons.web.dto.CreateCharacterRequest;
 import java.net.URI;
 import java.util.List;
 
+@Tag(name = "Characters", description = "Character save and retrieval operations")
 @RestController
 @RequestMapping("/api/characters")
 public class CharacterController {
@@ -23,11 +26,13 @@ public class CharacterController {
         this.saveService = saveService;
     }
 
+    @Operation(summary = "List all saved characters")
     @GetMapping
     public List<CharacterSummary> getAllSaves() {
         return saveService.getAvailableSaves();
     }
 
+    @Operation(summary = "Get full character profile by name")
     @GetMapping("/{name}")
     public ResponseEntity<CharacterSaveData> getCharacter(@PathVariable String name) {
         return saveService.loadGame(name)
@@ -35,15 +40,17 @@ public class CharacterController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @Operation(summary = "Create and save a new character")
     @PostMapping
     public ResponseEntity<?> createCharacter(@RequestBody CreateCharacterRequest request) {
         if (request.name() == null || request.name().isBlank()) {
             return ResponseEntity.badRequest().body("Character name cannot be blank");
         }
 
-        if (saveService.saveExists(request.name().trim())) {
+        String trimmedName = request.name().trim();
+        if (saveService.saveExists(trimmedName)) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("A character with the name '" + request.name() + "' already exists.");
+                    .body("A character with the name '" + trimmedName + "' already exists.");
         }
 
         CharacterClass chosenClass;
@@ -53,7 +60,7 @@ public class CharacterController {
              return ResponseEntity.badRequest().body("Invalid character class: " + request.characterClass());
         }
 
-        Kharacter newCharacter = new Kharacter(request.name().trim(), chosenClass);
+        Kharacter newCharacter = new Kharacter(trimmedName, chosenClass);
         String startingTown = "Densewood";
 
         saveService.saveGame(newCharacter, startingTown);
@@ -67,6 +74,7 @@ public class CharacterController {
         ));
     }
 
+    @Operation(summary = "Delete a character save")
     @DeleteMapping("/{name}")
     public ResponseEntity<Void> deleteCharacter(@PathVariable String name) {
         boolean deleted = saveService.deleteSave(name);
