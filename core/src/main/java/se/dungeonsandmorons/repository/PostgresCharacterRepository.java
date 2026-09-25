@@ -82,7 +82,7 @@ public class PostgresCharacterRepository implements CharacterRepository {
             """;
 
     private static final String SELECT_ALL_SUMMARIES_SQL = """
-            SELECT name, character_class, level
+            SELECT name, character_class, level, last_town_visited
             FROM character_saves
             ORDER BY name;
             """;
@@ -182,7 +182,7 @@ public class PostgresCharacterRepository implements CharacterRepository {
                         rs.getString("name"),
                         rs.getString("character_class"),
                         rs.getInt("level"),
-                        rs.getString("lastActiveTown")
+                        rs.getString("last_town_visited")
                 ));
             }
 

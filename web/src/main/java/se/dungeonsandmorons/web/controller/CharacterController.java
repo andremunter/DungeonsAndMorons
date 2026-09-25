@@ -2,6 +2,7 @@ package se.dungeonsandmorons.web.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +43,7 @@ public class CharacterController {
 
     @Operation(summary = "Create and save a new character")
     @PostMapping
-    public ResponseEntity<?> createCharacter(@RequestBody CreateCharacterRequest request) {
+    public ResponseEntity<?> createCharacter(@Valid @RequestBody CreateCharacterRequest request) {
         if (request.name() == null || request.name().isBlank()) {
             return ResponseEntity.badRequest().body("Character name cannot be blank");
         }
