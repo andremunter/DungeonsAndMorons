@@ -6,12 +6,14 @@ import se.dungeonsandmorons.repository.CharacterRepository;
 import se.dungeonsandmorons.repository.PostgresCharacterRepository;
 import se.dungeonsandmorons.service.SaveService;
 
+import javax.sql.DataSource;
+
 @Configuration
 public class CoreConfig {
 
     @Bean
-    public CharacterRepository characterRepository() {
-        return new PostgresCharacterRepository();
+    public CharacterRepository characterRepository(DataSource dataSource) {
+        return new PostgresCharacterRepository(dataSource);
     }
 
     @Bean

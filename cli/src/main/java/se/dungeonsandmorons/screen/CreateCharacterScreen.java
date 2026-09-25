@@ -32,7 +32,7 @@ public class CreateCharacterScreen implements Screen {
         }
 
         if (!trimmed.toLowerCase().startsWith("create ")) {
-            IO.println("Inavalid format. Use: create <name> <class>");
+            IO.println("Invalid format. Use: create <name> <class>");
             return;
         }
 

@@ -11,7 +11,11 @@ import se.dungeonsandmorons.model.character.Kharacter;
 import se.dungeonsandmorons.model.character.CharacterClass;
 import se.dungeonsandmorons.model.skill.SkillRegistry;
 
+import javax.sql.DataSource;
+
 public class PostgresCharacterRepository implements CharacterRepository {
+
+    private final DataSource dataSource;
 
     private static final String INSERT_PLAYER_SQL = """
             INSERT INTO character_saves (name, character_class, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana, last_town_visited, unallocated_stat_points, updated_at)
@@ -83,9 +87,24 @@ public class PostgresCharacterRepository implements CharacterRepository {
             ORDER BY name;
             """;
 
+    public PostgresCharacterRepository(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public PostgresCharacterRepository() {
+        this.dataSource = null;
+    }
+
+    private Connection getConnection() throws SQLException {
+        if (dataSource != null) {
+            return dataSource.getConnection();
+        }
+        return DatabaseConnection.getConnection();
+    }
+
     @Override
     public void save(Kharacter player, String lastTownVisited) {
-        try (Connection conn = DatabaseConnection.getConnection()) {
+        try (Connection conn = getConnection()) {
             conn.setAutoCommit(false);
 
             try {
@@ -105,7 +124,7 @@ public class PostgresCharacterRepository implements CharacterRepository {
     @Override
     public Optional<CharacterSaveData> findByName(String name) {
 
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = getConnection();
                 PreparedStatement playerStmt = conn.prepareStatement(SELECT_PLAYER_SQL)) {
 
                 playerStmt.setString(1, name);
@@ -154,7 +173,7 @@ public class PostgresCharacterRepository implements CharacterRepository {
     public List<CharacterSummary> findAllSummaries() {
         List<CharacterSummary> saves = new ArrayList<>();
 
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(SELECT_ALL_SUMMARIES_SQL);
              ResultSet rs = stmt.executeQuery()) {
 
@@ -162,7 +181,8 @@ public class PostgresCharacterRepository implements CharacterRepository {
                 saves.add(new CharacterSummary(
                         rs.getString("name"),
                         rs.getString("character_class"),
-                        rs.getInt("level")
+                        rs.getInt("level"),
+                        rs.getString("lastActiveTown")
                 ));
             }
 
@@ -179,7 +199,7 @@ public class PostgresCharacterRepository implements CharacterRepository {
             return false;
         }
 
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(DELETE_PLAYER_SQL)) {
 
             stmt.setString(1, name);
@@ -198,7 +218,7 @@ public class PostgresCharacterRepository implements CharacterRepository {
             return false;
         }
 
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(EXISTS_PLAYER_SQL)) {
 
             stmt.setString(1, name);

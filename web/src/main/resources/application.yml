@@ -10,5 +10,13 @@ spring:
     password: ${DB_PASSWORD:npg_pTFZ0keKunD1}
     driver-class-name: org.postgresql.Driver
     hikari:
+      pool-name: DungeonsHikariPool
       maximum-pool-size: 5
       minimum-idle: 1
+      idle-timeout: 300000
+      connection-timeout: 20000
+      max-lifetime: 1200000
+
+logging:
+  level:
+    com.zaxxer.hikari: DEBUG
