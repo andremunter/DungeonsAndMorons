@@ -49,4 +49,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
+    @ExceptionHandler(se.dungeonsandmorons.exception.CreateNullDungeonException.class)
+    public ResponseEntity<ApiErrorResponse> handleDungeonNotFound(se.dungeonsandmorons.exception.CreateNullDungeonException ex) {
+        ApiErrorResponse error = new ApiErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
 }
