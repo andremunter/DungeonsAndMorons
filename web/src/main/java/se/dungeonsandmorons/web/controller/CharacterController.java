@@ -11,6 +11,7 @@ import se.dungeonsandmorons.model.character.Kharacter;
 import se.dungeonsandmorons.repository.CharacterSaveData;
 import se.dungeonsandmorons.repository.CharacterSummary;
 import se.dungeonsandmorons.service.SaveService;
+import se.dungeonsandmorons.web.dto.AllocateStatsRequest;
 import se.dungeonsandmorons.web.dto.CreateCharacterRequest;
 
 import java.net.URI;
@@ -80,6 +81,37 @@ public class CharacterController {
     public ResponseEntity<Void> deleteCharacter(@PathVariable String name) {
         boolean deleted = saveService.deleteSave(name);
         return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+
+    @Operation(summary = "Allocate unallocated stat points to a character")
+    @PatchMapping("/{name}/stats")
+    public ResponseEntity<CharacterSaveData> allocateStats(
+            @PathVariable String name,
+            @Valid @RequestBody AllocateStatsRequest request
+    ) {
+        var saveOpt = saveService.loadGame(name);
+        if (saveOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        CharacterSaveData saveData = saveOpt.get();
+        Kharacter player = saveData.player();
+
+        if (request.totalPoints() == 0) {
+            throw new IllegalArgumentException("You must allocate at least 1 stat point.");
+        }
+
+        if (request.totalPoints() > player.getUnallocatedStatPoints()) {
+            throw new IllegalArgumentException(String.format(
+                    "Cannot allocate %d points. Character '%s' only has %d unallocated points.",
+                    request.totalPoints(), name, player.getUnallocatedStatPoints()
+            ));
+        }
+
+        player.allocateStats(request.strength(), request.agility(), request.intelligence(), request.vitality());
+        saveService.saveGame(player, saveData.lastTownVisited());
+
+        return ResponseEntity.ok(new CharacterSaveData(player, saveData.lastTownVisited()));
     }
 
 }

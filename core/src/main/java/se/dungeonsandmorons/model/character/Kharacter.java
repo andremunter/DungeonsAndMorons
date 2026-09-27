@@ -100,6 +100,19 @@ public class Kharacter implements Combatant {
         return true;
     }
 
+    // For Spring
+    public void allocateStats (int str, int agi, int intel, int vit) {
+        int total = str + agi + intel + vit;
+        if (total <= 0) {
+            throw new IllegalArgumentException(String.format(
+                    "Cannot allocated %d points; only %d unallocated points available",
+                    total, this.unallocatedStatPoints
+            ));
+        }
+
+        // TODO: Calculate max health, etc..
+    }
+
     public boolean isFirstTimeDungeon() {
         return firstTimeDungeon;
     }
