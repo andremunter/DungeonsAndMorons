@@ -20,13 +20,18 @@ public class Rotworm extends Monster implements Combatant {
 
     }
 
-    public boolean takeDamage(int amount, Combatant attacker) {
-        this.currentHealth = Math.max(0, this.currentHealth - amount);
-        if (!isAlive()) {
-            if(attacker instanceof Kharacter atker) {
-                atker.addExperience(expOnDeath);
-            }
+    @Override
+    public int takeDamage(int rawDamage, Combatant attacker) {
+        int k = 100 + (15 * this.level);
+        double mitigationFactor = (double) k / (k + Math.max(0, this.getArmor()));
+        int finalDamage = Math.max(1, (int) Math.round(rawDamage * mitigationFactor));
+
+        this.currentHealth = Math.max(0, this.currentHealth - finalDamage);
+
+        if (!isAlive() && attacker instanceof Kharacter player) {
+            player.addExperience(this.expOnDeath);
         }
-        return isDead();
+
+        return finalDamage;
     }
 }

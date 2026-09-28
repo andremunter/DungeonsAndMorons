@@ -4,6 +4,5 @@ public enum Attribute {
     STRENGTH,
     AGILITY,
     INTELLIGENCE,
-    VITALITY,
-    NONE
+    VITALITY
 }

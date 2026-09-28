@@ -4,7 +4,7 @@ import se.dungeonsandmorons.model.Attribute;
 
 public enum CharacterClass {
     WARRIOR(
-            Attribute.STRENGTH, // Primary Attribute, for damage scaling
+            Attribute.STRENGTH, // Primary Attribute, for baseDamage scaling
             5,                  // Unallocated stat points per level
             6,                  // HP gained per vitality
             2                   // Mana gained per int

@@ -1,5 +1,6 @@
-package se.dungeonsandmorons.model.skill;
+package se.dungeonsandmorons.service;
 import se.dungeonsandmorons.model.character.Kharacter;
+import se.dungeonsandmorons.model.skill.Skill;
 
 import java.util.List;
 

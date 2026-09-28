@@ -4,7 +4,7 @@ import se.dungeonsandmorons.repository.PostgresCharacterRepository;
 import se.dungeonsandmorons.game.GameContext;
 import se.dungeonsandmorons.game.GameLoop;
 import se.dungeonsandmorons.game.GameStateMachine;
-import se.dungeonsandmorons.model.skill.SkillService;
+import se.dungeonsandmorons.service.SkillService;
 import se.dungeonsandmorons.service.DungeonService;
 import se.dungeonsandmorons.service.SaveService;
 

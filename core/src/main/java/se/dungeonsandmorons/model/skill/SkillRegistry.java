@@ -32,7 +32,7 @@ public class SkillRegistry {
 
         // MAGE SKILLS
         register(new Skill("Basic Magic Attack", 4, 0,
-                Attribute.STRENGTH, 1, TargetType.SINGLE_TARGET,
+                Attribute.INTELLIGENCE, 1, TargetType.SINGLE_TARGET,
                 Set.of(SkillTag.RANGED, SkillTag.FIRE), Set.of(
                         CharacterClass.MAGICIAN
         )));

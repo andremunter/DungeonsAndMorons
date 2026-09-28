@@ -9,13 +9,14 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class Monster implements Combatant {
     private static final double HP_GROWTH_PER_LEVEL = 0.14;
-    private static final double DMG_GROWTH_PER_LEVEL = 0.1;
+    private static final double DMG_GROWTH_PER_LEVEL = 0.08;
     private static final double EXP_GROWTH_PER_LEVEL = 0.16;
 
     protected final String name;
     protected int level;
     private int maxHealth;
     protected int currentHealth;
+    protected int armor;
     protected int expOnDeath;
     protected MonsterRarity rarity;
     protected List<MonsterAction> actions = new ArrayList<>();
@@ -28,9 +29,6 @@ public abstract class Monster implements Combatant {
 
         double levelHp = baseHealth * (1.0 + (levelOffset * HP_GROWTH_PER_LEVEL));
         double levelExp = baseExp * (1.0 + (levelOffset * EXP_GROWTH_PER_LEVEL));
-
-        // TODO: Should be calced when using skills
-        double levelDmg = baseHealth * (1.0 + (levelOffset * DMG_GROWTH_PER_LEVEL));
 
         this.maxHealth = (int) Math.round(levelHp * rarity.getHealthMultiplier());
         this.expOnDeath = (int) Math.round(levelExp * rarity.getExperienceMultiplier());
@@ -61,11 +59,21 @@ public abstract class Monster implements Combatant {
         return actions.getFirst();
     }
 
+    public int calculateActionDamage(MonsterAction action) {
+        int levelOffset = Math.max(0, this.level - 1);
+        double levelMultiplier = Math.pow(1.0 + DMG_GROWTH_PER_LEVEL, levelOffset);
+        double rarityMultiplier = this.rarity.getDamageMultiplier();
+
+        return (int) Math.round(action.baseDamage() * levelMultiplier * rarityMultiplier);
+    }
+
     public boolean isAlive() { return this.currentHealth > 0; }
 
     public String getName() { return this.name;}
     public int getMaxHealth(){ return this.maxHealth; }
     public int getCurrentHealth() { return this.currentHealth; }
+    public int getArmor() { return armor; }
+
     public int getDeathExperience() { return this.expOnDeath; }
     public MonsterRarity getRarity() { return this.rarity; }
 

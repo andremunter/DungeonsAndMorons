@@ -4,7 +4,7 @@ import se.dungeonsandmorons.model.character.Kharacter;
 import se.dungeonsandmorons.combat.CombatEngine;
 import se.dungeonsandmorons.model.dungeon.Dungeon;
 import se.dungeonsandmorons.model.npc.Npc;
-import se.dungeonsandmorons.model.skill.SkillService;
+import se.dungeonsandmorons.service.SkillService;
 import se.dungeonsandmorons.service.DungeonService;
 import se.dungeonsandmorons.service.SaveService;
 import se.dungeonsandmorons.town.Town;

@@ -28,6 +28,8 @@ public class Kharacter implements Combatant {
     private int intelligence;
     private int vitality;
 
+    private int armor;
+
     private final int healthPerLevel = 3;
     private final int manaPerLevel = 2;
     private final int healthPerVitality = 5;
@@ -43,6 +45,9 @@ public class Kharacter implements Combatant {
     protected List<Skill> skills = new ArrayList<>();
     private final List<String> clearedDungeons = new ArrayList<>();
 
+    private final double DMG_GROWTH_PER_LEVEL = 0.08;
+    private final int BASE_UNARMED_DAMAGE = 5;
+
     public Kharacter(String name, CharacterClass characterClass) {
         this.name = name;
         this.characterClass = characterClass;
@@ -57,6 +62,7 @@ public class Kharacter implements Combatant {
         agility = 0;
         intelligence = 0;
         vitality = 0;
+        armor = 0;
 
     }
 
@@ -119,13 +125,60 @@ public class Kharacter implements Combatant {
         return this.currentHealth > 0;
     }
 
-    public void attack(Combatant attacker, Skill skill) {
 
+    public int attack(Combatant target, Skill skill) {
+        if (target == null) {
+            throw new IllegalArgumentException("Cannot attack a null target");
+        }
+
+        if (skill != null) {
+            if (this.currentMana < skill.getResourceCost()) {
+                throw new IllegalStateException(String.format(
+                        "Not enough mana to cast %s. Required: %d, Available: %d",
+                        skill.name(), skill.getResourceCost(), this.currentMana
+                ));
+            }
+            this.currentMana -= skill.getResourceCost();
+        }
+
+        int rawDamage = calculateRawDamage(skill);
+        return target.takeDamage(rawDamage, this);
     }
 
-    public boolean takeDamage(int amount, Combatant attacker) {
-        this.currentHealth = Math.max(0, this.currentHealth - amount);
-        return isDead();
+    private int calculateRawDamage(Skill skill) {
+        int levelOffset = Math.max(0, this.level - 1);
+        double levelMultiplier = Math.pow(1.0 + DMG_GROWTH_PER_LEVEL, levelOffset);
+
+        int baseDmg;
+        int statScalingBonus;
+
+        if (skill != null) {
+            baseDmg = skill.getBaseDamage();
+            int statValue = getAttributeValue(skill.getScalingAttribute());
+            statScalingBonus = statValue * skill.getAttributeDamageMultiplier();
+        } else {
+            // Fallback unarmed attack scales with str by default
+            baseDmg = BASE_UNARMED_DAMAGE;
+            statScalingBonus = this.strength;
+        }
+
+        // TODO: Weapon scaling, int weaponDamage = getEquippedWeaponDamage.. etc
+
+        int combinedBase = baseDmg + statScalingBonus;
+
+        return (int) Math.round(combinedBase * levelMultiplier);
+    }
+
+    @Override
+    public int takeDamage(int rawDamage, Combatant attacker) {
+
+        int k = 100 + (15 * this.level);
+        double mitigationFactor = (double) k / (k + Math.max(0, this.armor));
+        int finalDamage = Math.max(1, (int) Math.round(rawDamage * mitigationFactor));
+
+        this.currentHealth = Math.max(0, this.currentHealth - finalDamage);
+
+        return finalDamage;
     }
 
     public void levelUp() {
@@ -198,6 +251,19 @@ public class Kharacter implements Combatant {
         }
 
         return skills.contains(skill);
+    }
+
+    public int getAttributeValue(Attribute attribute) {
+        if (attribute == null) {
+            return 0;
+        }
+
+        return switch (attribute) {
+            case STRENGTH       -> this.strength;
+            case AGILITY        -> this.agility;
+            case INTELLIGENCE   -> this.intelligence;
+            case VITALITY       -> this.vitality;
+        };
     }
 
     public void setClearedDungeons(List<String> dungeons) {

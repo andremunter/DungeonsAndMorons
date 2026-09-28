@@ -8,7 +8,7 @@ import java.util.Set;
 
 public record MonsterAction(
         String name,
-        int damage,
+        int baseDamage,
         int weight,
         Set<SkillTag> tags,
         String flavorText

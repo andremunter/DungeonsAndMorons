@@ -2,10 +2,10 @@ package se.dungeonsandmorons.model.monster;
 
 public enum MonsterRarity {
     NORMAL(1.0, 1.0, 1.0),
-    MAGIC(1.2, 1.2, 1.2),
-    RARE(1.4, 1.5, 1.5),
-    EPIC(1.8, 2, 1.8),
-    BOSS(5, 4, 3.5);
+    MAGIC(1.2, 1.15, 1.2),
+    RARE(1.4, 1.35, 1.5),
+    EPIC(1.8, 1.6, 1.8),
+    BOSS(5, 2, 3.5);
 
     private final double healthMultiplier;
     private final double damageMultiplier;

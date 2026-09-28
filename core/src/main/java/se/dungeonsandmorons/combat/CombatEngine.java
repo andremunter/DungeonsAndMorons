@@ -5,11 +5,16 @@ import se.dungeonsandmorons.model.monster.Monster;
 import se.dungeonsandmorons.model.monster.MonsterAction;
 import se.dungeonsandmorons.model.skill.Skill;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class CombatEngine {
     private final Kharacter player;
     private final Monster monster;
     private CombatState state;
     private int roundCount;
+    private final List<String> combatLog = new ArrayList<>();
 
     public CombatEngine(Kharacter player, Monster monster) {
         this.player = player;
@@ -37,10 +42,16 @@ public class CombatEngine {
 
         switch (action) {
             // TODO: Separate Attack and Cast. Dunno yet how. Cast should be like a magicians Firebolt or a Buff
-            case ATTACK, CAST -> player.attack(monster, skill);
+            case ATTACK, CAST -> {
+                int damageDealt = player.attack(monster, skill);
+                combatLog.add(String.format("You used %s on %s for %d damage.",
+                        skill != null ? skill.name() : "Basic Attack", monster.getName(), damageDealt
+                        ));
+            }
             case RUN    -> {
                 // TODO: Some kind of escape odds calculation?
                 this.state = CombatState.ESCAPED;
+                combatLog.add("You escaped from battle!");
                 return;
             }
         }
@@ -48,6 +59,8 @@ public class CombatEngine {
         if (!monster.isAlive()) {
             // TODO: CombatState.VICTORY -> CombatState.LOOT? How to handle looting hmm?
             this.state = CombatState.VICTORY;
+            combatLog.add(String.format("You defeated %s and earned %d experience",
+                    monster.getName(), monster.getDeathExperience()));
         } else {
             this.state = CombatState.RESOLVING_ENEMY_ACTION;
             resolveEnemyTurn();
@@ -63,19 +76,20 @@ public class CombatEngine {
 
         if (monster.isAlive()) {
             MonsterAction action = monster.chooseAction();
-
             if (action == null) {
                 throw new NullPointerException(String.format("%s have no actions registered.", monster.getName()));
             }
 
-            int damage = action.damage();
-            player.takeDamage(damage, monster);
-            System.out.println(String.format("%s used %s for %d damage", monster.getName(), action.name(), damage));
+            int rawDamage = monster.calculateActionDamage(action);
+            int finalDamage = player.takeDamage(rawDamage, monster);
+            combatLog.add(String.format("%s used %s for %d damage!",
+                    monster.getName(), action.name(), finalDamage));
         }
 
         if (!player.isAlive()) {
             // TODO: Some kind of evaluation of loss of exp, loot, etc.
             this.state = CombatState.DEFEAT;
+            combatLog.add("You were slain in battle...");
         } else {
             this.roundCount++;
             this.state = CombatState.ROUND_START;
@@ -87,7 +101,5 @@ public class CombatEngine {
     public int getRoundCount() { return roundCount; }
     public Kharacter getPlayer() { return player; }
     public Monster getEnemy() { return monster; }
-
-
-
+    public List<String> getCombatLog() { return Collections.unmodifiableList(combatLog); }
 }
