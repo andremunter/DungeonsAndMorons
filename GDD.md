@@ -118,12 +118,12 @@ $$\text{actionDamage} = \text{round}\left( \text{baseActionDamage} \times (1 + g
 ### 4.2.3 Monster Rarity Matrix & Time-To-Kill (TTK)
 Rarity multipliers modify health pools, offensive threat, and player reward scaling to match intended encounter durations:
 
-| Rarity Tier | Health Multiplier ($M_{hp}$) | Damage Multiplier ($M_{dmg}$) | EXP Multiplier ($M_{exp}$) | Target TTK (Rounds) |
-| :--- | :--- | :--- | :--- | :--- |
-| **NORMAL** | 1.00 | 1.00 | 1.00 | 3 – 4 rounds |
-| **MAGIC** | 1.45 | 1.15 | 1.60 | 4 – 6 rounds |
-| **RARE** | 2.25 | 1.35 | 2.75 | 7 – 9 rounds |
-| **BOSS / UNIQUE** | 4.50 | 1.60 | 6.00 | 10 – 14 rounds |
+| Rarity Tier       | Health Multiplier ($M_{hp}$) | Damage Multiplier ($M_{dmg}$) | EXP Multiplier ($M_{exp}$) | Target TTK (Rounds) |
+|:------------------|:-----------------------------|:------------------------------|:---------------------------|:--------------------|
+| **NORMAL**        | 1.00                         | 1.00                          | 1.00                       | 3 – 4 rounds        |
+| **MAGIC**         | 1.45                         | 1.15                          | 1.60                       | 4 – 6 rounds        |
+| **RARE**          | 2.25                         | 1.35                          | 2.75                       | 7 – 9 rounds        |
+| **BOSS / UNIQUE** | 4.50                         | 1.60                          | 6.00                       | 10 – 14 rounds      |
 
 ---
 
