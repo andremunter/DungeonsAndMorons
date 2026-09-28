@@ -70,7 +70,7 @@ public class CombatEngine {
 
             int damage = action.damage();
             player.takeDamage(damage, monster);
-            System.out.println(String.format("%s used %s for %d damage", monster.getName(), action.getName(), damage));
+            System.out.println(String.format("%s used %s for %d damage", monster.getName(), action.name(), damage));
         }
 
         if (!player.isAlive()) {

@@ -4,9 +4,7 @@ import se.dungeonsandmorons.model.Attribute;
 import se.dungeonsandmorons.model.skill.Skill;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Kharacter implements Combatant {
     protected String name;
@@ -180,7 +178,7 @@ public class Kharacter implements Combatant {
         }
 
         if (!skill.canBeLearnedBy(this.getCharacterClass())) {
-            System.out.println(String.format("A %s cannot learn %s", this.getCharacterClass(), skill.getName()));
+            System.out.println(String.format("A %s cannot learn %s", this.getCharacterClass(), skill.name()));
             return false;
         }
 
@@ -190,7 +188,7 @@ public class Kharacter implements Combatant {
         }
 
         skills.add(skill);
-        System.out.println(String.format("%s learned %s!", name, skill.getName()));
+        System.out.println(String.format("%s learned %s!", name, skill.name()));
         return true;
     }
 
@@ -223,7 +221,7 @@ public class Kharacter implements Combatant {
     public List<Skill> getSkills() { return List.copyOf(skills); }
     public List<String> getSkillNames() {
         return skills.stream()
-                .map(Skill::getName)
+                .map(Skill::name)
                 .toList();
     }
     public List<String> getClearedDungeons() { return clearedDungeons; }

@@ -7,8 +7,8 @@ import java.util.Set;
 
 public interface CombatAbility {
 
-    String getName();
+    String name();
     TargetType getTargetType();
-    Set<SkillTag> getTags();
+    Set<SkillTag> tags();
 
 }

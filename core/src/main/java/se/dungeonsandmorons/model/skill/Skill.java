@@ -38,9 +38,9 @@ public class Skill implements CombatAbility {
         return tags.contains(tag);
     }
 
-    @Override public String getName() { return name; }
+    @Override public String name() { return name; }
     @Override public TargetType getTargetType() { return targetType; }
-    @Override public Set<SkillTag> getTags() { return tags; }
+    @Override public Set<SkillTag> tags() { return tags; }
     public int getResourceCost() { return resourceCost; }
     public int getBaseDamage() { return baseDamage; }
     public Attribute getScalingAttribute() { return scalingAttribute; }

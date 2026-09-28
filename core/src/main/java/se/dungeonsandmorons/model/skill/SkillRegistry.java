@@ -41,7 +41,7 @@ public class SkillRegistry {
 
 
     public static void register(Skill skill) {
-        SKILLS.put(skill.getName().toLowerCase(), skill);
+        SKILLS.put(skill.name().toLowerCase(), skill);
     }
 
     public static Skill get(String name) {
