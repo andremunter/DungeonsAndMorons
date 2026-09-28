@@ -2,7 +2,7 @@ package se.dungeonsandmorons.screen;
 
 import se.dungeonsandmorons.game.GameContext;
 import se.dungeonsandmorons.game.GameEvent;
-import se.dungeonsandmorons.model.combat.CombatEngine;
+import se.dungeonsandmorons.combat.CombatEngine;
 
 public class ExploringDungeonScreen implements Screen {
 

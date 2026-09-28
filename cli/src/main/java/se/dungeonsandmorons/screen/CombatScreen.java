@@ -3,8 +3,8 @@ package se.dungeonsandmorons.screen;
 import se.dungeonsandmorons.game.GameContext;
 import se.dungeonsandmorons.game.GameEvent;
 import se.dungeonsandmorons.model.character.Kharacter;
-import se.dungeonsandmorons.model.combat.CombatAction;
-import se.dungeonsandmorons.model.combat.CombatEngine;
+import se.dungeonsandmorons.combat.CombatAction;
+import se.dungeonsandmorons.combat.CombatEngine;
 import se.dungeonsandmorons.model.monster.Monster;
 import se.dungeonsandmorons.model.skill.SkillRegistry;
 

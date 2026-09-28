@@ -1,4 +1,4 @@
-package se.dungeonsandmorons.model.combat;
+package se.dungeonsandmorons.combat;
 
 public enum CombatEvent {
     BEGIN_TURN,

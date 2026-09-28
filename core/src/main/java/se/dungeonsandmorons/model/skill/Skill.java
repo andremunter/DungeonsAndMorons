@@ -2,7 +2,7 @@ package se.dungeonsandmorons.model.skill;
 
 import se.dungeonsandmorons.model.Attribute;
 import se.dungeonsandmorons.model.character.CharacterClass;
-import se.dungeonsandmorons.model.combat.CombatAbility;
+import se.dungeonsandmorons.combat.CombatAbility;
 
 import java.util.Set;
 

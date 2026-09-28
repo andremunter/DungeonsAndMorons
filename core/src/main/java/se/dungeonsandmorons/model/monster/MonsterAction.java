@@ -1,6 +1,6 @@
 package se.dungeonsandmorons.model.monster;
 
-import se.dungeonsandmorons.model.combat.CombatAbility;
+import se.dungeonsandmorons.combat.CombatAbility;
 import se.dungeonsandmorons.model.skill.SkillTag;
 import se.dungeonsandmorons.model.skill.TargetType;
 

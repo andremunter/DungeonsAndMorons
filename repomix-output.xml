@@ -1,0 +1,3805 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+cli/
+  src/
+    main/
+      java/
+        se/
+          dungeonsandmorons/
+            game/
+              GameContext.java
+              GameEvent.java
+              GameLoop.java
+              GameState.java
+              GameStateMachine.java
+            screen/
+              AllocateStatsScreen.java
+              CombatScreen.java
+              CreateCharacterScreen.java
+              DungeonSelectScreen.java
+              ExploringDungeonScreen.java
+              IO.java
+              LoadScreen.java
+              MainMenuScreen.java
+              Screen.java
+              TalkingToNpcScreen.java
+              TownScreen.java
+            Main.java
+  build.gradle.kts
+core/
+  src/
+    main/
+      java/
+        se/
+          dungeonsandmorons/
+            database/
+              DatabaseConnection.java
+            exception/
+              AttackingDeadTargetException.java
+              CharacterDoesNotExistException.java
+              CorruptedSaveException.java
+              CreateNullDungeonException.java
+              CreateNullTownException.java
+              ListNullOrEmptyException.java
+              SkillNotLearnedException.java
+            helper/
+              CapitalizeWords.java
+            model/
+              character/
+                CharacterClass.java
+                Combatant.java
+                Kharacter.java
+              combat/
+                CombatAbility.java
+                CombatAction.java
+                CombatEngine.java
+                CombatEvent.java
+                CombatState.java
+              daycycle/
+                DayCycle.java
+              dungeon/
+                Dungeon.java
+                DungeonRegistry.java
+              monster/
+                Bird.java
+                Dragon.java
+                Monster.java
+                MonsterAction.java
+                MonsterFactory.java
+                MonsterRarity.java
+                Rotworm.java
+              npc/
+                Npc.java
+              skill/
+                Skill.java
+                SkillRegistry.java
+                SkillService.java
+                SkillTag.java
+                TargetType.java
+              Attribute.java
+            repository/
+              CharacterRepository.java
+              CharacterSaveData.java
+              CharacterSummary.java
+              PostgresCharacterRepository.java
+            service/
+              DungeonService.java
+              SaveService.java
+            town/
+              Town.java
+              TownRegistry.java
+  test/
+    java/
+      se/
+        dungeonsandmorons/
+          model/
+            character/
+              CharacterTest.java
+  build.gradle.kts
+gradle/
+  wrapper/
+    gradle-wrapper.jar
+    gradle-wrapper.properties
+  libs.versions.toml
+web/
+  src/
+    main/
+      java/
+        se/
+          dungeonsandmorons/
+            web/
+              config/
+                OpenApiConfig.java
+              controller/
+                CharacterController.java
+                DungeonController.java
+                GlobalExceptionHandler.java
+              dto/
+                AllocateStatsRequest.java
+                ApiErrorResponse.java
+                CreateCharacterRequest.java
+                DungeonResponse.java
+                MonsterSummaryResponse.java
+              CoreConfig.java
+              DungeonsAndMoronsApplication.java
+      resources/
+        application.yml
+  build.gradle.kts
+.gitattributes
+.gitignore
+build.gradle.kts
+DungeonsAndMorons.iml
+gradle.properties
+gradlew
+gradlew.bat
+settings.gradle.kts
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="cli/src/main/java/se/dungeonsandmorons/game/GameContext.java">
+package se.dungeonsandmorons.game;
+
+import se.dungeonsandmorons.model.character.Kharacter;
+import se.dungeonsandmorons.model.combat.CombatEngine;
+import se.dungeonsandmorons.model.dungeon.Dungeon;
+import se.dungeonsandmorons.model.npc.Npc;
+import se.dungeonsandmorons.model.skill.SkillService;
+import se.dungeonsandmorons.service.DungeonService;
+import se.dungeonsandmorons.service.SaveService;
+import se.dungeonsandmorons.town.Town;
+
+public class GameContext {
+    private Kharacter player;
+    private Town activeTown;
+    private Npc activeNpc;
+    private Dungeon activeDungeon;
+    private CombatEngine activeCombat;
+    private final GameStateMachine stateMachine;
+
+    private final DungeonService dungeonService;
+    private final SkillService skillService;
+    private final SaveService saveService;
+
+    public GameContext(GameStateMachine stateMachine,
+                       DungeonService dungeonService,
+                       SkillService skillService,
+                       SaveService saveService) {
+        this.stateMachine = stateMachine;
+        this.dungeonService = dungeonService;
+        this.skillService = skillService;
+        this.saveService = saveService;
+    }
+
+    public Kharacter getPlayer() { return player; }
+    public void setPlayer(Kharacter player) { this.player = player; }
+
+    public Town getActiveTown() { return activeTown; }
+    public void setActiveTown(Town activeTown) { this.activeTown = activeTown; }
+
+    public Npc getActiveNpc() { return activeNpc; }
+    public void setActiveNpc(Npc activeNpc) { this.activeNpc = activeNpc; }
+
+    public Dungeon getActiveDungeon() { return activeDungeon; }
+    public void setActiveDungeon(Dungeon dungeon) { this.activeDungeon = dungeon; }
+
+    public CombatEngine getActiveCombat() { return activeCombat; }
+    public void setActiveCombat(CombatEngine activeCombat) { this.activeCombat = activeCombat; }
+
+    public GameStateMachine getStateMachine() { return stateMachine; }
+    public DungeonService getDungeonService() { return dungeonService; }
+
+    public SkillService getSkillService() { return skillService; }
+    public SaveService getSaveService() { return saveService; }
+
+
+}
+</file>
+
+<file path="cli/src/main/java/se/dungeonsandmorons/game/GameEvent.java">
+package se.dungeonsandmorons.game;
+
+public enum GameEvent {
+    START_CREATE_CHARACTER,
+    OPEN_LOAD_MENU,
+    LOAD_GAME,
+    LOAD_GAME_FAIL,
+    ENTER_TOWN,
+    INTERACT_NPC,
+    LEAVE_NPC,
+    REST,
+    ENTER_DUNGEON,
+    SELECT_DUNGEON,
+    ENCOUNTER_MONSTER,
+    FLEE,
+    COMBAT_RESOLVED,
+    LEAVE_DUNGEON,
+    PLAYER_DIED,
+    CANCEL,
+    OPEN_STAT_MANAGEMENT,
+}
+</file>
+
+<file path="cli/src/main/java/se/dungeonsandmorons/game/GameState.java">
+package se.dungeonsandmorons.game;
+
+public enum GameState {
+    MAIN_MENU,
+    LOAD_MENU,
+    CHARACTER_CREATION,
+    IN_TOWN,
+    TALKING_TO_NPC,
+    SELECTING_DUNGEON,
+    EXPLORING_DUNGEON,
+    IN_COMBAT,
+    GAME_OVER,
+    STAT_MANAGEMENT,
+}
+</file>
+
+<file path="cli/src/main/java/se/dungeonsandmorons/game/GameStateMachine.java">
+package se.dungeonsandmorons.game;
+
+public class GameStateMachine {
+    private GameState currentState = GameState.MAIN_MENU;
+
+    public GameState findNextState(GameEvent event) {
+        return findNextState(this.currentState, event);
+    }
+
+    public GameState findNextState(GameState fromState, GameEvent event) {
+
+        return switch (fromState) {
+
+            case MAIN_MENU -> switch (event) {
+                case START_CREATE_CHARACTER -> GameState.CHARACTER_CREATION;
+                case OPEN_LOAD_MENU         -> GameState.LOAD_MENU;
+                case ENTER_TOWN             -> GameState.IN_TOWN;
+                default                     -> throw invalidTransition(currentState, event);
+            };
+
+            case LOAD_MENU -> switch (event) {
+                case LOAD_GAME              -> GameState.IN_TOWN;
+                case LOAD_GAME_FAIL, CANCEL -> GameState.MAIN_MENU;
+                default                     -> throw invalidTransition(currentState, event);
+            };
+
+            case CHARACTER_CREATION -> switch (event) {
+                case ENTER_TOWN         -> GameState.IN_TOWN;
+                case CANCEL             -> GameState.MAIN_MENU;
+                default                 -> throw invalidTransition(currentState, event);
+            };
+
+            case IN_TOWN -> switch (event) {
+                case INTERACT_NPC           -> GameState.TALKING_TO_NPC;
+                case SELECT_DUNGEON         -> GameState.SELECTING_DUNGEON;
+                case REST                   -> GameState.IN_TOWN;
+                case OPEN_STAT_MANAGEMENT   -> GameState.STAT_MANAGEMENT;
+                default                     -> throw invalidTransition(currentState, event);
+            };
+
+            case TALKING_TO_NPC -> switch (event) {
+                case LEAVE_NPC, ENTER_TOWN  -> GameState.IN_TOWN;
+                default                     -> throw invalidTransition(currentState, event);
+            };
+
+            case STAT_MANAGEMENT -> switch (event) {
+                case CANCEL, ENTER_TOWN     -> GameState.IN_TOWN;
+                default                     -> throw invalidTransition(currentState, event);
+            };
+
+            case SELECTING_DUNGEON -> switch (event) {
+                case ENTER_DUNGEON          -> GameState.EXPLORING_DUNGEON;
+                case ENTER_TOWN             -> GameState.IN_TOWN;
+                default                     -> throw invalidTransition(currentState, event);
+            };
+
+            case EXPLORING_DUNGEON -> switch (event) {
+                case ENCOUNTER_MONSTER          -> GameState.IN_COMBAT;
+                case LEAVE_DUNGEON, ENTER_TOWN  -> GameState.IN_TOWN;
+                default                         -> throw invalidTransition(currentState, event);
+            };
+
+            case IN_COMBAT -> switch (event) {
+                case LEAVE_DUNGEON              -> GameState.IN_TOWN;
+                case COMBAT_RESOLVED, FLEE      -> GameState.EXPLORING_DUNGEON;
+                case PLAYER_DIED                -> GameState.GAME_OVER;
+                default                         -> throw invalidTransition(currentState, event);
+            };
+
+            case GAME_OVER -> switch (event) {
+                case ENTER_TOWN         -> GameState.IN_TOWN;
+                case LOAD_GAME          -> GameState.MAIN_MENU;
+                default                 -> throw invalidTransition(currentState, event);
+            };
+        };
+
+    }
+
+    public void transition(GameEvent event) {
+        this.currentState = findNextState(this.currentState, event);
+    }
+
+    public boolean canTransition(GameEvent event) {
+        try {
+            findNextState(event);
+            return true;
+        } catch (IllegalStateException e) {
+            return false;
+        }
+    }
+
+
+    private IllegalStateException invalidTransition(GameState state, GameEvent event) {
+        return new IllegalStateException("Cannot trigger event " + event + " while in state " + state);
+    }
+
+    public GameState getCurrentState() {
+        return currentState;
+    }
+
+}
+</file>
+
+<file path="cli/src/main/java/se/dungeonsandmorons/screen/AllocateStatsScreen.java">
+package se.dungeonsandmorons.screen;
+
+import se.dungeonsandmorons.game.GameContext;
+import se.dungeonsandmorons.game.GameEvent;
+import se.dungeonsandmorons.model.Attribute;
+
+public class AllocateStatsScreen implements Screen {
+
+    @Override
+    public void display(GameContext context) {
+        IO.print("""
+                
+                === STAT MANAGEMENT ===
+                
+                To allocate stats:
+                allocate <str|agi|int|vit> <amount>
+                
+                Stats to show player stats
+                
+                """);
+
+    }
+
+    @Override
+    public void handleInput(String input, GameContext context) {
+
+        switch (input.toLowerCase()) {
+            case "stats" -> {
+                context.getPlayer().getStats();
+                return;
+            }
+            case "back", "cancel", "town" -> {
+                context.getStateMachine().transition(GameEvent.CANCEL);
+                return;
+            }
+        }
+
+        String[] parts = input.trim().split("\\s+");
+
+        if (parts.length != 3 || !parts[0].equalsIgnoreCase("allocate")) {
+            IO.println("Usage: allocate <str|agi|int|vit> <amount>");
+            return;
+        }
+
+        Attribute attribute = switch (parts[1]) {
+            case "str", "strength"      -> Attribute.STRENGTH;
+            case "agi", "agility"       -> Attribute.AGILITY;
+            case "int", "intelligence"  -> Attribute.INTELLIGENCE;
+            case "vit", "vitality"      -> Attribute.VITALITY;
+            default                     -> null;
+        };
+
+        if (attribute != null) {
+            IO.println("Invalid attribute. Choose str, agi, int or vit.");
+            return;
+        }
+
+        try {
+            int points = Integer.parseInt(parts[2]);
+            boolean success = context.getPlayer().allocateStat(attribute, points);
+
+            if (success) {
+                IO.println(String.format("Allocated %d points to %s. Remining points: %d",
+                        points, attribute, context.getPlayer().getUnallocatedStatPoints()));
+            } else {
+                IO.println("Not enough unallocated stat points! Available: " + context.getPlayer().getUnallocatedStatPoints());
+            }
+        } catch (NumberFormatException e) {
+            IO.println("Amount must be a valid number.");
+        }
+
+    }
+
+}
+</file>
+
+<file path="cli/src/main/java/se/dungeonsandmorons/screen/CombatScreen.java">
+package se.dungeonsandmorons.screen;
+
+import se.dungeonsandmorons.game.GameContext;
+import se.dungeonsandmorons.game.GameEvent;
+import se.dungeonsandmorons.model.character.Kharacter;
+import se.dungeonsandmorons.model.combat.CombatAction;
+import se.dungeonsandmorons.model.combat.CombatEngine;
+import se.dungeonsandmorons.model.monster.Monster;
+import se.dungeonsandmorons.model.skill.SkillRegistry;
+
+public class CombatScreen implements Screen {
+
+    @Override
+    public void display(GameContext context) {
+
+        CombatEngine engine = context.getActiveCombat();
+        Kharacter player = context.getPlayer();
+        Monster monster = context.getActiveDungeon().getMonsters().getFirst();
+
+        IO.println(String.format("""
+                    ---------- ROUND %d ----------
+                    %s HP: %d | %s HP: %d
+                    """,
+                engine.getRoundCount(),
+                player.getName(), player.getCurrentHealth(),
+                monster.getName(), monster.getCurrentHealth()));
+
+        IO.println("Actions: Attack | Cast <skill> | Run");
+    }
+
+    @Override
+    public void handleInput(String input, GameContext context) {
+
+        CombatEngine engine = context.getActiveCombat();
+        Kharacter player = context.getPlayer();
+        Monster monster = context.getActiveDungeon().getMonsters().getFirst();
+
+        String trimmed = input.trim();
+        String[] parts = trimmed.split("\\s+", 2);
+        String action = parts[0].toLowerCase();
+        String skill = parts.length > 1 ? parts[1].trim() : "";
+
+        switch (action) {
+            case "cast" -> {
+                if (skill.isEmpty()) {
+                    IO.println("Cannot cast nothing. Usage: Cast <skill>");
+                    break;
+                }
+
+                if (player.isSkillLearned(SkillRegistry.get(skill))) {
+                    engine.executePlayerAction(CombatAction.CAST, SkillRegistry.get(skill));
+                } else {
+                    IO.println("Skill not learned.");
+                }
+            }
+            case "attack"   -> engine.executePlayerAction(CombatAction.ATTACK, player.getSkills().getFirst());
+            case "run"      -> {
+                // TODO: Calc odds of escaping
+                engine.executePlayerAction(CombatAction.RUN, null);
+            }
+            default -> IO.println("Action not found.");
+        }
+
+        switch (engine.getState()) {
+            case VICTORY -> {
+                IO.println(monster.getName() + " was defeated.");
+                context.getActiveDungeon().removeMonster(monster);
+                context.setActiveCombat(null);
+
+                if (context.getActiveDungeon().getMonsters().isEmpty()) {
+                    IO.println(String.format("%s successfully cleared %s!",
+                            context.getPlayer().getName(), context.getActiveDungeon().getName()));
+
+                    context.setActiveDungeon(null);
+                    // TODO: GameEvent.DUNGEON_CLEARED ? Grab loot, etc.. ? > ENTER_TOWN/SELECT_DUNGEON
+                    context.getStateMachine().transition(GameEvent.LEAVE_DUNGEON);
+                } else {
+                    context.getStateMachine().transition(GameEvent.COMBAT_RESOLVED);
+                }
+            }
+            case DEFEAT -> {
+                IO.println(player.getName() + " was killed.");
+                context.setActiveCombat(null);
+                context.getStateMachine().transition(GameEvent.PLAYER_DIED);
+            }
+            case ESCAPED -> {
+                IO.println("Fled from combat.");
+                context.setActiveCombat(null);
+                context.getStateMachine().transition(GameEvent.FLEE);
+            }
+        }
+    }
+}
+</file>
+
+<file path="cli/src/main/java/se/dungeonsandmorons/screen/DungeonSelectScreen.java">
+package se.dungeonsandmorons.screen;
+
+import se.dungeonsandmorons.game.GameContext;
+import se.dungeonsandmorons.game.GameEvent;
+
+import java.util.List;
+
+public class DungeonSelectScreen implements Screen {
+
+    @Override
+    public void display(GameContext context) {
+        List<String> dungeons = context.getDungeonService().getAvailableDungeonNames();
+        if (dungeons == null || dungeons.isEmpty()) {
+            IO.println("No dungeons discovered.");
+        }
+
+        IO.println("- Dungeons -");
+
+        for (String dungeon : dungeons) {
+            IO.println(context.getDungeonService().findDungeonByName(dungeon));
+        }
+
+        IO.println("Type 'help' for available commands.");
+    }
+
+    @Override
+    public void handleInput(String input, GameContext context) {
+        String fInput = input.trim().toLowerCase();
+        if (context.getDungeonService().getAvailableDungeonNames().contains(fInput)) {
+            context.setActiveDungeon(context.getDungeonService().findDungeonByName(fInput));
+
+            IO.println(String.format("Entering %s... Proceed?(enter), 'back' to cancel.", context.getActiveDungeon().getName()));
+            String enter = IO.readln(">");
+
+            switch (enter.trim().toLowerCase()) {
+                case "enter", "", " " -> {
+                    context.getStateMachine().transition(GameEvent.ENTER_DUNGEON);
+                }
+                case "back", "cancel" -> context.getStateMachine().transition(GameEvent.ENTER_TOWN);
+            }
+        }
+
+
+
+
+        switch (input.trim().toLowerCase()) {
+            case "leave"    -> context.getStateMachine().transition(GameEvent.ENTER_TOWN);
+            case "help"     -> displayHelp();
+        }
+    }
+
+    public void displayHelp() {
+        IO.print("""
+            Available commands:
+            <DungeonName>   - Enters specified dungeon.
+            Leave           - Back to town
+            Help            - Help :)
+            """);
+    }
+}
+</file>
+
+<file path="cli/src/main/java/se/dungeonsandmorons/screen/ExploringDungeonScreen.java">
+package se.dungeonsandmorons.screen;
+
+import se.dungeonsandmorons.game.GameContext;
+import se.dungeonsandmorons.game.GameEvent;
+import se.dungeonsandmorons.model.combat.CombatEngine;
+
+public class ExploringDungeonScreen implements Screen {
+
+    @Override
+    public void display(GameContext context) {
+        IO.println(String.format("- Exploring %s, Area level %d -", context.getActiveDungeon().getName(), context.getActiveDungeon().getAreaLevel()));
+        IO.println("Type 'help' for available commands.");
+    }
+
+    @Override
+    public void handleInput(String input, GameContext context) {
+        switch (input.trim().toLowerCase()) {
+
+            case "explore"                      -> {
+                // TODO: 'DUNGEON_EVENT' > Calc if ENCOUNTER_MONSTER, ENCOUNTER_DUNGEON_EVENT? _CHEST etc?
+                CombatEngine combat = new CombatEngine(context.getPlayer(), context.getActiveDungeon().getMonsters().getFirst());
+                combat.startRound();
+                context.setActiveCombat(combat);
+                context.getStateMachine().transition(GameEvent.ENCOUNTER_MONSTER);
+            }
+            case "back", "town", "leave"        -> {
+                IO.println("Leaving dungeon..");
+                context.getStateMachine().transition(GameEvent.ENTER_TOWN);
+            }
+            case "help"                         -> displayHelp();
+        }
+    }
+
+    public void displayHelp() {
+        IO.print("""
+            Available commands:
+            explore             - Explores dungeon, encounters monsters and other events.
+            back, leave, town   - Leaves dungeon & enters town
+            """);
+    }
+}
+</file>
+
+<file path="cli/src/main/java/se/dungeonsandmorons/screen/IO.java">
+package se.dungeonsandmorons.screen;
+
+import java.util.Scanner;
+
+public final class IO {
+    private static final Scanner SCANNER = new Scanner(System.in);
+
+    private IO() {}
+
+    public static void println(Object obj) {
+        System.out.println(obj);
+    }
+
+    public static void println() {
+        System.out.println();
+    }
+
+    public static void print(Object obj) {
+        System.out.print(obj);
+    }
+
+    public static void printf(String format, Object... args) {
+        System.out.printf(format, args);
+    }
+
+    public static String readln() {
+        return SCANNER.hasNextLine() ? SCANNER.nextLine() : "";
+    }
+
+    // Handles IO.readln("> ")
+    public static String readln(String prompt) {
+        System.out.print(prompt);
+        return readln();
+    }
+}
+</file>
+
+<file path="cli/src/main/java/se/dungeonsandmorons/screen/MainMenuScreen.java">
+package se.dungeonsandmorons.screen;
+
+import se.dungeonsandmorons.game.GameContext;
+import se.dungeonsandmorons.game.GameEvent;
+
+
+public class MainMenuScreen implements Screen {
+
+    @Override
+    public void display(GameContext context) {
+        IO.print("""
+                
+                === Dungeons and Morons ===
+                
+                """);
+        IO.print("""
+                1. New Game
+                2. Load
+                3. Quit
+                
+                """);
+    }
+
+    @Override
+    public void handleInput(String input, GameContext context) {
+        switch (input.trim().toLowerCase()) {
+            case "1", "new game" -> context.getStateMachine().transition(GameEvent.START_CREATE_CHARACTER);
+            case "2", "load" -> context.getStateMachine().transition(GameEvent.OPEN_LOAD_MENU);
+            case "3", "quit" -> System.exit(0);
+        }
+    }
+
+}
+</file>
+
+<file path="cli/src/main/java/se/dungeonsandmorons/screen/Screen.java">
+package se.dungeonsandmorons.screen;
+
+import se.dungeonsandmorons.game.GameContext;
+
+public interface Screen {
+    void display(GameContext context);
+    void handleInput(String input, GameContext context);
+}
+</file>
+
+<file path="cli/src/main/java/se/dungeonsandmorons/screen/TalkingToNpcScreen.java">
+package se.dungeonsandmorons.screen;
+
+import se.dungeonsandmorons.game.GameContext;
+import se.dungeonsandmorons.game.GameEvent;
+import se.dungeonsandmorons.model.npc.Npc;
+
+public class TalkingToNpcScreen implements Screen {
+
+    @Override
+    public void display(GameContext context) {
+        Npc npc = context.getActiveNpc();
+        IO.println(String.format("- Talking to %s (%s) -", npc.name(), npc.role()));
+        IO.println(String.format("'%s'", npc.dialogue()));
+        IO.print("""
+                Options: leave | trade
+                """);
+    }
+
+    @Override
+    public void handleInput(String input, GameContext context) {
+        switch (input.trim().toLowerCase()) {
+            case "leave", "back"    -> {
+                context.setActiveNpc(null);
+                context.getStateMachine().transition(GameEvent.LEAVE_NPC);
+            }
+            case "trade"            -> {
+                IO.println("TRADE NOT IMPLEMENTED");
+            }
+            default -> IO.println("Unkown command.");
+        }
+
+    }
+}
+</file>
+
+<file path="cli/src/main/java/se/dungeonsandmorons/screen/TownScreen.java">
+package se.dungeonsandmorons.screen;
+
+import se.dungeonsandmorons.game.GameContext;
+import se.dungeonsandmorons.game.GameEvent;
+import se.dungeonsandmorons.model.npc.Npc;
+
+public class TownScreen implements Screen {
+
+    @Override
+    public void display(GameContext context) {
+        IO.print(String.format("""
+                
+                === %s ===
+                
+                """, context.getActiveTown().getName()));
+
+        for (Npc npc : context.getActiveTown().getNpcs()) {
+            IO.println(String.format("%s - %s", npc.name(), npc.role()));
+        }
+
+        IO.print("""
+                
+                Type 'help' for available commands.
+                
+                """);
+    }
+
+    @Override
+    public void handleInput(String input, GameContext context) {
+
+        switch (input.trim().toLowerCase()) {
+            case String s when s.startsWith("talk ") -> {
+                // TODO: blala talk contains <NpcName> find Npc, trigger blalalal
+
+                String target = s.substring("talk ".length()).trim();
+
+                Npc targetNpc = context.getActiveTown().findNpc(target);
+                if (targetNpc != null) {
+                    context.setActiveNpc(targetNpc);
+                    context.getStateMachine().transition(GameEvent.INTERACT_NPC);
+                } else {
+                    IO.println(String.format("Could not find '%s'.", target));
+                }
+
+            }
+            case "talk"         -> IO.println("Specify who to talk to. Example: 'talk Flint Blunt' or 'talk blacksmith'");
+            case "stats"        -> context.getStateMachine().transition(GameEvent.OPEN_STAT_MANAGEMENT);
+            case "skills"       -> context.getSkillService().listSkills(context.getPlayer());
+            case "dungeon", "explore dungeons", "dungeons"
+                                -> context.getStateMachine().transition(GameEvent.SELECT_DUNGEON);
+            case "save"         -> context.getSaveService().saveGame(context.getPlayer(), context.getActiveTown().getName());
+            case "help"         -> displayHelp();
+            case "main menu"    -> context.getStateMachine().transition(GameEvent.LOAD_GAME);
+            default             -> IO.println("Unknown town command. Type 'help' for options.");
+        }
+    }
+
+    public void displayHelp() {
+        IO.print("""
+            Available commands:
+            stats              - Shows player stats
+            skills             - Lists learned skills
+            dungeons           - Lists available dungeons
+            save               - Saves current character progress
+            help               - Lists all available commands
+            main menu          - Goes back to Main Menu
+            """);
+    }
+}
+</file>
+
+<file path="cli/src/main/java/se/dungeonsandmorons/Main.java">
+package se.dungeonsandmorons;
+
+import se.dungeonsandmorons.repository.PostgresCharacterRepository;
+import se.dungeonsandmorons.game.GameContext;
+import se.dungeonsandmorons.game.GameLoop;
+import se.dungeonsandmorons.game.GameStateMachine;
+import se.dungeonsandmorons.model.skill.SkillService;
+import se.dungeonsandmorons.service.DungeonService;
+import se.dungeonsandmorons.service.SaveService;
+
+public class Main {
+
+    void main(String[] args) {
+
+        GameLoop gameLoop = new GameLoop(
+                new GameContext(
+                        new GameStateMachine(),
+                        new DungeonService(),
+                        new SkillService(),
+                        new SaveService(new PostgresCharacterRepository())
+                ));
+        gameLoop.run();
+
+    }
+
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/database/DatabaseConnection.java">
+package se.dungeonsandmorons.database;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class DatabaseConnection {
+    //private static final String URL = "jdbc:postgresql://localhost:5432/dungeonsandmorons";
+    private static final String URL = "jdbc:postgresql://ep-cool-art-b2km85jl-pooler.c-6.eu-central-1.aws.neon.tech/neondb?sslmode=require";
+    private static final String USER = "neondb_owner";
+    private static final String PASSWORD = "npg_pTFZ0keKunD1";
+
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(URL, USER, PASSWORD);
+    }
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/exception/AttackingDeadTargetException.java">
+package se.dungeonsandmorons.exception;
+
+public class AttackingDeadTargetException extends RuntimeException {
+    public AttackingDeadTargetException() {
+        super("Target is already dead");
+    }
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/exception/CharacterDoesNotExistException.java">
+package se.dungeonsandmorons.exception;
+
+public class CharacterDoesNotExistException extends RuntimeException {
+    public CharacterDoesNotExistException(String message) {
+        super(message);
+    }
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/exception/CorruptedSaveException.java">
+package se.dungeonsandmorons.exception;
+
+public class CorruptedSaveException extends RuntimeException {
+    public CorruptedSaveException(String message) {
+        super(message);
+    }
+
+    public CorruptedSaveException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/exception/CreateNullDungeonException.java">
+package se.dungeonsandmorons.exception;
+
+public class CreateNullDungeonException extends RuntimeException {
+    public CreateNullDungeonException(String message) {
+        super(message);
+    }
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/exception/CreateNullTownException.java">
+package se.dungeonsandmorons.exception;
+
+public class CreateNullTownException extends RuntimeException {
+    public CreateNullTownException(String message) {
+        super(message);
+    }
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/exception/ListNullOrEmptyException.java">
+package se.dungeonsandmorons.exception;
+
+public class ListNullOrEmptyException extends RuntimeException {
+    public ListNullOrEmptyException(String message) {
+        super(message);
+    }
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/exception/SkillNotLearnedException.java">
+package se.dungeonsandmorons.exception;
+
+public class SkillNotLearnedException extends RuntimeException {
+    public SkillNotLearnedException(String message) {
+        super(message);
+    }
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/helper/CapitalizeWords.java">
+package se.dungeonsandmorons.helper;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
+public class CapitalizeWords {
+    public static String capitalizeWords(String input) {
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
+
+        return Arrays.stream(input.split("\\s+"))
+                .map(word -> word.substring(0, 1).toUpperCase() + word.substring(1))
+                .collect(Collectors.joining(" "));
+    }
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/model/combat/CombatAbility.java">
+package se.dungeonsandmorons.model.combat;
+
+import se.dungeonsandmorons.model.skill.SkillTag;
+import se.dungeonsandmorons.model.skill.TargetType;
+
+import java.util.Set;
+
+public interface CombatAbility {
+
+    String getName();
+    TargetType getTargetType();
+    Set<SkillTag> getTags();
+
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/model/combat/CombatAction.java">
+package se.dungeonsandmorons.model.combat;
+
+public enum CombatAction {
+    ATTACK,
+    CAST,
+    HEAL,
+    RUN,
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/model/combat/CombatEvent.java">
+package se.dungeonsandmorons.model.combat;
+
+public enum CombatEvent {
+    BEGIN_TURN,
+    PLAYER_ATTACKED,
+    PLAYER_FLED,
+    ENEMY_DEFEATED,
+    ENEMY_ATTACKED,
+    PLAYER_DEFEATED,
+
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/model/combat/CombatState.java">
+package se.dungeonsandmorons.model.combat;
+
+public enum CombatState {
+    ROUND_START,
+    AWAITING_PLAYER_INPUT,
+    RESOLVING_PLAYER_ACTION,
+    RESOLVING_ENEMY_ACTION,
+
+    VICTORY,
+    DEFEAT,
+    ESCAPED;
+
+    public boolean isTerminal() {
+        return this == VICTORY || this == DEFEAT || this == ESCAPED;
+    }
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/model/daycycle/DayCycle.java">
+package se.dungeonsandmorons.model.daycycle;
+
+public class DayCycle {
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/model/dungeon/Dungeon.java">
+package se.dungeonsandmorons.model.dungeon;
+
+import se.dungeonsandmorons.exception.ListNullOrEmptyException;
+import se.dungeonsandmorons.model.monster.MonsterRarity;
+import se.dungeonsandmorons.model.monster.Monster;
+import se.dungeonsandmorons.model.monster.MonsterFactory;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class Dungeon {
+    private final String name;
+    private final String description;
+    private final int areaLevel;
+    private boolean cleared;
+
+    private final List<Monster> monsters = new ArrayList<>();
+
+    public Dungeon(String name, String description, int areaLevel) {
+        this.name = name;
+        this.description = description;
+        this.areaLevel = areaLevel;
+        this.cleared = false;
+    }
+
+    public void populateDungeon(List<MonsterFactory> recipes) {
+        if (recipes == null || recipes.isEmpty()) {
+            throw new ListNullOrEmptyException("Trying to populate dungeon with null or empty List");
+        }
+
+        for (MonsterFactory recipe : recipes) {
+            Monster spawned = recipe.create(this.areaLevel, MonsterRarity.NORMAL);
+            this.monsters.add(spawned);
+        }
+
+    }
+
+    public String getName() { return name; }
+    public String getDescription() { return description; }
+    public int getAreaLevel() { return areaLevel; }
+    public List<Monster> getMonsters() { return Collections.unmodifiableList(monsters); }
+    public boolean isCleared() { return cleared; }
+
+    public void removeMonster(Monster monster) {
+        monsters.remove(monster);
+    }
+
+    public void setCleared(boolean cleared) { this.cleared = cleared; }
+
+    @Override
+    public String toString() {
+        return String.format("%s, '%s', Area Level: %d%s" , name, description, areaLevel, cleared ? " (Cleared)" : "");
+    }
+
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/model/dungeon/DungeonRegistry.java">
+package se.dungeonsandmorons.model.dungeon;
+
+import se.dungeonsandmorons.exception.CreateNullDungeonException;
+import se.dungeonsandmorons.model.monster.Dragon;
+import se.dungeonsandmorons.model.monster.Rotworm;
+
+import java.util.*;
+import java.util.function.Supplier;
+
+public class DungeonRegistry {
+
+    private static final Map<String, Supplier<Dungeon>> REGISTRY = new LinkedHashMap<>();
+
+    static {
+        register("Rotworm Cave", () -> {
+            Dungeon rotwormCave = new Dungeon("Rotworm Cave", "Cave of only Rottenwurmen", 8);
+            rotwormCave.populateDungeon(List.of(
+                    (lvl, rarity) -> new Rotworm("Rotworm", lvl, 1, 20, rarity),
+                    (lvl, rarity) -> new Rotworm("Rotworm", lvl, 1, 20, rarity)
+            ));
+            return rotwormCave;
+        });
+
+        register("Dragon Lair", () -> {
+            Dungeon dragonLair = new Dungeon("Dragon Lair", "placeholder", 28);
+            dragonLair.populateDungeon(List.of(
+                    (lvl, rarity) -> new Dragon("Dragon Hatchling", lvl, 160, 40, rarity),
+                    (lvl, rarity) -> new Dragon("Dragon Hatchling", lvl, 160, 40, rarity),
+                    (lvl, rarity) -> new Dragon("Dragon",           lvl, 400, 120, rarity)
+            ));
+            return dragonLair;
+        });
+    }
+
+
+    public static void register(String name, Supplier<Dungeon> factory) {
+        REGISTRY.put(name.toLowerCase(), factory);
+    }
+
+    public static Dungeon create(String name) {
+        Supplier<Dungeon> factory = REGISTRY.get(name.toLowerCase());
+        if (factory == null) {
+            throw new CreateNullDungeonException("Trying to create a null dungeon");
+        }
+
+        return factory.get();
+    }
+
+    public static List<Dungeon> createAll() {
+        List<Dungeon> allDungeons = new ArrayList<>();
+        for (Supplier<Dungeon> supplier : REGISTRY.values()) {
+            allDungeons.add(supplier.get());
+        }
+        return allDungeons;
+    }
+
+    public static List<String> getAllDungeonNames() {
+        return List.copyOf(REGISTRY.keySet());
+    }
+
+
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/model/monster/Monster.java">
+package se.dungeonsandmorons.model.monster;
+
+import se.dungeonsandmorons.model.character.Combatant;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
+
+public abstract class Monster implements Combatant {
+    private static final double HP_GROWTH_PER_LEVEL = 0.14;
+    private static final double DMG_GROWTH_PER_LEVEL = 0.1;
+    private static final double EXP_GROWTH_PER_LEVEL = 0.16;
+
+    protected final String name;
+    protected int level;
+    private int maxHealth;
+    protected int currentHealth;
+    protected int expOnDeath;
+    protected MonsterRarity rarity;
+    protected List<MonsterAction> actions = new ArrayList<>();
+
+    Monster(String name, int level, int baseHealth, int baseExp, MonsterRarity rarity) {
+        this.name = (rarity != MonsterRarity.NORMAL ? rarity.name() + " " + name : name);
+        this.rarity = rarity;
+
+        int levelOffset = Math.max(0, level - 1);
+
+        double levelHp = baseHealth * (1.0 + (levelOffset * HP_GROWTH_PER_LEVEL));
+        double levelExp = baseExp * (1.0 + (levelOffset * EXP_GROWTH_PER_LEVEL));
+
+        // TODO: Should be calced when using skills
+        double levelDmg = baseHealth * (1.0 + (levelOffset * DMG_GROWTH_PER_LEVEL));
+
+        this.maxHealth = (int) Math.round(levelHp * rarity.getHealthMultiplier());
+        this.expOnDeath = (int) Math.round(levelExp * rarity.getExperienceMultiplier());
+
+        this.currentHealth = maxHealth;
+    }
+
+    public MonsterAction chooseAction() {
+        if (actions.isEmpty()) {
+            throw new IllegalStateException(name + " has no actions configured!");
+        }
+
+        int totalWeight = 0;
+        for (MonsterAction action : actions) {
+            totalWeight += action.weight();
+        }
+
+        int roll = ThreadLocalRandom.current().nextInt(totalWeight);
+
+        int currentThreshold = 0;
+        for (MonsterAction action : actions) {
+            currentThreshold += action.weight();
+            if (roll < currentThreshold) {
+                return action;
+            }
+        }
+
+        return actions.getFirst();
+    }
+
+    public boolean isAlive() { return this.currentHealth > 0; }
+
+    public String getName() { return this.name;}
+    public int getMaxHealth(){ return this.maxHealth; }
+    public int getCurrentHealth() { return this.currentHealth; }
+    public int getDeathExperience() { return this.expOnDeath; }
+    public MonsterRarity getRarity() { return this.rarity; }
+
+    public void setMaxHealth(int maxHealth) { this.maxHealth = maxHealth; }
+    public void setDeathExperience(int expOnDeath) { this.expOnDeath = expOnDeath; }
+    public void setLevel(int level) { this.level = level; }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s", rarity, name);
+    }
+
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/model/monster/MonsterAction.java">
+package se.dungeonsandmorons.model.monster;
+
+import se.dungeonsandmorons.model.combat.CombatAbility;
+import se.dungeonsandmorons.model.skill.SkillTag;
+import se.dungeonsandmorons.model.skill.TargetType;
+
+import java.util.Set;
+
+public class MonsterAction implements CombatAbility {
+    private final String name;
+    private final int damage;
+    private final int weight;
+    private final Set<SkillTag> tags;
+    private final String flavorText;
+
+    public MonsterAction(String name, int damage, int weight, Set<SkillTag> tags, String combatFlavorText) {
+        this.name = name;
+        this.damage = damage;
+        this.weight = weight;
+        this.tags = tags;
+        this.flavorText = combatFlavorText;
+    }
+
+    @Override public String getName() { return name; }
+    @Override public TargetType getTargetType() { return TargetType.SINGLE_TARGET; }
+    @Override public Set<SkillTag> getTags() { return tags; }
+
+    public int damage() { return damage; }
+    public int weight() { return weight; }
+    public String flavorText() { return flavorText; }
+
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/model/monster/MonsterFactory.java">
+package se.dungeonsandmorons.model.monster;
+
+@FunctionalInterface
+public interface MonsterFactory {
+    Monster create(int level, MonsterRarity rarity);
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/model/monster/MonsterRarity.java">
+package se.dungeonsandmorons.model.monster;
+
+public enum MonsterRarity {
+    NORMAL(1.0, 1.0, 1.0),
+    MAGIC(1.2, 1.2, 1.2),
+    RARE(1.4, 1.5, 1.5),
+    EPIC(1.8, 2, 1.8),
+    BOSS(5, 4, 3.5);
+
+    private final double healthMultiplier;
+    private final double damageMultiplier;
+    private final double experienceMultiplier;
+
+    MonsterRarity(double healthMultiplier, double damageMultiplier, double experienceMultiplier) {
+        this.healthMultiplier      = healthMultiplier;
+        this.damageMultiplier      = damageMultiplier;
+        this.experienceMultiplier  = experienceMultiplier;
+    }
+
+    public double getHealthMultiplier()      { return healthMultiplier; }
+    public double getDamageMultiplier()      { return damageMultiplier; }
+    public double getExperienceMultiplier()  { return experienceMultiplier; }
+
+    public int scale(int baseValue, double multiplier) {
+        return (int) Math.round(baseValue * multiplier);
+    }
+
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/model/npc/Npc.java">
+package se.dungeonsandmorons.model.npc;
+
+public record Npc(String name, String role, String dialogue) {
+
+    public boolean matches(String query) {
+        if (query == null || query.isBlank()) {
+            return false;
+        }
+
+        String cleanQuery = query.trim();
+        return name.equalsIgnoreCase(cleanQuery) || role.equalsIgnoreCase(cleanQuery);
+    }
+
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/model/skill/Skill.java">
+package se.dungeonsandmorons.model.skill;
+
+import se.dungeonsandmorons.model.Attribute;
+import se.dungeonsandmorons.model.character.CharacterClass;
+import se.dungeonsandmorons.model.combat.CombatAbility;
+
+import java.util.Set;
+
+public class Skill implements CombatAbility {
+    private final String name;
+    private final int resourceCost;
+    private final int baseDamage;
+    private final Attribute scalingAttribute;
+    private final int attributeDamageMultiplier;
+    private final TargetType targetType;
+    private final Set<SkillTag> tags;
+    private final Set<CharacterClass> allowedClasses;
+
+
+    public Skill(String name, int baseDamage, int resourceCost,
+                 Attribute attribute, int attributeDamageMultiplier,
+                 TargetType targetType, Set<SkillTag> tags, Set<CharacterClass> allowedClasses) {
+        this.name = name;
+        this.resourceCost = resourceCost;
+        this.baseDamage = baseDamage;
+        this.scalingAttribute = attribute;
+        this.attributeDamageMultiplier = attributeDamageMultiplier;
+        this.targetType = targetType;
+        this.tags = tags;
+        this.allowedClasses = allowedClasses;
+    }
+
+    public boolean canBeLearnedBy(CharacterClass clazz) {
+        return allowedClasses.isEmpty() || allowedClasses.contains(clazz);
+    }
+
+    public boolean hasTag(SkillTag tag) {
+        return tags.contains(tag);
+    }
+
+    @Override public String getName() { return name; }
+    @Override public TargetType getTargetType() { return targetType; }
+    @Override public Set<SkillTag> getTags() { return tags; }
+    public int getResourceCost() { return resourceCost; }
+    public int getBaseDamage() { return baseDamage; }
+    public Attribute getScalingAttribute() { return scalingAttribute; }
+    public int getAttributeDamageMultiplier() { return attributeDamageMultiplier; }
+
+    @Override
+    public String toString() {
+        return String.format("Skill{name=%s, baseDamage=%d, resourceCost=%d, attribute=%s, attributeDamageMultiplier=%d}",
+                name, baseDamage, resourceCost, scalingAttribute, attributeDamageMultiplier);
+    }
+
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/model/skill/SkillTag.java">
+package se.dungeonsandmorons.model.skill;
+
+public enum SkillTag {
+    MELEE,
+    RANGED,
+    SPELL,
+    PHYSICAL,
+    FIRE,
+    COLD,
+    LIGHTNING,
+    HEAL,
+    BUFF,
+    DEBUFF
+
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/model/skill/TargetType.java">
+package se.dungeonsandmorons.model.skill;
+
+public enum TargetType {
+    SINGLE_TARGET,
+    MULTIPLE_TARGETS,
+    SELF,
+    SELF_AND_TARGET,
+    SELF_AND_TARGETS
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/model/Attribute.java">
+package se.dungeonsandmorons.model;
+
+public enum Attribute {
+    STRENGTH,
+    AGILITY,
+    INTELLIGENCE,
+    VITALITY,
+    NONE
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/repository/CharacterRepository.java">
+package se.dungeonsandmorons.repository;
+
+import se.dungeonsandmorons.model.character.Kharacter;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface CharacterRepository {
+    void save(Kharacter character, String lastTownVisited);
+    Optional<CharacterSaveData> findByName(String name);
+    List<CharacterSummary> findAllSummaries();
+    boolean deleteByName(String name);
+    boolean existsByName(String name);
+
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/repository/CharacterSaveData.java">
+package se.dungeonsandmorons.repository;
+
+import se.dungeonsandmorons.model.character.Kharacter;
+
+public record CharacterSaveData(Kharacter player, String lastTownVisited) {}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/town/Town.java">
+package se.dungeonsandmorons.town;
+
+import se.dungeonsandmorons.model.npc.Npc;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Town {
+    private final String name;
+    private final String description;
+    private final List<Npc> npcs;
+
+    public Town(String name, String description, List<Npc> npcs) {
+        this.name = name;
+        this.description = description;
+        this.npcs = npcs;
+    }
+
+    public Npc findNpc(String query) {
+        for (Npc npc : npcs) {
+            if (npc.matches(query)) {
+                return npc;
+            }
+        }
+        return null;
+    }
+
+    public String getName() { return name; }
+    public String getDescription() { return description; }
+    public List<Npc> getNpcs() { return npcs; }
+
+}
+</file>
+
+<file path="core/test/java/se/dungeonsandmorons/model/character/CharacterTest.java">
+package se.dungeonsandmorons.model.character;
+
+
+public class CharacterTest {
+
+
+
+
+
+}
+</file>
+
+<file path="core/build.gradle.kts">
+dependencies {
+    // Required since DatabaseConnection and PostgresCharacterRepository currently reside here
+    implementation("org.postgresql:postgresql:42.7.12")
+}
+</file>
+
+<file path="gradle/wrapper/gradle-wrapper.properties">
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+distributionUrl=https\://services.gradle.org/distributions/gradle-9.7.1-bin.zip
+networkTimeout=10000
+retries=0
+retryBackOffMs=500
+validateDistributionUrl=true
+zipStoreBase=GRADLE_USER_HOME
+zipStorePath=wrapper/dists
+</file>
+
+<file path="gradle/libs.versions.toml">
+# This file was generated by the Gradle 'init' task.
+# https://docs.gradle.org/current/userguide/version_catalogs.html#sec::toml-dependencies-format
+</file>
+
+<file path="web/src/main/java/se/dungeonsandmorons/web/config/OpenApiConfig.java">
+package se.dungeonsandmorons.web.config;
+
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class OpenApiConfig {
+
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("Dungeons & Morons REST API")
+                        .version("1.0.0")
+                        .description("REST endpoints for character management and dungeon runs"));
+    }
+
+}
+</file>
+
+<file path="web/src/main/java/se/dungeonsandmorons/web/controller/DungeonController.java">
+package se.dungeonsandmorons.web.controller;
+
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import se.dungeonsandmorons.model.dungeon.Dungeon;
+import se.dungeonsandmorons.service.DungeonService;
+import se.dungeonsandmorons.web.dto.DungeonResponse;
+import se.dungeonsandmorons.web.dto.MonsterSummaryResponse;
+
+import java.util.List;
+
+@Tag(name = "Dungeons", description = "Query available dungeons and encounters information")
+@RestController
+@RequestMapping("/api/dungeons")
+public class DungeonController {
+
+    private final DungeonService dungeonService;
+
+    public DungeonController(DungeonService dungeonService) {
+        this.dungeonService = dungeonService;
+    }
+
+    @Operation(summary = "List all discoverable dungeons with encounter summaries")
+    @GetMapping
+    public List<DungeonResponse> getAllDungeons() {
+        return dungeonService.getAvailableDungeonNames().stream()
+                .map(dungeonService::findDungeonByName)
+                .map(this::toResponse)
+                .toList();
+    }
+
+    @Operation(summary = "Get dungeon details and monster spawns by name")
+    @GetMapping("/{name}")
+    public DungeonResponse getDungeonByName(@PathVariable String name) {
+        String formattedName = name.replace("-", " ").trim();
+        Dungeon dungeon = dungeonService.findDungeonByName(formattedName);
+        return toResponse(dungeon);
+    }
+
+    private DungeonResponse toResponse(Dungeon dungeon) {
+        List<MonsterSummaryResponse> monsters = dungeon.getMonsters().stream()
+                .map(m -> new MonsterSummaryResponse(
+                        m.getName(),
+                        m.getMaxHealth(),
+                        m.getDeathExperience(),
+                        m.getRarity().name()
+                ))
+                .toList();
+
+        return new DungeonResponse(
+                dungeon.getName(),
+                dungeon.getDescription(),
+                dungeon.getAreaLevel(),
+                monsters.size(),
+                monsters
+        );
+    }
+
+}
+</file>
+
+<file path="web/src/main/java/se/dungeonsandmorons/web/dto/AllocateStatsRequest.java">
+package se.dungeonsandmorons.web.dto;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Min;
+
+public record AllocateStatsRequest(
+        @Schema(description = "Points to allocate to Strength", example = "2", defaultValue = "0")
+        @Min(value = 0, message = "Strength points to allocate cannot be negative.")
+        int strength,
+
+        @Schema(description = "Points to allocate to Agility", example = "2", defaultValue = "0")
+        @Min(value = 0, message = "Agility points to allocate cannot be negative.")
+        int agility,
+
+        @Schema(description = "Points to allocate to Intelligence", example = "2", defaultValue = "0")
+        @Min(value = 0, message = "Intelligence points to allocate cannot be negative.")
+        int intelligence,
+
+        @Schema(description = "Points to allocate to Vitality", example = "2", defaultValue = "0")
+        @Min(value = 0, message = "Vitality points to allocate cannot be negative.")
+        int vitality
+) {
+
+    public int totalPoints() {
+        return strength + agility + intelligence + vitality;
+    }
+
+}
+</file>
+
+<file path="web/src/main/java/se/dungeonsandmorons/web/dto/ApiErrorResponse.java">
+package se.dungeonsandmorons.web.dto;
+
+import java.time.Instant;
+
+public record ApiErrorResponse(
+        int status,
+        String error,
+        String message,
+        Instant timestamp
+) {
+    public ApiErrorResponse(int status, String error, String message) {
+        this(status, error, message, Instant.now());
+    }
+}
+</file>
+
+<file path="web/src/main/java/se/dungeonsandmorons/web/dto/DungeonResponse.java">
+package se.dungeonsandmorons.web.dto;
+
+import java.util.List;
+
+public record DungeonResponse(
+        String name,
+        String description,
+        int areaLevel,
+        int monsterCount,
+        List<MonsterSummaryResponse> monsters
+) {}
+</file>
+
+<file path="web/src/main/java/se/dungeonsandmorons/web/dto/MonsterSummaryResponse.java">
+package se.dungeonsandmorons.web.dto;
+
+public record MonsterSummaryResponse(
+        String name,
+        int maxHealth,
+        int expOnDeath,
+        String rarity
+) {
+}
+</file>
+
+<file path="web/src/main/java/se/dungeonsandmorons/web/DungeonsAndMoronsApplication.java">
+package se.dungeonsandmorons.web;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class DungeonsAndMoronsApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(DungeonsAndMoronsApplication.class, args);
+    }
+}
+</file>
+
+<file path=".gitattributes">
+#
+# https://help.github.com/articles/dealing-with-line-endings/
+#
+# Linux start script should use lf
+/gradlew        text eol=lf
+
+# These are Windows script files and should use crlf
+*.bat           text eol=crlf
+
+# Binary files should be left untouched
+*.jar           binary
+</file>
+
+<file path="build.gradle.kts">
+plugins {
+    java
+    id("org.springframework.boot") version "3.4.0" apply false
+    id("io.spring.dependency-management") version "1.1.7" apply false
+}
+
+subprojects {
+    apply(plugin = "java")
+
+    configure<JavaPluginExtension> {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(25))
+        }
+    }
+
+    configure<JavaPluginExtension> {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(25))
+        }
+    }
+
+    // Instructs the Java 25 compiler to produce bytecode Spring Boot's scanner can parse
+    tasks.withType<JavaCompile> {
+        options.release.set(21)
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        testImplementation(platform("org.junit:junit-bom:5.11.0"))
+        testImplementation("org.junit.jupiter:junit-jupiter")
+        testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    }
+
+    tasks.withType<Test> {
+        useJUnitPlatform()
+    }
+}
+</file>
+
+<file path="DungeonsAndMorons.iml">
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
+</file>
+
+<file path="gradle.properties">
+# This file was generated by the Gradle 'init' task.
+# https://docs.gradle.org/current/userguide/build_environment.html#sec:gradle_configuration_properties
+
+org.gradle.configuration-cache=true
+</file>
+
+<file path="gradlew">
+#!/bin/sh
+
+#
+# Copyright © 2015 the original authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+##############################################################################
+#
+#   gradlew start up script for POSIX generated by Gradle.
+#
+#   Important for running:
+#
+#   (1) You need a POSIX-compliant shell to run this script. If your /bin/sh is
+#       noncompliant, but you have some other compliant shell such as ksh or
+#       bash, then to run this script, type that shell name before the whole
+#       command line, like:
+#
+#           ksh gradlew
+#
+#       Busybox and similar reduced shells will NOT work, because this script
+#       requires all of these POSIX shell features:
+#         * functions;
+#         * expansions «$var», «${var}», «${var:-default}», «${var+SET}»,
+#           «${var#prefix}», «${var%suffix}», and «$( cmd )»;
+#         * compound commands having a testable exit status, especially «case»;
+#         * various built-in commands including «command», «set», and «ulimit».
+#
+#   Important for patching:
+#
+#   (2) This script targets any POSIX shell, so it avoids extensions provided
+#       by Bash, Ksh, etc; in particular arrays are avoided.
+#
+#       The "traditional" practice of packing multiple parameters into a
+#       space-separated string is a well documented source of bugs and security
+#       problems, so this is (mostly) avoided, by progressively accumulating
+#       options in "$@", and eventually passing that to Java.
+#
+#       Where the inherited environment variables (DEFAULT_JVM_OPTS, JAVA_OPTS,
+#       and GRADLE_OPTS) rely on word-splitting, this is performed explicitly;
+#       see the in-line comments for details.
+#
+#       There are tweaks for specific operating systems such as AIX, CygWin,
+#       Darwin, MinGW, and NonStop.
+#
+#   (3) This script is generated from the Groovy template
+#       https://github.com/gradle/gradle/blob/<unknown>/platforms/jvm/plugins-application/src/main/resources/org/gradle/api/internal/plugins/unixStartScript.txt
+#       within the Gradle project.
+#
+#       You can find Gradle at https://github.com/gradle/gradle/.
+#
+##############################################################################
+
+# Attempt to set APP_HOME
+
+# Resolve links: $0 may be a link
+app_path=$0
+
+# Need this for daisy-chained symlinks.
+while
+    APP_HOME=${app_path%"${app_path##*/}"}  # leaves a trailing /; empty if no leading path
+    [ -h "$app_path" ]
+do
+    ls=$( ls -ld "$app_path" )
+    link=${ls#*' -> '}
+    case $link in             #(
+      /*)   app_path=$link ;; #(
+      *)    app_path=$APP_HOME$link ;;
+    esac
+done
+
+# This is normally unused
+# shellcheck disable=SC2034
+APP_BASE_NAME=${0##*/}
+# Discard cd standard output in case $CDPATH is set (https://github.com/gradle/gradle/issues/25036)
+APP_HOME=$( cd -P "${APP_HOME:-./}" > /dev/null && printf '%s\n' "$PWD" ) || exit
+
+# Use the maximum available, or set MAX_FD != -1 to use that value.
+MAX_FD=maximum
+
+warn () {
+    echo "$*"
+} >&2
+
+die () {
+    echo
+    echo "$*"
+    echo
+    exit 1
+} >&2
+
+# OS specific support (must be 'true' or 'false').
+cygwin=false
+msys=false
+darwin=false
+nonstop=false
+case "$( uname )" in                #(
+  CYGWIN* )         cygwin=true  ;; #(
+  Darwin* )         darwin=true  ;; #(
+  MSYS* | MINGW* )  msys=true    ;; #(
+  NONSTOP* )        nonstop=true ;;
+esac
+
+
+
+# Determine the Java command to use to start the JVM.
+if [ -n "$JAVA_HOME" ] ; then
+    if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
+        # IBM's JDK on AIX uses strange locations for the executables
+        JAVACMD=$JAVA_HOME/jre/sh/java
+    else
+        JAVACMD=$JAVA_HOME/bin/java
+    fi
+    if [ ! -x "$JAVACMD" ] ; then
+        die "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME
+
+Please set the JAVA_HOME variable in your environment to match the
+location of your Java installation."
+    fi
+else
+    JAVACMD=java
+    if ! command -v java >/dev/null 2>&1
+    then
+        die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
+
+Please set the JAVA_HOME variable in your environment to match the
+location of your Java installation."
+    fi
+fi
+
+# Increase the maximum file descriptors if we can.
+if ! "$cygwin" && ! "$darwin" && ! "$nonstop" ; then
+    case $MAX_FD in #(
+      max*)
+        # In POSIX sh, ulimit -H is undefined. That's why the result is checked to see if it worked.
+        # shellcheck disable=SC2039,SC3045
+        MAX_FD=$( ulimit -H -n ) ||
+            warn "Could not query maximum file descriptor limit"
+    esac
+    case $MAX_FD in  #(
+      '' | soft) :;; #(
+      *)
+        # In POSIX sh, ulimit -n is undefined. That's why the result is checked to see if it worked.
+        # shellcheck disable=SC2039,SC3045
+        ulimit -n "$MAX_FD" ||
+            warn "Could not set maximum file descriptor limit to $MAX_FD"
+    esac
+fi
+
+# Collect all arguments for the java command, stacking in reverse order:
+#   * args from the command line
+#   * the main class name
+#   * -classpath
+#   * -D...appname settings
+#   * --module-path (only if needed)
+#   * DEFAULT_JVM_OPTS, JAVA_OPTS, and GRADLE_OPTS environment variables.
+
+# For Cygwin or MSYS, switch paths to Windows format before running java
+if "$cygwin" || "$msys" ; then
+    APP_HOME=$( cygpath --path --mixed "$APP_HOME" )
+
+    JAVACMD=$( cygpath --unix "$JAVACMD" )
+
+    # Now convert the arguments - kludge to limit ourselves to /bin/sh
+    for arg do
+        if
+            case $arg in                                #(
+              -*)   false ;;                            # don't mess with options #(
+              /?*)  t=${arg#/} t=/${t%%/*}              # looks like a POSIX filepath
+                    [ -e "$t" ] ;;                      #(
+              *)    false ;;
+            esac
+        then
+            arg=$( cygpath --path --ignore --mixed "$arg" )
+        fi
+        # Roll the args list around exactly as many times as the number of
+        # args, so each arg winds up back in the position where it started, but
+        # possibly modified.
+        #
+        # NB: a `for` loop captures its iteration list before it begins, so
+        # changing the positional parameters here affects neither the number of
+        # iterations, nor the values presented in `arg`.
+        shift                   # remove old arg
+        set -- "$@" "$arg"      # push replacement arg
+    done
+fi
+
+
+# Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
+DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
+
+# Collect all arguments for the java command:
+#   * DEFAULT_JVM_OPTS, JAVA_OPTS, and optsEnvironmentVar are not allowed to contain shell fragments,
+#     and any embedded shellness will be escaped.
+#   * For example: A user cannot expect ${Hostname} to be expanded, as it is an environment variable and will be
+#     treated as '${Hostname}' itself on the command line.
+
+set -- \
+        "-Dorg.gradle.appname=$APP_BASE_NAME" \
+        -jar "$APP_HOME/gradle/wrapper/gradle-wrapper.jar" \
+        "$@"
+
+# Stop when "xargs" is not available.
+if ! command -v xargs >/dev/null 2>&1
+then
+    die "xargs is not available"
+fi
+
+# Use "xargs" to parse quoted args.
+#
+# With -n1 it outputs one arg per line, with the quotes and backslashes removed.
+#
+# In Bash we could simply go:
+#
+#   readarray ARGS < <( xargs -n1 <<<"$var" ) &&
+#   set -- "${ARGS[@]}" "$@"
+#
+# but POSIX shell has neither arrays nor command substitution, so instead we
+# post-process each arg (as a line of input to sed) to backslash-escape any
+# character that might be a shell metacharacter, then use eval to reverse
+# that process (while maintaining the separation between arguments), and wrap
+# the whole thing up as a single "set" statement.
+#
+# This will of course break if any of these variables contains a newline or
+# an unmatched quote.
+#
+
+eval "set -- $(
+        printf '%s\n' "$DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS" |
+        xargs -n1 |
+        sed ' s~[^-[:alnum:]+,./:=@_]~\\&~g; ' |
+        tr '\n' ' '
+    )" '"$@"'
+
+exec "$JAVACMD" "$@"
+</file>
+
+<file path="gradlew.bat">
+@rem
+@rem Copyright 2015 the original author or authors.
+@rem
+@rem Licensed under the Apache License, Version 2.0 (the "License");
+@rem you may not use this file except in compliance with the License.
+@rem You may obtain a copy of the License at
+@rem
+@rem      https://www.apache.org/licenses/LICENSE-2.0
+@rem
+@rem Unless required by applicable law or agreed to in writing, software
+@rem distributed under the License is distributed on an "AS IS" BASIS,
+@rem WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+@rem See the License for the specific language governing permissions and
+@rem limitations under the License.
+@rem
+@rem SPDX-License-Identifier: Apache-2.0
+@rem
+
+@if "%DEBUG%"=="" @echo off
+@rem ##########################################################################
+@rem
+@rem  gradlew startup script for Windows
+@rem
+@rem ##########################################################################
+
+@rem Set local scope for the variables, and ensure extensions are enabled
+setlocal EnableExtensions
+
+set DIRNAME=%~dp0
+if "%DIRNAME%"=="" set DIRNAME=.
+@rem This is normally unused
+set APP_BASE_NAME=%~n0
+set APP_HOME=%DIRNAME%
+
+@rem Resolve any "." and ".." in APP_HOME to make it shorter.
+for %%i in ("%APP_HOME%") do set APP_HOME=%%~fi
+
+@rem Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
+set DEFAULT_JVM_OPTS="-Xmx64m" "-Xms64m"
+
+@rem Find java.exe
+if defined JAVA_HOME goto findJavaFromJavaHome
+
+set JAVA_EXE=java.exe
+%JAVA_EXE% -version >NUL 2>&1
+if %ERRORLEVEL% equ 0 goto execute
+
+echo. 1>&2
+echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH. 1>&2
+echo. 1>&2
+echo Please set the JAVA_HOME variable in your environment to match the 1>&2
+echo location of your Java installation. 1>&2
+
+"%COMSPEC%" /c exit 1
+
+:findJavaFromJavaHome
+set JAVA_HOME=%JAVA_HOME:"=%
+set JAVA_EXE=%JAVA_HOME%/bin/java.exe
+
+if exist "%JAVA_EXE%" goto execute
+
+echo. 1>&2
+echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME% 1>&2
+echo. 1>&2
+echo Please set the JAVA_HOME variable in your environment to match the 1>&2
+echo location of your Java installation. 1>&2
+
+"%COMSPEC%" /c exit 1
+
+:execute
+@rem Setup the command line
+
+
+
+@rem Execute gradlew
+@rem endlocal doesn't take effect until after the line is parsed and variables are expanded
+@rem which allows us to clear the local environment before executing the java command
+endlocal & "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -jar "%APP_HOME%\gradle\wrapper\gradle-wrapper.jar" %* & call :exitWithErrorLevel
+
+:exitWithErrorLevel
+@rem Use "%COMSPEC%" /c exit to allow operators to work properly in scripts
+"%COMSPEC%" /c exit %ERRORLEVEL%
+</file>
+
+<file path="settings.gradle.kts">
+/*
+ * This file was generated by the Gradle 'init' task.
+ *
+ * The settings file is used to specify which projects to include in your build.
+ * For more detailed information on multi-project builds, please refer to https://docs.gradle.org/9.7.1/userguide/multi_project_builds.html in the Gradle documentation.
+ */
+
+rootProject.name = "dungeons-and-morons"
+include("core")
+include("cli")
+include("web")
+</file>
+
+<file path="cli/src/main/java/se/dungeonsandmorons/game/GameLoop.java">
+package se.dungeonsandmorons.game;
+
+import se.dungeonsandmorons.screen.*;
+import se.dungeonsandmorons.screen.IO;
+
+import java.util.Map;
+
+public class GameLoop {
+
+    private final GameContext context;
+    private final Map<GameState, Screen> screens;
+
+    public GameLoop(GameContext context) {
+        this.context = context;
+        this.screens = Map.of(
+                GameState.MAIN_MENU, new MainMenuScreen(),
+                GameState.LOAD_MENU, new LoadScreen(),
+                GameState.CHARACTER_CREATION, new CreateCharacterScreen(),
+                GameState.IN_TOWN, new TownScreen(),
+                GameState.TALKING_TO_NPC, new TalkingToNpcScreen(),
+                GameState.SELECTING_DUNGEON, new DungeonSelectScreen(),
+                GameState.EXPLORING_DUNGEON, new ExploringDungeonScreen(),
+                GameState.IN_COMBAT, new CombatScreen(),
+                GameState.STAT_MANAGEMENT, new AllocateStatsScreen()
+        );
+    }
+
+    public void run() {
+        while (context.getStateMachine().getCurrentState() != GameState.GAME_OVER) {
+            GameState currentState = context.getStateMachine().getCurrentState();
+            Screen currentScreen = screens.get(currentState);
+
+            if (currentScreen == null) {
+                throw new IllegalStateException("No screen mapped for state: " + currentState);
+            }
+
+            currentScreen.display(context);
+            String input = IO.readln("> ");
+            currentScreen.handleInput(input, context);
+        }
+    }
+
+}
+</file>
+
+<file path="cli/src/main/java/se/dungeonsandmorons/screen/CreateCharacterScreen.java">
+package se.dungeonsandmorons.screen;
+
+import se.dungeonsandmorons.game.GameContext;
+import se.dungeonsandmorons.game.GameEvent;
+import se.dungeonsandmorons.model.character.CharacterClass;
+import se.dungeonsandmorons.model.character.Kharacter;
+import se.dungeonsandmorons.town.TownRegistry;
+
+public class CreateCharacterScreen implements Screen {
+
+    @Override
+    public void display(GameContext context) {
+        IO.println("""
+        
+        === Character Creation ===
+        
+        Classes: Warrior | Magician | Archer
+        Usage:      create <name> <class>
+        Example:    create Cliff Hanger Warrior
+        
+        Type 'back' to return to Main Menu.
+        """);
+    }
+
+    @Override
+    public void handleInput(String input, GameContext context) {
+        String trimmed = input.trim();
+
+        if (trimmed.equalsIgnoreCase("back")) {
+            context.getStateMachine().transition(GameEvent.CANCEL);
+            return;
+        }
+
+        if (!trimmed.toLowerCase().startsWith("create ")) {
+            IO.println("Invalid format. Use: create <name> <class>");
+            return;
+        }
+
+        String payload = trimmed.substring("create ".length()).trim();
+
+        int lastSpaceIndex = payload.lastIndexOf(' ');
+        if (lastSpaceIndex == -1) {
+            IO.println(String.format("Missing class! Example: create %s Warrior", payload));
+            return;
+        }
+
+        String characterName = payload.substring(0, lastSpaceIndex).trim();
+        String characterClass = payload.substring(lastSpaceIndex + 1).trim();
+
+        if (characterName.isBlank()) {
+            IO.println("Character name cannot be blank.");
+            return;
+        }
+
+        if (context.getSaveService().saveExists(characterName)) {
+            IO.println(String.format("Character with name '%s' already exists!", characterName));
+            return;
+        }
+
+        switch (characterClass.toLowerCase()) {
+            case "warrior"  -> {
+                context.setPlayer(new Kharacter(characterName, CharacterClass.WARRIOR));
+                context.setActiveTown(TownRegistry.get("Densewood"));
+                IO.println(String.format("Character created: %s the Warrior!", characterName));
+                context.getStateMachine().transition(GameEvent.ENTER_TOWN);
+            }
+
+            case "archer"  -> {
+                context.setPlayer(new Kharacter(characterName, CharacterClass.ARCHER));
+                context.setActiveTown(TownRegistry.get("Densewood"));
+                IO.println(String.format("Character created: %s the Archer!", characterName));
+                context.getStateMachine().transition(GameEvent.ENTER_TOWN);
+            }
+
+            case "magician"  -> {
+                context.setPlayer(new Kharacter(characterName, CharacterClass.MAGICIAN));
+                context.setActiveTown(TownRegistry.get("Densewood"));
+                IO.println(String.format("Character created: %s the Magician!", characterName));
+                context.getStateMachine().transition(GameEvent.ENTER_TOWN);
+            }
+            default         -> IO.println(String.format("Unknown class '%s'.", characterClass));
+        }
+
+    }
+
+
+}
+</file>
+
+<file path="cli/src/main/java/se/dungeonsandmorons/screen/LoadScreen.java">
+package se.dungeonsandmorons.screen;
+
+import se.dungeonsandmorons.repository.CharacterSummary;
+import se.dungeonsandmorons.exception.CorruptedSaveException;
+import se.dungeonsandmorons.game.GameContext;
+import se.dungeonsandmorons.game.GameEvent;
+import se.dungeonsandmorons.town.TownRegistry;
+
+import java.util.List;
+
+public class LoadScreen implements Screen {
+
+    @Override
+    public void display(GameContext context) {
+        IO.print("""
+                
+                === Saved Characters ===
+                
+                """);
+        List<CharacterSummary> saves = context.getSaveService().getAvailableSaves();
+
+        if (saves != null && !saves.isEmpty()) {
+            for (CharacterSummary save : saves) {
+                IO.println(save);
+            }
+        } else {
+            IO.println("No saved characters");
+        }
+
+        IO.print("""
+                
+                Type character name to load, or 'back' to return.
+                Name is case-sensitive
+                
+                """);
+    }
+
+    @Override
+    public void handleInput(String input, GameContext context) {
+        String trimmed = input.trim();
+
+        if (trimmed.equalsIgnoreCase("back")) {
+            context.getStateMachine().transition(GameEvent.CANCEL);
+            return;
+        }
+
+        try {
+            context.getSaveService().loadGame(trimmed).ifPresentOrElse(saveData -> {
+                context.setPlayer(saveData.player());
+                String townName = saveData.lastTownVisited() != null
+                        ? saveData.lastTownVisited()
+                        : "Densewood";
+                context.setActiveTown(TownRegistry.get(townName));
+
+                IO.println("Character loaded successfully!");
+                context.getStateMachine().transition(GameEvent.ENTER_TOWN);
+            }, () -> IO.println("Failed to load character"));
+        } catch (CorruptedSaveException e) {
+            IO.println("Error: " + e.getMessage());
+            IO.println("Returning to Main Menu...");
+            context.getStateMachine().transition(GameEvent.LOAD_GAME_FAIL);
+        }
+
+    }
+
+}
+</file>
+
+<file path="cli/build.gradle.kts">
+plugins {
+    application
+}
+
+dependencies {
+    implementation(project(":core"))
+}
+
+application {
+    mainClass.set("se.dungeonsandmorons.Main")
+}
+
+// Enables interactive terminal/scanner input when running via './gradlew :cli:run'
+tasks.named<JavaExec>("run") {
+    standardInput = System.`in`
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/model/character/Combatant.java">
+package se.dungeonsandmorons.model.character;
+
+public interface Combatant {
+    String getName();
+    int getCurrentHealth();
+    int getMaxHealth();
+    boolean takeDamage(int amount, Combatant combatant);
+    default boolean isAlive() {
+        return getCurrentHealth() > 0;
+    }
+    default boolean isDead() {
+        return getCurrentHealth() <= 0;
+    }
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/model/skill/SkillRegistry.java">
+package se.dungeonsandmorons.model.skill;
+
+import se.dungeonsandmorons.model.Attribute;
+import se.dungeonsandmorons.model.character.CharacterClass;
+
+import java.util.*;
+
+public class SkillRegistry {
+
+    private static final Map<String, Skill> SKILLS = new HashMap<>();
+
+
+    static {
+        // WARRIOR SKILLS
+        register(new Skill("Basic Melee Attack", 5, 0,
+                Attribute.STRENGTH, 1, TargetType.SINGLE_TARGET,
+                Set.of(SkillTag.MELEE, SkillTag.PHYSICAL), Set.of(
+                        CharacterClass.WARRIOR
+        )));
+
+        register(new Skill("Strike", 9, 5,
+                Attribute.STRENGTH, 1, TargetType.SINGLE_TARGET,
+                Set.of(SkillTag.MELEE, SkillTag.PHYSICAL), Set.of(
+                        CharacterClass.WARRIOR
+        )));
+
+         register(new Skill("Raise Shield", 0, 5,
+                Attribute.STRENGTH, 1, TargetType.SELF,
+                Set.of(SkillTag.MELEE, SkillTag.PHYSICAL), Set.of(
+                        CharacterClass.WARRIOR
+         )));
+
+        // MAGE SKILLS
+        register(new Skill("Basic Magic Attack", 4, 0,
+                Attribute.STRENGTH, 1, TargetType.SINGLE_TARGET,
+                Set.of(SkillTag.RANGED, SkillTag.FIRE), Set.of(
+                        CharacterClass.MAGICIAN
+        )));
+
+    }
+
+
+    public static void register(Skill skill) {
+        SKILLS.put(skill.getName().toLowerCase(), skill);
+    }
+
+    public static Skill get(String name) {
+        return SKILLS.get(name.toLowerCase());
+    }
+
+    public static Map<String, Skill> getAll() {
+        return Collections.unmodifiableMap(SKILLS);
+    }
+
+
+
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/repository/CharacterSummary.java">
+package se.dungeonsandmorons.repository;
+
+public record CharacterSummary(String name, String characterClass, int level, String town) {
+    @Override
+    public String toString() {
+        return String.format("- %s, %s, level: %d", name, characterClass, level, town);
+    }
+
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/service/DungeonService.java">
+package se.dungeonsandmorons.service;
+
+import se.dungeonsandmorons.model.dungeon.Dungeon;
+import se.dungeonsandmorons.model.dungeon.DungeonRegistry;
+
+import java.util.List;
+
+public class DungeonService {
+
+    public List<String> getAvailableDungeonNames() {
+        return DungeonRegistry.getAllDungeonNames();
+    }
+
+    public Dungeon findDungeonByName(String name) {
+        Dungeon dungeon = DungeonRegistry.create(name);
+        if (dungeon == null) {
+            System.out.println("Could not find specified dungeon.");
+            return null;
+        }
+        return dungeon;
+    }
+
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/town/TownRegistry.java">
+package se.dungeonsandmorons.town;
+
+import se.dungeonsandmorons.model.npc.Npc;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
+
+public class TownRegistry {
+
+    private static final Map<String, Supplier<Town>> REGISTRY = new LinkedHashMap<>();
+
+    static {
+        register("Densewood", () -> new Town(
+                "Densewood",
+                "Home to the King of Fools and its' equally unintelligent citizens.",
+                List.of(
+                        new Npc("Watchman Gourd", "Guard", "Halt! Who goes there? If you're a friend, say 'friend.' If you're a foe, say 'friend' anyway so I don't gotta draw this sword, 'cause I put it in backwards and the pointy bit is stuck in the scabbard."),
+                        new Npc("Flint Blunt", "Blacksmith", "Hold on, don't interrupt the rhythm! Forty-two... forty-three... Damn rock won't bend today. Must be stubborn iron. You need armor, buy it now before I hit it again and make it worse"),
+                        new Npc("Phil Phial", "Alchemist", "Careful! Do not breathe in the red fumes. Wait, what color is this? Hand me that looking-glass—no, wait, drink this first and tell me if your tongue goes numb. If it does, great news, it cures coughs!")
+                )
+        ));
+
+        register("Cliffhanger", () -> new Town(
+                "Cliffhanger",
+                "A dizzying mountain village built literally over a sheer drop where the residents live in perpetual suspense.",
+                List.of(
+                        new Npc("Cliff Hanger", "Founder", "Im the founder of Cliffhanger, you can call me Cliff!"),
+                        new Npc("Eileen Dover", "Alchemist", "Find all kinds of herbs & potions here!"),
+                        new Npc("Brinkley", "Blacksmith", "I can get that blade right for you, or whip you up some fresh armor.")
+                )
+        ));
+    }
+
+    public static void register(String name, Supplier<Town> supplier) {
+        REGISTRY.put(name.toLowerCase(), supplier);
+    }
+
+    public static Town get(String name) {
+        Supplier<Town> supplier = REGISTRY.get(name.toLowerCase());
+        return supplier != null ? supplier.get() : null;
+    }
+
+}
+</file>
+
+<file path="web/src/main/resources/application.yml">
+server:
+  port: 8080
+
+spring:
+  application:
+    name: dungeons-and-morons-api
+  datasource:
+    url: jdbc:postgresql://ep-cool-art-b2km85jl-pooler.c-6.eu-central-1.aws.neon.tech/neondb?sslmode=require
+    username: neondb_owner
+    password: ${DB_PASSWORD:npg_pTFZ0keKunD1}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      pool-name: DungeonsHikariPool
+      maximum-pool-size: 5
+      minimum-idle: 1
+      idle-timeout: 300000
+      connection-timeout: 20000
+      max-lifetime: 1200000
+
+logging:
+  level:
+    com.zaxxer.hikari: DEBUG
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/model/character/CharacterClass.java">
+package se.dungeonsandmorons.model.character;
+
+import se.dungeonsandmorons.model.Attribute;
+
+public enum CharacterClass {
+    WARRIOR(
+            Attribute.STRENGTH, // Primary Attribute, for damage scaling
+            5,                  // Unallocated stat points per level
+            6,                  // HP gained per vitality
+            2                   // Mana gained per int
+
+    ),
+    ARCHER(
+            Attribute.AGILITY,
+            5,
+            4,
+            4
+    ),
+    MAGICIAN(
+            Attribute.INTELLIGENCE,
+            5,
+            3,
+            6
+    );
+
+    private final Attribute primaryAttribute;
+    private final int statPointGain;
+    private final int hpPerVitality;
+    private final int manaPerIntelligence;
+
+
+    CharacterClass(Attribute primaryAttribute, int statPointGain, int hpPerVitality, int manaPerIntelligence) {
+        this.primaryAttribute = primaryAttribute;
+        this.statPointGain = statPointGain;
+        this.hpPerVitality = hpPerVitality;
+        this.manaPerIntelligence = manaPerIntelligence;
+    }
+
+    public Attribute getPrimaryAttribute() { return primaryAttribute; }
+    public int getUnallocatedStats() { return statPointGain; }
+    public int getHpPerVitality() { return hpPerVitality; }
+    public int getManaPerIntelligence() { return manaPerIntelligence; }
+    public int getStatPointGain() { return statPointGain; }
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/model/combat/CombatEngine.java">
+package se.dungeonsandmorons.model.combat;
+
+import se.dungeonsandmorons.model.character.Kharacter;
+import se.dungeonsandmorons.model.monster.Monster;
+import se.dungeonsandmorons.model.monster.MonsterAction;
+import se.dungeonsandmorons.model.skill.Skill;
+
+public class CombatEngine {
+    private final Kharacter player;
+    private final Monster monster;
+    private CombatState state;
+    private int roundCount;
+
+    public CombatEngine(Kharacter player, Monster monster) {
+        this.player = player;
+        this.monster = monster;
+        this.state = CombatState.ROUND_START;
+        this.roundCount = 1;
+    }
+
+    public void startRound() {
+        if (state != CombatState.ROUND_START) {
+            throw new IllegalStateException("Cannot start round from state " + state);
+        }
+
+        // TODO: If we want DoTs or something like regeneration we can tick it here?
+
+        this.state = CombatState.AWAITING_PLAYER_INPUT;
+    }
+
+    public void executePlayerAction(CombatAction action, Skill skill) {
+        if (state != CombatState.AWAITING_PLAYER_INPUT) {
+            throw new IllegalStateException("Player action forbidden in state: " + state);
+        }
+
+        this.state = CombatState.RESOLVING_PLAYER_ACTION;
+
+        switch (action) {
+            // TODO: Separate Attack and Cast. Dunno yet how. Cast should be like a magicians Firebolt or a Buff
+            case ATTACK, CAST -> player.attack(monster, skill);
+            case RUN    -> {
+                // TODO: Some kind of escape odds calculation?
+                this.state = CombatState.ESCAPED;
+                return;
+            }
+        }
+
+        if (!monster.isAlive()) {
+            // TODO: CombatState.VICTORY -> CombatState.LOOT? How to handle looting hmm?
+            this.state = CombatState.VICTORY;
+        } else {
+            this.state = CombatState.RESOLVING_ENEMY_ACTION;
+            resolveEnemyTurn();
+        }
+
+    }
+
+    public void resolveEnemyTurn() {
+        if (state != CombatState.RESOLVING_ENEMY_ACTION) {
+            throw new IllegalStateException("Illegal enemy turn in state: " + state);
+        }
+
+
+        if (monster.isAlive()) {
+            MonsterAction action = monster.chooseAction();
+
+            if (action == null) {
+                throw new NullPointerException(String.format("%s have no actions registered.", monster.getName()));
+            }
+
+            int damage = action.damage();
+            player.takeDamage(damage, monster);
+            System.out.println(String.format("%s used %s for %d damage", monster.getName(), action.getName(), damage));
+        }
+
+        if (!player.isAlive()) {
+            // TODO: Some kind of evaluation of loss of exp, loot, etc.
+            this.state = CombatState.DEFEAT;
+        } else {
+            this.roundCount++;
+            this.state = CombatState.ROUND_START;
+            startRound();
+        }
+    }
+
+    public CombatState getState() { return state; }
+    public int getRoundCount() { return roundCount; }
+    public Kharacter getPlayer() { return player; }
+    public Monster getEnemy() { return monster; }
+
+
+
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/model/monster/Bird.java">
+package se.dungeonsandmorons.model.monster;
+
+import se.dungeonsandmorons.model.character.Kharacter;
+import se.dungeonsandmorons.model.character.Combatant;
+
+public class Bird extends Monster {
+
+    public Bird(String name, int level, int baseHealth, int baseExp, MonsterRarity rarity) {
+        super(name, baseHealth, baseExp, level, rarity);
+    }
+
+    @Override
+    public MonsterAction chooseAction() {
+        return null;
+    }
+
+    public boolean takeDamage(int amount, Combatant attacker) {
+        this.currentHealth = Math.max(0, this.currentHealth - amount);
+        if (!isAlive()) {
+            if(attacker instanceof Kharacter atker) {
+                atker.addExperience(expOnDeath);
+            }
+        }
+        return isDead();
+    }
+
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/model/monster/Dragon.java">
+package se.dungeonsandmorons.model.monster;
+
+import se.dungeonsandmorons.model.character.Kharacter;
+import se.dungeonsandmorons.model.character.Combatant;
+import se.dungeonsandmorons.model.skill.SkillTag;
+
+import java.util.Set;
+
+public class Dragon extends Monster {
+
+    public Dragon(String name, int level, int baseHealth, int baseExp, MonsterRarity rarity) {
+        super(name, baseHealth, baseExp, level, rarity);
+
+
+        actions.add(new MonsterAction(
+                "Swipe", 20, 50,
+                Set.of(SkillTag.MELEE, SkillTag.PHYSICAL),
+                "Swipes with its claws"
+        ));
+
+        actions.add(new MonsterAction(
+                "Fire Breath", 35, 35,
+                Set.of(SkillTag.MELEE, SkillTag.PHYSICAL),
+                "Breathes fire"
+        ));
+
+        actions.add(new MonsterAction(
+                "Incinerate", 20, 15,
+                Set.of(SkillTag.MELEE, SkillTag.PHYSICAL),
+                "Focuses flames from its belly into a super-heated laser-like fire"
+        ));
+
+    }
+
+    public boolean takeDamage(int amount, Combatant attacker) {
+        this.currentHealth = Math.max(0, this.currentHealth - amount);
+        if (!isAlive()) {
+            if(attacker instanceof Kharacter atker) {
+                atker.addExperience(expOnDeath);
+            }
+        }
+        return isDead();
+    }
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/model/monster/Rotworm.java">
+package se.dungeonsandmorons.model.monster;
+
+import se.dungeonsandmorons.model.character.Kharacter;
+import se.dungeonsandmorons.model.character.Combatant;
+import se.dungeonsandmorons.model.skill.SkillTag;
+
+import java.util.Set;
+
+public class Rotworm extends Monster implements Combatant {
+
+
+    public Rotworm(String name, int level, int baseHealth, int baseExp, MonsterRarity rarity) {
+        super(name, baseHealth, baseExp, level, rarity);
+
+        actions.add(new MonsterAction(
+                "Bite", 5, 100,
+                Set.of(SkillTag.MELEE, SkillTag.PHYSICAL),
+                "Bites"
+        ));
+
+    }
+
+    public boolean takeDamage(int amount, Combatant attacker) {
+        this.currentHealth = Math.max(0, this.currentHealth - amount);
+        if (!isAlive()) {
+            if(attacker instanceof Kharacter atker) {
+                atker.addExperience(expOnDeath);
+            }
+        }
+        return isDead();
+    }
+}
+</file>
+
+<file path="web/src/main/java/se/dungeonsandmorons/web/controller/GlobalExceptionHandler.java">
+package se.dungeonsandmorons.web.controller;
+
+import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import se.dungeonsandmorons.web.dto.ApiErrorResponse;
+
+import java.util.stream.Collectors;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiErrorResponse> handleValidationErrors(MethodArgumentNotValidException ex) {
+        String combinedErrors = ex.getBindingResult()
+                .getAllErrors()
+                .stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.joining("; "));
+
+        ApiErrorResponse error = new ApiErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                combinedErrors
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
+        ApiErrorResponse error = new ApiErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ApiErrorResponse> handleIllegalState(IllegalStateException ex) {
+        ApiErrorResponse error = new ApiErrorResponse(
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @ExceptionHandler(se.dungeonsandmorons.exception.CreateNullDungeonException.class)
+    public ResponseEntity<ApiErrorResponse> handleDungeonNotFound(se.dungeonsandmorons.exception.CreateNullDungeonException ex) {
+        ApiErrorResponse error = new ApiErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+}
+</file>
+
+<file path="web/src/main/java/se/dungeonsandmorons/web/dto/CreateCharacterRequest.java">
+package se.dungeonsandmorons.web.dto;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
+public record CreateCharacterRequest(
+        @Schema(description = "Character name", example = "Ragnar")
+        @NotBlank(message = "Character name is required")
+        @Size(min = 2, max = 20, message = "Character name must be between 2 and 20 characters")
+        @Pattern(regexp = "^[a-zA-Z0-9_-]+$", message = "Character name may only contain alphanumeric characters, hyphens and underscores.")
+        String name,
+
+        @Schema(description = "Class archetype", example = "WARRIOR")
+        @NotBlank(message = "Character class is required")
+        String characterClass
+) {}
+</file>
+
+<file path="web/src/main/java/se/dungeonsandmorons/web/CoreConfig.java">
+package se.dungeonsandmorons.web;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import se.dungeonsandmorons.repository.CharacterRepository;
+import se.dungeonsandmorons.repository.PostgresCharacterRepository;
+import se.dungeonsandmorons.service.DungeonService;
+import se.dungeonsandmorons.service.SaveService;
+
+import javax.sql.DataSource;
+
+@Configuration
+public class CoreConfig {
+
+    @Bean
+    public CharacterRepository characterRepository(DataSource dataSource) {
+        return new PostgresCharacterRepository(dataSource);
+    }
+
+    @Bean
+    public SaveService saveService(CharacterRepository characterRepository) {
+        return new SaveService(characterRepository);
+    }
+
+    @Bean
+    public DungeonService dungeonService() {
+        return new DungeonService();
+    }
+}
+</file>
+
+<file path=".gitignore">
+### IntelliJ IDEA ###
+.idea/
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+.kotlin
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/repository/PostgresCharacterRepository.java">
+package se.dungeonsandmorons.repository;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import se.dungeonsandmorons.database.DatabaseConnection;
+import se.dungeonsandmorons.exception.CorruptedSaveException;
+import se.dungeonsandmorons.model.character.Kharacter;
+import se.dungeonsandmorons.model.character.CharacterClass;
+import se.dungeonsandmorons.model.skill.SkillRegistry;
+
+import javax.sql.DataSource;
+
+public class PostgresCharacterRepository implements CharacterRepository {
+
+    private final DataSource dataSource;
+
+    private static final String INSERT_PLAYER_SQL = """
+            INSERT INTO character_saves (name, character_class, level, experience, strength, agility, intelligence, vitality, health, max_health, mana, max_mana, last_town_visited, unallocated_stat_points, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT (name)
+            DO UPDATE SET
+            level = EXCLUDED.level,
+            experience = EXCLUDED.experience,
+            strength = EXCLUDED.strength,
+            agility = EXCLUDED.agility,
+            intelligence = EXCLUDED.intelligence,
+            vitality = EXCLUDED.vitality,
+            health = EXCLUDED.health,
+            max_health = EXCLUDED.max_health,
+            mana = EXCLUDED.mana,
+            max_mana = EXCLUDED.max_mana,
+            last_town_visited = EXCLUDED.last_town_visited,
+            unallocated_stat_points = EXCLUDED.unallocated_stat_points,
+            updated_at = CURRENT_TIMESTAMP
+            RETURNING id;
+            """;
+
+    private static final String INSERT_DUNGEON_SQL = """
+            INSERT INTO character_dungeons_cleared (character_id, dungeon_name)
+            VALUES (?, ?)
+            ON CONFLICT (character_id, dungeon_name) DO NOTHING;
+            """;
+
+    private static final String INSERT_SKILL_SQL = """
+            INSERT INTO character_skills_learned (character_id, skill_name)
+            VALUES (?, ?)
+            ON CONFLICT (character_id, skill_name) DO NOTHING;
+            """;
+
+    private static final String SELECT_PLAYER_SQL = """
+            SELECT id, character_class, level, experience, strength, agility, intelligence,
+            vitality, health, max_health, mana, max_mana, last_town_visited, unallocated_stat_points
+            FROM character_saves
+            WHERE name = ?;
+            """;
+
+    private static final String SELECT_DUNGEONS_SQL = """
+            SELECT dungeon_name
+            FROM character_dungeons_cleared
+            WHERE character_id = ?
+            """;
+
+    private static final String SELECT_SKILLS_SQL = """
+            SELECT skill_name
+            FROM character_skills_learned
+            WHERE character_id = ?;
+            """;
+
+    private static final String DELETE_PLAYER_SQL = """
+            DELETE FROM character_saves
+            WHERE name = ?;
+            """;
+
+    private static final String EXISTS_PLAYER_SQL = """
+            SELECT 1
+            FROM character_saves
+            WHERE name = ?
+            LIMIT 1;
+            """;
+
+    private static final String SELECT_ALL_SUMMARIES_SQL = """
+            SELECT name, character_class, level, last_town_visited
+            FROM character_saves
+            ORDER BY name;
+            """;
+
+    public PostgresCharacterRepository(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public PostgresCharacterRepository() {
+        this.dataSource = null;
+    }
+
+    private Connection getConnection() throws SQLException {
+        if (dataSource != null) {
+            return dataSource.getConnection();
+        }
+        return DatabaseConnection.getConnection();
+    }
+
+    @Override
+    public void save(Kharacter player, String lastTownVisited) {
+        try (Connection conn = getConnection()) {
+            conn.setAutoCommit(false);
+
+            try {
+                int characterId = saveCharacterData(conn, player, lastTownVisited);
+                saveClearedDungeons(conn, characterId, player.getClearedDungeons());
+                saveLearnedSkills(conn, characterId, player.getSkillNames());
+                conn.commit();
+            } catch (SQLException e) {
+                conn.rollback();
+                System.err.printf("Failed to save character '%s': %s%n", player.getName(), e.getMessage());
+            }
+        } catch (SQLException e) {
+            System.err.println("Database connection failure: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public Optional<CharacterSaveData> findByName(String name) {
+
+        try (Connection conn = getConnection();
+                PreparedStatement playerStmt = conn.prepareStatement(SELECT_PLAYER_SQL)) {
+
+                playerStmt.setString(1, name);
+
+                try (ResultSet rs = playerStmt.executeQuery()) {
+                    if (!rs.next()) {
+                        return Optional.empty();
+                    }
+
+                    int characterId             = rs.getInt(    "id");
+                    int level                   = rs.getInt(    "level");
+                    String className            = rs.getString( "character_class");
+                    int experience              = rs.getInt(    "experience");
+                    int strength                = rs.getInt(    "strength");
+                    int agility                 = rs.getInt(    "agility");
+                    int intelligence            = rs.getInt(    "intelligence");
+                    int vitality                = rs.getInt(    "vitality");
+                    int health                  = rs.getInt(    "health");
+                    int maxHealth               = rs.getInt(    "max_health");
+                    int mana                    = rs.getInt(    "mana");
+                    int maxMana                 = rs.getInt(    "max_mana");
+                    int unallocatedStatPoints = rs.getInt(    "unallocated_stat_points");
+                    String lastTownVisited    = rs.getString( "last_town_visited");
+
+                    CharacterClass characterClass = parseCharacterClass(name, className);
+
+                    Kharacter player = new Kharacter(
+                            characterId, name, characterClass, level, experience,
+                            unallocatedStatPoints, strength, agility, intelligence,
+                            vitality, health, maxHealth, mana, maxMana
+                    );
+
+                    player.setClearedDungeons(loadClearedDungeons(conn, characterId, player));
+                    loadLearnedSkills(conn, characterId, player);
+
+                    return Optional.of(new CharacterSaveData(player, lastTownVisited));
+                }
+
+        } catch (SQLException e) {
+            System.err.println("Failed to load character: " + e.getMessage());
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public List<CharacterSummary> findAllSummaries() {
+        List<CharacterSummary> saves = new ArrayList<>();
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(SELECT_ALL_SUMMARIES_SQL);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                saves.add(new CharacterSummary(
+                        rs.getString("name"),
+                        rs.getString("character_class"),
+                        rs.getInt("level"),
+                        rs.getString("last_town_visited")
+                ));
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Failed to fetch characters: " + e.getMessage());
+        }
+
+        return saves;
+    }
+
+    @Override
+    public boolean deleteByName(String name) {
+        if (name == null || name.isBlank()) {
+            return false;
+        }
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(DELETE_PLAYER_SQL)) {
+
+            stmt.setString(1, name);
+            int rowsAffected = stmt.executeUpdate();
+
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.err.printf("Could not delete character '%s': %s%n", name, e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean existsByName(String name) {
+        if (name == null || name.isBlank()) {
+            return false;
+        }
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(EXISTS_PLAYER_SQL)) {
+
+            stmt.setString(1, name);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            System.err.printf("Database error when searching for '%s': %s%n", name, e.getMessage());
+            return false;
+        }
+    }
+
+
+    // ========================================================== //
+    //                    PRIVATE HELP METHODS                    //
+    // ========================================================== //
+
+    private int saveCharacterData(Connection conn, Kharacter player, String lastTownVisited) throws SQLException {
+        try (PreparedStatement charStmt = conn.prepareStatement(INSERT_PLAYER_SQL)) {
+
+            charStmt.setString(1,  player.getName());
+            charStmt.setString(2,  player.getCharacterClass().toString());
+            charStmt.setInt(3,     player.getLevel());
+            charStmt.setInt(4,     player.getExperience());
+            charStmt.setInt(5,     player.getStrength());
+            charStmt.setInt(6,     player.getAgility());
+            charStmt.setInt(7,     player.getIntelligence());
+            charStmt.setInt(8,     player.getVitality());
+            charStmt.setInt(9,     player.getCurrentHealth());
+            charStmt.setInt(10,    player.getMaxHealth());
+            charStmt.setInt(11,    player.getCurrentMana());
+            charStmt.setInt(12,    player.getMaxMana());
+            charStmt.setString(13, lastTownVisited);
+            charStmt.setInt(14,    player.getUnallocatedStatPoints());
+
+            try (ResultSet rs = charStmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+                throw new SQLException("Creating character save failed, no ID obtained.");
+            }
+        }
+    }
+
+    private void saveClearedDungeons(Connection conn, int characterId, List<String> clearedDungeons) throws SQLException {
+        if (clearedDungeons == null || clearedDungeons.isEmpty()) {
+            return;
+        }
+
+        try (PreparedStatement dungStmt = conn.prepareStatement(INSERT_DUNGEON_SQL)) {
+            for (String dungeon : clearedDungeons) {
+                dungStmt.setInt(1, characterId);
+                dungStmt.setString(2, dungeon);
+                dungStmt.addBatch();
+            }
+            dungStmt.executeBatch();
+        }
+    }
+
+    private void saveLearnedSkills(Connection conn, int characterId, List<String> skills) throws SQLException {
+        if (skills == null || skills.isEmpty()) {
+            return;
+        }
+
+        try (PreparedStatement skillStmt = conn.prepareStatement(INSERT_SKILL_SQL)) {
+            for (String skill : skills) {
+                skillStmt.setInt(1, characterId);
+                skillStmt.setString(2, skill);
+                skillStmt.addBatch();
+            }
+            skillStmt.executeBatch();
+        }
+    }
+
+    private static void loadLearnedSkills(Connection conn, int characterId, Kharacter player) throws SQLException {
+        try (PreparedStatement skillStmt = conn.prepareStatement(SELECT_SKILLS_SQL)) {
+            skillStmt.setInt(1, characterId);
+            try (ResultSet skillRs = skillStmt.executeQuery()) {
+                while (skillRs.next()) {
+                    player.learnSkill(SkillRegistry.get(skillRs.getString("skill_name")));
+                }
+            }
+        }
+    }
+
+    private List<String> loadClearedDungeons(Connection conn, int characterId, Kharacter player) throws SQLException {
+        List<String> clearedDungeons = new ArrayList<>();
+        try (PreparedStatement dungeonStmt = conn.prepareStatement(SELECT_DUNGEONS_SQL)) {
+            dungeonStmt.setInt(1, characterId);
+            try (ResultSet dungeonRs = dungeonStmt.executeQuery()) {
+                while (dungeonRs.next()) {
+                    clearedDungeons.add(dungeonRs.getString("dungeon_name"));
+                }
+            }
+        }
+        return clearedDungeons;
+    }
+
+    private CharacterClass parseCharacterClass(String name, String className) {
+        if (className == null) {
+            throw new IllegalArgumentException("Class name in database is null");
+        }
+
+        try {
+            return CharacterClass.valueOf(className.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new CorruptedSaveException(
+                    String.format("Failed to load character '%s': Unknown or invalid class '%s'",
+                            name, className), e
+            );
+        }
+    }
+
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/service/SaveService.java">
+package se.dungeonsandmorons.service;
+
+import se.dungeonsandmorons.model.character.Kharacter;
+import se.dungeonsandmorons.repository.CharacterRepository;
+import se.dungeonsandmorons.repository.CharacterSaveData;
+import se.dungeonsandmorons.repository.CharacterSummary;
+import se.dungeonsandmorons.town.TownRegistry;
+
+import java.util.List;
+import java.util.Optional;
+
+public class SaveService {
+    private final CharacterRepository repository;
+
+    public SaveService(CharacterRepository repository) {
+        this.repository = repository;
+    }
+
+    public void saveGame(Kharacter player, String townName) {
+        repository.save(player, townName);
+    }
+
+    public Optional<CharacterSaveData> loadGame(String playerName) {
+        return repository.findByName(playerName);
+    }
+
+    public boolean deleteSave(String playerName) {
+        return repository.deleteByName(playerName);
+    }
+
+    public boolean saveExists(String playerName) {
+        return repository.existsByName(playerName);
+    }
+
+    public List<CharacterSummary> getAvailableSaves() {
+        return repository.findAllSummaries();
+    }
+
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/model/skill/SkillService.java">
+package se.dungeonsandmorons.model.skill;
+import se.dungeonsandmorons.model.character.Kharacter;
+
+import java.util.List;
+
+public class SkillService {
+
+    public void listSkills(Kharacter player) {
+        List<Skill> skills = player.getSkills();
+        if (skills == null || skills.isEmpty()) {
+            System.out.println(String.format("%s has not learned any skills.", player.getName()));
+            return;
+        }
+
+        skills.forEach(skill ->
+                System.out.println(String.format(
+                "Skill{name=%s, baseDamage=%d, resourceCost=%d, attribute=%s, targetType=%s, tags=N/A, allowedClasses=N/A}",
+                skill.getName(),
+                skill.getBaseDamage(),
+                skill.getResourceCost(),
+                skill.getScalingAttribute(),
+                skill.getTargetType()))
+        );
+
+    }
+
+}
+</file>
+
+<file path="web/src/main/java/se/dungeonsandmorons/web/controller/CharacterController.java">
+package se.dungeonsandmorons.web.controller;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import se.dungeonsandmorons.model.character.CharacterClass;
+import se.dungeonsandmorons.model.character.Kharacter;
+import se.dungeonsandmorons.repository.CharacterSaveData;
+import se.dungeonsandmorons.repository.CharacterSummary;
+import se.dungeonsandmorons.service.SaveService;
+import se.dungeonsandmorons.web.dto.AllocateStatsRequest;
+import se.dungeonsandmorons.web.dto.CreateCharacterRequest;
+
+import java.net.URI;
+import java.util.List;
+
+@Tag(name = "Characters", description = "Character save and retrieval operations")
+@RestController
+@RequestMapping("/api/characters")
+public class CharacterController {
+
+    private final SaveService saveService;
+
+    public CharacterController(SaveService saveService) {
+        this.saveService = saveService;
+    }
+
+    @Operation(summary = "List all saved characters")
+    @GetMapping
+    public List<CharacterSummary> getAllSaves() {
+        return saveService.getAvailableSaves();
+    }
+
+    @Operation(summary = "Get full character profile by name")
+    @GetMapping("/{name}")
+    public ResponseEntity<CharacterSaveData> getCharacter(@PathVariable String name) {
+        return saveService.loadGame(name)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @Operation(summary = "Create and save a new character")
+    @PostMapping
+    public ResponseEntity<?> createCharacter(@Valid @RequestBody CreateCharacterRequest request) {
+        if (request.name() == null || request.name().isBlank()) {
+            return ResponseEntity.badRequest().body("Character name cannot be blank");
+        }
+
+        String trimmedName = request.name().trim();
+        if (saveService.saveExists(trimmedName)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("A character with the name '" + trimmedName + "' already exists.");
+        }
+
+        CharacterClass chosenClass;
+        try {
+            chosenClass = CharacterClass.valueOf(request.characterClass().trim().toUpperCase());
+        } catch (IllegalArgumentException | NullPointerException e) {
+             return ResponseEntity.badRequest().body("Invalid character class: " + request.characterClass());
+        }
+
+        Kharacter newCharacter = new Kharacter(trimmedName, chosenClass);
+        String startingTown = "Densewood";
+
+        saveService.saveGame(newCharacter, startingTown);
+
+        URI location = URI.create("/api/characters/" + newCharacter.getName());
+        return ResponseEntity.created(location).body(new CharacterSummary(
+                newCharacter.getName(),
+                newCharacter.getCharacterClass().name(),
+                newCharacter.getLevel(),
+                startingTown
+        ));
+    }
+
+    @Operation(summary = "Delete a character save")
+    @DeleteMapping("/{name}")
+    public ResponseEntity<Void> deleteCharacter(@PathVariable String name) {
+        boolean deleted = saveService.deleteSave(name);
+        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+
+    @Operation(summary = "Allocate unallocated stat points to a character")
+    @PatchMapping("/{name}/stats")
+    public ResponseEntity<CharacterSaveData> allocateStats(
+            @PathVariable String name,
+            @Valid @RequestBody AllocateStatsRequest request
+    ) {
+        var saveOpt = saveService.loadGame(name);
+        if (saveOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        CharacterSaveData saveData = saveOpt.get();
+        Kharacter player = saveData.player();
+
+        if (request.totalPoints() == 0) {
+            throw new IllegalArgumentException("You must allocate at least 1 stat point.");
+        }
+
+        if (request.totalPoints() > player.getUnallocatedStatPoints()) {
+            throw new IllegalArgumentException(String.format(
+                    "Cannot allocate %d points. Character '%s' only has %d unallocated points.",
+                    request.totalPoints(), name, player.getUnallocatedStatPoints()
+            ));
+        }
+
+        player.allocateStats(request.strength(), request.agility(), request.intelligence(), request.vitality());
+        saveService.saveGame(player, saveData.lastTownVisited());
+
+        return ResponseEntity.ok(new CharacterSaveData(player, saveData.lastTownVisited()));
+    }
+
+}
+</file>
+
+<file path="core/src/main/java/se/dungeonsandmorons/model/character/Kharacter.java">
+package se.dungeonsandmorons.model.character;
+
+import se.dungeonsandmorons.model.Attribute;
+import se.dungeonsandmorons.model.skill.Skill;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class Kharacter implements Combatant {
+    protected String name;
+    protected CharacterClass characterClass;
+    protected int id;
+
+    protected int level;
+    private int experience;
+    private int expPerLevel;
+
+    private int maxHealth;
+    private int currentHealth;
+
+    private int maxMana;
+    private int currentMana;
+
+    private int unallocatedStatPoints;
+
+    private int strength;
+    private int agility;
+    private int intelligence;
+    private int vitality;
+
+    private final int healthPerLevel = 3;
+    private final int manaPerLevel = 2;
+    private final int healthPerVitality = 5;
+    private final int manaPerIntelligence = 4;
+
+    protected int strengthPerLevel = 5;
+    protected int agilityPerLevel = 3;
+    protected int intelligencePerLevel = 1;
+    protected int vitalityPerLevel = 3;
+
+    private boolean firstTimeDungeon = true;
+
+    protected List<Skill> skills = new ArrayList<>();
+    private final List<String> clearedDungeons = new ArrayList<>();
+
+    public Kharacter(String name, CharacterClass characterClass) {
+        this.name = name;
+        this.characterClass = characterClass;
+        this.level = 0;
+        this.experience = 0;
+        this.expPerLevel = 45;
+        maxHealth = 150;
+        currentHealth = maxHealth;
+        maxMana = 35;
+        currentMana = maxMana;
+        strength = 0;
+        agility = 0;
+        intelligence = 0;
+        vitality = 0;
+
+    }
+
+    Kharacter(String name, int level) {
+        this.name = name;
+        this.level = level;
+    }
+
+    public Kharacter(int id, String name, CharacterClass characterClass, int level, int experience, int unallocatedStatPoints, int strength, int agility, int intelligence, int vitality, int currentHealth, int maxHealth, int currentMana, int maxMana) {
+        this.id = id;
+        this.name = name;
+        this.characterClass = characterClass;
+        this.level = level;
+        this.experience = experience;
+        this.unallocatedStatPoints = unallocatedStatPoints;
+        this.strength = strength;
+        this.agility = agility;
+        this.intelligence = intelligence;
+        this.vitality = vitality;
+        this.currentHealth = currentHealth;
+        this.maxHealth = maxHealth;
+        this.currentMana = currentMana;
+        this.maxMana = maxMana;
+    }
+
+    public boolean allocateStat(Attribute attribute, int points) {
+        if (points <= 0 || points > this.unallocatedStatPoints) {
+            return false;
+        }
+
+        switch (attribute) {
+            case STRENGTH       -> this.strength += points;
+            case AGILITY        -> this.agility += points;
+            case INTELLIGENCE   -> this.intelligence += points;
+            case VITALITY       -> this.vitality += points;
+        }
+
+        this.unallocatedStatPoints -= points;
+        return true;
+    }
+
+    // For Spring
+    public void allocateStats (int str, int agi, int intel, int vit) {
+        int total = str + agi + intel + vit;
+        if (total <= 0) {
+            throw new IllegalArgumentException(String.format(
+                    "Cannot allocated %d points; only %d unallocated points available",
+                    total, this.unallocatedStatPoints
+            ));
+        }
+
+        // TODO: Calculate max health, etc..
+    }
+
+    public boolean isFirstTimeDungeon() {
+        return firstTimeDungeon;
+    }
+
+    public boolean isAlive() {
+        return this.currentHealth > 0;
+    }
+
+    public void attack(Combatant attacker, Skill skill) {
+
+    }
+
+    public boolean takeDamage(int amount, Combatant attacker) {
+        this.currentHealth = Math.max(0, this.currentHealth - amount);
+        return isDead();
+    }
+
+    public void levelUp() {
+        System.out.println(String.format("%s leveled up from level %d to level %d.", name, level, level+1));
+
+        this.level++;
+        this.unallocatedStatPoints += characterClass.getStatPointGain();
+
+        this.currentHealth = maxHealth;
+        this.currentMana = maxMana;
+
+        updateStats();
+    }
+
+    private void updateStats() {
+        maxHealth += (level * healthPerLevel) + (healthPerVitality * (vitality * vitalityPerLevel));
+        maxMana += (level * manaPerLevel) + (manaPerIntelligence * (intelligence * intelligencePerLevel));
+    }
+
+    public void getStats() {
+        System.out.print(String.format("""
+                Name: %s
+                Class: %s
+                Level: %d,
+                Experience: %d
+                MaxHealth: %d,
+                MaxMana: %d,
+                Strength: %d,
+                Agility: %d,
+                Intelligence: %d,
+                Vitality: %d
+                Unallocated Stat Points: %d
+                """,
+                name, characterClass, level, experience, maxHealth, maxMana, strength, agility, intelligence, vitality, unallocatedStatPoints));
+    }
+
+    public void addExperience(int amount) {
+        if (this.experience + amount >= expPerLevel) {
+            levelUp();
+            this.experience = 0;
+        } else {
+            this.experience += amount;
+            System.out.println(String.format("%s gained %d experience.", name, amount));
+        }
+    }
+
+    public boolean learnSkill(Skill skill) {
+        if (skill == null) {
+            throw new NullPointerException("Trying to learn Null skill");
+        }
+
+        if (!skill.canBeLearnedBy(this.getCharacterClass())) {
+            System.out.println(String.format("A %s cannot learn %s", this.getCharacterClass(), skill.getName()));
+            return false;
+        }
+
+        if (isSkillLearned(skill)) {
+            System.out.println(String.format("%s already know this skill.", name));
+            return false;
+        }
+
+        skills.add(skill);
+        System.out.println(String.format("%s learned %s!", name, skill.getName()));
+        return true;
+    }
+
+    public boolean isSkillLearned(Skill skill) {
+        if (getSkills() == null || getSkills().isEmpty()) {
+            return false;
+        }
+
+        return skills.contains(skill);
+    }
+
+    public void setClearedDungeons(List<String> dungeons) {
+        this.clearedDungeons.addAll(dungeons);
+    }
+
+
+    public CharacterClass getCharacterClass() { return characterClass; }
+    public String getName() { return name; }
+    public int getMaxHealth() { return maxHealth; }
+    public int getCurrentHealth() { return currentHealth; }
+    public int getMaxMana() { return maxMana; }
+    public int getCurrentMana() { return currentMana; }
+    public int getLevel() { return level; }
+    public int getExperience() { return experience; }
+    public int getUnallocatedStatPoints() { return unallocatedStatPoints; }
+    public int getStrength() { return strength; }
+    public int getAgility() { return agility; }
+    public int getIntelligence() { return intelligence; }
+    public int getVitality() { return vitality; }
+    public List<Skill> getSkills() { return List.copyOf(skills); }
+    public List<String> getSkillNames() {
+        return skills.stream()
+                .map(Skill::getName)
+                .toList();
+    }
+    public List<String> getClearedDungeons() { return clearedDungeons; }
+
+    public void setMaxHealth(int health) { this.maxHealth = health; }
+    public void setCurrentHealth(int health) { this.currentHealth = health; }
+    public void setCurrentMana(int mana) { this.currentMana = mana; }
+    public void setStrength(int strength) { this.strength = strength; }
+    public void setAgility(int agility) { this.agility = agility; }
+    public void setIntelligence(int intelligence) { this.intelligence = intelligence; }
+    public void setVitality(int vitality) { this.vitality = vitality; }
+    public void setFirstTimeDungeon(boolean first) { this.firstTimeDungeon = first; }
+
+    public void addLevel(int amount) { this.level += amount; }
+    public void addMaxHealth(int amount) { this.maxHealth += amount; }
+    public void addStrength(int amount) { this.strength += amount; }
+    public void addAgility(int amount) { this.agility += amount; }
+    public void addIntelligence(int amount) { this.intelligence += amount; }
+    public void addVitality(int amount) { this.vitality += amount; }
+    public void addClearedDungeon(String dungeon) { this.clearedDungeons.add(dungeon); }
+
+}
+</file>
+
+<file path="web/build.gradle.kts">
+plugins {
+    id("org.springframework.boot")
+    id("io.spring.dependency-management")
+    java
+}
+
+springBoot {
+    mainClass.set("se.dungeonsandmorons.web.DungeonsAndMoronsApplication")
+}
+
+dependencies {
+    implementation(project(":core"))
+
+    implementation(platform("org.springframework.boot:spring-boot-dependencies:3.4.0"))
+
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
+
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.0")
+
+    runtimeOnly("org.postgresql:postgresql")
+}
+</file>
+
+</files>

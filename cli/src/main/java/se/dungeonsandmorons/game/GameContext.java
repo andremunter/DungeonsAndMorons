@@ -1,7 +1,7 @@
 package se.dungeonsandmorons.game;
 
 import se.dungeonsandmorons.model.character.Kharacter;
-import se.dungeonsandmorons.model.combat.CombatEngine;
+import se.dungeonsandmorons.combat.CombatEngine;
 import se.dungeonsandmorons.model.dungeon.Dungeon;
 import se.dungeonsandmorons.model.npc.Npc;
 import se.dungeonsandmorons.model.skill.SkillService;

@@ -1,4 +1,4 @@
-package se.dungeonsandmorons.model.combat;
+package se.dungeonsandmorons.combat;
 
 import se.dungeonsandmorons.model.character.Kharacter;
 import se.dungeonsandmorons.model.monster.Monster;
