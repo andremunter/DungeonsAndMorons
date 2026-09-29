@@ -1,10 +1,12 @@
 package se.dungeonsandmorons.town;
 
+import lombok.Getter;
 import se.dungeonsandmorons.model.npc.Npc;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class Town {
     private final String name;
     private final String description;
@@ -24,9 +26,5 @@ public class Town {
         }
         return null;
     }
-
-    public String getName() { return name; }
-    public String getDescription() { return description; }
-    public List<Npc> getNpcs() { return npcs; }
 
 }

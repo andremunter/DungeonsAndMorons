@@ -1,5 +1,6 @@
 package se.dungeonsandmorons.combat;
 
+import lombok.Getter;
 import se.dungeonsandmorons.model.character.Kharacter;
 import se.dungeonsandmorons.model.monster.Monster;
 import se.dungeonsandmorons.model.monster.MonsterAction;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Getter
 public class CombatEngine {
     private final Kharacter player;
     private final Monster monster;
@@ -60,7 +62,7 @@ public class CombatEngine {
             // TODO: CombatState.VICTORY -> CombatState.LOOT? How to handle looting hmm?
             this.state = CombatState.VICTORY;
             combatLog.add(String.format("You defeated %s and earned %d experience",
-                    monster.getName(), monster.getDeathExperience()));
+                    monster.getName(), monster.getExpOnDeath()));
         } else {
             this.state = CombatState.RESOLVING_ENEMY_ACTION;
             resolveEnemyTurn();
@@ -97,9 +99,5 @@ public class CombatEngine {
         }
     }
 
-    public CombatState getState() { return state; }
-    public int getRoundCount() { return roundCount; }
-    public Kharacter getPlayer() { return player; }
-    public Monster getEnemy() { return monster; }
     public List<String> getCombatLog() { return Collections.unmodifiableList(combatLog); }
 }
