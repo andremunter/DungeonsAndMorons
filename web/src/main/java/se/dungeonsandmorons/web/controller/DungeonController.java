@@ -47,7 +47,7 @@ public class DungeonController {
                 .map(m -> new MonsterSummaryResponse(
                         m.getName(),
                         m.getMaxHealth(),
-                        m.getDeathExperience(),
+                        m.getExpOnDeath(),
                         m.getRarity().name()
                 ))
                 .toList();

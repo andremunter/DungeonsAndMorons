@@ -149,8 +149,8 @@ public class Kharacter implements Combatant {
         int levelOffset = Math.max(0, this.level - 1);
         double levelMultiplier = Math.pow(1.0 + DMG_GROWTH_PER_LEVEL, levelOffset);
 
-        int baseDmg;
-        int statScalingBonus;
+        double baseDmg;
+        double statScalingBonus;
 
         if (skill != null) {
             baseDmg = skill.getBaseDamage();
@@ -164,7 +164,7 @@ public class Kharacter implements Combatant {
 
         // TODO: Weapon scaling, int weaponDamage = getEquippedWeaponDamage.. etc
 
-        int combinedBase = baseDmg + statScalingBonus;
+        double combinedBase = baseDmg + statScalingBonus;
 
         return (int) Math.round(combinedBase * levelMultiplier);
     }

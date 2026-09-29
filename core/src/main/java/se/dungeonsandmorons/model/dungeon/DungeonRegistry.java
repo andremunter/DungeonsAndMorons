@@ -1,8 +1,6 @@
 package se.dungeonsandmorons.model.dungeon;
 
 import se.dungeonsandmorons.exception.CreateNullDungeonException;
-import se.dungeonsandmorons.model.monster.Dragon;
-import se.dungeonsandmorons.model.monster.Rotworm;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -12,49 +10,52 @@ public class DungeonRegistry {
     private static final Map<String, Supplier<Dungeon>> REGISTRY = new LinkedHashMap<>();
 
     static {
-        register("Rotworm Cave", () -> {
-            Dungeon rotwormCave = new Dungeon("Rotworm Cave", "Cave of only Rottenwurmen", 8);
-            rotwormCave.populateDungeon(List.of(
-                    (lvl, rarity) -> new Rotworm("Rotworm", lvl, 1, 20, rarity),
-                    (lvl, rarity) -> new Rotworm("Rotworm", lvl, 1, 20, rarity)
-            ));
-            return rotwormCave;
-        });
-
-        register("Dragon Lair", () -> {
-            Dungeon dragonLair = new Dungeon("Dragon Lair", "placeholder", 28);
-            dragonLair.populateDungeon(List.of(
-                    (lvl, rarity) -> new Dragon("Dragon Hatchling", lvl, 160, 40, rarity),
-                    (lvl, rarity) -> new Dragon("Dragon Hatchling", lvl, 160, 40, rarity),
-                    (lvl, rarity) -> new Dragon("Dragon",           lvl, 400, 120, rarity)
-            ));
-            return dragonLair;
-        });
+        DensewoodDungeons.registerDungeons();
     }
-
 
     public static void register(String name, Supplier<Dungeon> factory) {
         REGISTRY.put(name.toLowerCase(), factory);
     }
 
-    public static Dungeon create(String name) {
-        Supplier<Dungeon> factory = REGISTRY.get(name.toLowerCase());
+    public static Dungeon create(String idOrName) {
+        if (idOrName == null) {
+            throw new CreateNullDungeonException("Cannot create dungeon from null identifier");
+        }
+
+        Supplier<Dungeon> factory = REGISTRY.get(idOrName.toLowerCase());
         if (factory == null) {
-            throw new CreateNullDungeonException("Trying to create a null dungeon");
+            // Fallback: search by display name match
+            factory = REGISTRY.values().stream()
+                    .filter(supplier -> supplier.get().getName().equalsIgnoreCase(idOrName))
+                    .findFirst()
+                    .orElse(null);
+        }
+
+        if (factory == null) {
+            throw new CreateNullDungeonException("Trying to create a null dungoen: " + idOrName);
         }
 
         return factory.get();
     }
 
-    public static List<Dungeon> createAll() {
-        List<Dungeon> allDungeons = new ArrayList<>();
-        for (Supplier<Dungeon> supplier : REGISTRY.values()) {
-            allDungeons.add(supplier.get());
+    public static List<Dungeon> createDungeonsByTownId(String townId) {
+        if (townId == null) {
+            return List.of();
         }
-        return allDungeons;
+
+        return REGISTRY.values().stream()
+                .map(Supplier::get)
+                .filter(dungeon -> townId.equalsIgnoreCase(dungeon.getTownId()))
+                .toList();
     }
 
-    public static List<String> getAllDungeonNames() {
+    public static List<Dungeon> createAll() {
+        return REGISTRY.values().stream()
+                .map(Supplier::get)
+                .toList();
+    }
+
+    public static List<String> getAllDungeonIds() {
         return List.copyOf(REGISTRY.keySet());
     }
 

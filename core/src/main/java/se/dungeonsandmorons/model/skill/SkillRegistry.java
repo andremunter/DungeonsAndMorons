@@ -1,55 +1,34 @@
 package se.dungeonsandmorons.model.skill;
 
-import se.dungeonsandmorons.model.Attribute;
-import se.dungeonsandmorons.model.character.CharacterClass;
-
 import java.util.*;
 
 public class SkillRegistry {
 
-    private static final Map<String, Skill> SKILLS = new HashMap<>();
-
+    private static final Map<String, Skill> SKILLS_BY_ID = new HashMap<>();
+    private static final Map<String, Skill> SKILLS_BY_NAME = new HashMap<>();
 
     static {
-        // WARRIOR SKILLS
-        register(new Skill("Basic Melee Attack", 5, 0,
-                Attribute.STRENGTH, 1, TargetType.SINGLE_TARGET,
-                Set.of(SkillTag.MELEE, SkillTag.PHYSICAL), Set.of(
-                        CharacterClass.WARRIOR
-        )));
-
-        register(new Skill("Strike", 9, 5,
-                Attribute.STRENGTH, 1, TargetType.SINGLE_TARGET,
-                Set.of(SkillTag.MELEE, SkillTag.PHYSICAL), Set.of(
-                        CharacterClass.WARRIOR
-        )));
-
-         register(new Skill("Raise Shield", 0, 5,
-                Attribute.STRENGTH, 1, TargetType.SELF,
-                Set.of(SkillTag.MELEE, SkillTag.PHYSICAL), Set.of(
-                        CharacterClass.WARRIOR
-         )));
-
-        // MAGE SKILLS
-        register(new Skill("Basic Magic Attack", 4, 0,
-                Attribute.INTELLIGENCE, 1, TargetType.SINGLE_TARGET,
-                Set.of(SkillTag.RANGED, SkillTag.FIRE), Set.of(
-                        CharacterClass.MAGICIAN
-        )));
-
+        WarriorSkills.registerSkills();
+        ArcherSkills.registerSkills();
     }
-
 
     public static void register(Skill skill) {
-        SKILLS.put(skill.name().toLowerCase(), skill);
+        if (skill.getId() != null) {
+            SKILLS_BY_ID.put(skill.getId().toLowerCase(), skill);
+        }
+        SKILLS_BY_NAME.put(skill.name().toLowerCase(), skill);
     }
 
-    public static Skill get(String name) {
-        return SKILLS.get(name.toLowerCase());
+    public static Skill get(String nameOrId) {
+        if (nameOrId == null) return null;
+        String key = nameOrId.toLowerCase();
+        Skill skill = SKILLS_BY_NAME.get(key);
+
+        return skill != null ? skill : SKILLS_BY_ID.get(key);
     }
 
     public static Map<String, Skill> getAll() {
-        return Collections.unmodifiableMap(SKILLS);
+        return Collections.unmodifiableMap(SKILLS_BY_ID);
     }
 
 

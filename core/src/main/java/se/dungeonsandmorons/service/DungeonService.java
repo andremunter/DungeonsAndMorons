@@ -8,7 +8,7 @@ import java.util.List;
 public class DungeonService {
 
     public List<String> getAvailableDungeonNames() {
-        return DungeonRegistry.getAllDungeonNames();
+        return DungeonRegistry.getAllDungeonIds();
     }
 
     public Dungeon findDungeonByName(String name) {
