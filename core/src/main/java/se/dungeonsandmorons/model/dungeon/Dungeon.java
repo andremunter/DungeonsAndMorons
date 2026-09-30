@@ -1,9 +1,5 @@
 package se.dungeonsandmorons.model.dungeon;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import se.dungeonsandmorons.exception.ListNullOrEmptyException;
 import se.dungeonsandmorons.model.monster.MonsterRarity;
 import se.dungeonsandmorons.model.monster.Monster;
 import se.dungeonsandmorons.model.monster.MonsterFactory;
@@ -12,19 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Getter
 public class Dungeon {
     private final String id;
     private final String name;
     private final String description;
     private final String townId;
     private final int areaLevel;
-    @Setter
     private boolean cleared;
 
     private final List<Monster> monsters = new ArrayList<>();
 
-    @Builder
     public Dungeon(
             String id,
             String name,
@@ -63,6 +56,39 @@ public class Dungeon {
 
     public void removeMonster(Monster monster) {
         monsters.remove(monster);
+    }
+
+    public String getId() { return id; }
+    public String getName() { return name; }
+    public String getDescription() { return description; }
+    public String getTownId() { return townId; }
+    public int getAreaLevel() { return areaLevel; }
+    public boolean isCleared() { return cleared; }
+    public List<Monster> getMonsters() { return List.copyOf(monsters); }
+
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private String id;
+        private String name;
+        private String description = "";
+        private String townId;
+        private int areaLevel;
+        private List<MonsterFactory> monsterRecipes = new ArrayList<>();
+
+        public Builder id(String id) { this.id = id; return this; }
+        public Builder name(String name) { this.name = name; return this; }
+        public Builder description(String description) { this.description = description; return this; }
+        public Builder townId(String townId) { this.townId = townId; return this; }
+        public Builder areaLevel(int areaLevel) { this.areaLevel = areaLevel; return this; }
+        public Builder monsterRecipes(List<MonsterFactory> recipes) { this.monsterRecipes = recipes; return this; }
+
+        public Dungeon build() {
+            return new Dungeon(id, name, description, townId, areaLevel, monsterRecipes);
+        }
     }
 
     @Override
