@@ -271,6 +271,7 @@ public class Kharacter implements Combatant {
     }
 
     public CharacterClass getCharacterClass() { return characterClass; }
+    public int getId() { return this.id; }
     public String getName() { return name; }
     public int getMaxHealth() { return maxHealth; }
     public int getCurrentHealth() { return currentHealth; }
