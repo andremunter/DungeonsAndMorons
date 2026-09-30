@@ -9,9 +9,9 @@ import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Monster implements Combatant {
-    private static final double HP_GROWTH_PER_LEVEL = 0.14;
+    private static final double HP_GROWTH_PER_LEVEL = 0.12;
     private static final double DMG_GROWTH_PER_LEVEL = 0.08;
-    private static final double EXP_GROWTH_PER_LEVEL = 0.16;
+    private static final double EXP_GROWTH_PER_LEVEL = 0.14;
 
     private final String templateId;
     private final String name;
@@ -42,11 +42,11 @@ public class Monster implements Combatant {
 
         int levelOffset = Math.max(0, level - 1);
 
-        double levelHp = template.baseHealth() * Math.pow(HP_GROWTH_PER_LEVEL, levelOffset);
+        double levelHp = template.baseHealth() * Math.pow(1.0 + HP_GROWTH_PER_LEVEL, levelOffset);
         this.maxHealth = Math.max(1, (int) Math.round(levelHp * rarity.getHealthMultiplier()));
         this.currentHealth = this.maxHealth;
 
-        double levelExp = template.baseExp() * Math.pow(EXP_GROWTH_PER_LEVEL, levelOffset);
+        double levelExp = template.baseExp() * Math.pow(1.0 + EXP_GROWTH_PER_LEVEL, levelOffset);
         this.expOnDeath = Math.max(0, (int) Math.round(levelExp * rarity.getExperienceMultiplier()));
     }
 
