@@ -1,16 +1,17 @@
 package se.dungeonsandmorons.town;
 
-import lombok.Getter;
 import se.dungeonsandmorons.model.npc.Npc;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@Getter
 public class Town {
     private final String name;
     private final String description;
     private final List<Npc> npcs;
+
+    public String getDescription() { return description; }
+    public String getName() { return name; }
+    public List<Npc> getNpcs() { return npcs; }
 
     public Town(String name, String description, List<Npc> npcs) {
         this.name = name;
@@ -19,12 +20,11 @@ public class Town {
     }
 
     public Npc findNpc(String query) {
-        for (Npc npc : npcs) {
-            if (npc.matches(query)) {
-                return npc;
-            }
-        }
-        return null;
+        return npcs.stream()
+                .filter(npc -> npc.matches(query))
+                .findFirst()
+                .orElse(null);
+
     }
 
 }

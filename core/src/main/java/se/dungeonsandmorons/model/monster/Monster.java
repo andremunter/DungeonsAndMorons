@@ -1,16 +1,13 @@
 package se.dungeonsandmorons.model.monster;
 
-import lombok.Getter;
 import se.dungeonsandmorons.model.character.Combatant;
-import se.dungeonsandmorons.model.character.Kharacter;
+import se.dungeonsandmorons.model.dungeon.Dungeon;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
-@Getter
 public class Monster implements Combatant {
     private static final double HP_GROWTH_PER_LEVEL = 0.14;
     private static final double DMG_GROWTH_PER_LEVEL = 0.08;
@@ -111,6 +108,9 @@ public class Monster implements Combatant {
     }
 
     @Override
+    public int getArmor() { return this.armor;}
+
+    @Override
     public String getName() {
         return this.name;
     }
@@ -135,6 +135,8 @@ public class Monster implements Combatant {
         return this.currentHealth <= 0;
     }
 
+    public int getExpOnDeath() { return this.expOnDeath; }
+    public MonsterRarity getRarity() { return this.rarity; }
     public List<MonsterAction> getActions() {
         return Collections.unmodifiableList(this.actions);
     }
@@ -144,5 +146,4 @@ public class Monster implements Combatant {
     public String toString() {
         return String.format("%s %s", rarity, name);
     }
-
 }

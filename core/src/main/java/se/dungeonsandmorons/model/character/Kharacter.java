@@ -30,10 +30,10 @@ public class Kharacter implements Combatant {
 
     private int armor;
 
-    private final int healthPerLevel = 3;
-    private final int manaPerLevel = 2;
-    private final int healthPerVitality = 5;
-    private final int manaPerIntelligence = 4;
+    private final int HP_GROWTH_PER_LEVEL = 3;
+    private final int MANA_GROWTH_PER_LEVEL = 2;
+    private final int HEALTH_GROWTH_PER_VITALITY = 5;
+    private final int MANA_GROWTH_PER_INTELLIGENCE = 4;
 
     protected int strengthPerLevel = 5;
     protected int agilityPerLevel = 3;
@@ -117,10 +117,6 @@ public class Kharacter implements Combatant {
         // TODO: Calculate max health, etc..
     }
 
-    public boolean isFirstTimeDungeon() {
-        return firstTimeDungeon;
-    }
-
     public boolean isAlive() {
         return this.currentHealth > 0;
     }
@@ -181,6 +177,10 @@ public class Kharacter implements Combatant {
         return finalDamage;
     }
 
+    @Override
+    public int getArmor() { return this.armor; }
+
+
     public void levelUp() {
         System.out.println(String.format("%s leveled up from level %d to level %d.", name, level, level+1));
 
@@ -194,8 +194,8 @@ public class Kharacter implements Combatant {
     }
 
     private void updateStats() {
-        maxHealth += (level * healthPerLevel) + (healthPerVitality * (vitality * vitalityPerLevel));
-        maxMana += (level * manaPerLevel) + (manaPerIntelligence * (intelligence * intelligencePerLevel));
+        maxHealth += (level * HP_GROWTH_PER_LEVEL) + (HEALTH_GROWTH_PER_VITALITY * (vitality * vitalityPerLevel));
+        maxMana += (level * MANA_GROWTH_PER_LEVEL) + (MANA_GROWTH_PER_INTELLIGENCE * (intelligence * intelligencePerLevel));
     }
 
     public void getStats() {
@@ -270,7 +270,6 @@ public class Kharacter implements Combatant {
         this.clearedDungeons.addAll(dungeons);
     }
 
-
     public CharacterClass getCharacterClass() { return characterClass; }
     public String getName() { return name; }
     public int getMaxHealth() { return maxHealth; }
@@ -284,6 +283,7 @@ public class Kharacter implements Combatant {
     public int getAgility() { return agility; }
     public int getIntelligence() { return intelligence; }
     public int getVitality() { return vitality; }
+
     public List<Skill> getSkills() { return List.copyOf(skills); }
     public List<String> getSkillNames() {
         return skills.stream()

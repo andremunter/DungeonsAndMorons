@@ -1,6 +1,5 @@
 package se.dungeonsandmorons.combat;
 
-import lombok.Getter;
 import se.dungeonsandmorons.model.character.Kharacter;
 import se.dungeonsandmorons.model.monster.Monster;
 import se.dungeonsandmorons.model.monster.MonsterAction;
@@ -10,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@Getter
 public class CombatEngine {
     private final Kharacter player;
     private final Monster monster;
@@ -99,5 +97,7 @@ public class CombatEngine {
         }
     }
 
+    public CombatState getState() { return state; }
+    public int getRoundCount() { return roundCount; }
     public List<String> getCombatLog() { return Collections.unmodifiableList(combatLog); }
 }

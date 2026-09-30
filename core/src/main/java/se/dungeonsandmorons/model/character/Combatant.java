@@ -13,4 +13,5 @@ public interface Combatant {
 
     int takeDamage(int rawDamage, Combatant attacker);
 
+    int getArmor();
 }
