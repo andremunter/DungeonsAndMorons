@@ -1,16 +1,30 @@
-You are the Lead Systems Architect for "Dungeons and Morons," a menu-driven, browser-based turn-based RPG. Your sole focus is pure Java domain architecture, Spring Boot REST APIs, and state machine integrity.
+# Engine and systems architect
 
-# Architecture & Tech Stack Rules
-- Language: Modern Java (Java 21+). Use records for DTOs, sealed interfaces, and switch expressions with pattern matching.
-- Decoupling: Domain classes (CombatEngine, Kharacter, Monster, Skill) must remain 100% free of web/HTTP dependencies and console I/O.
-- STRICT BAN: Never write terminal code (no Scanner, no System.out.println, no Screen classes). All output must be returned via structured DTOs or logged through standard logging frameworks.
-- State Validation: Enforce fail-fast state checks (throw IllegalStateException when actions are invoked out of turn/state).
-- Scaling & Math: Adhere strictly to the compound scaling model:
-    * Monster HP growth: 12% per level (Math.pow(1.12, level - 1))
-    * Damage growth: 8% per level (Math.pow(1.08, level - 1))
-    * EXP growth: 14% per level (Math.pow(1.14, level - 1))
-    * Armor mitigation: K / (K + Armor), where K = 100 + (15 * level)
-    * Stat damage scaling: Base + (AttributeValue * Multiplier)
+## Current architecture
 
-# Deliverables
-When providing code, provide fully typed, compilable classes or records matching package structures under `se.dungeonsandmorons.*`.
+- `:core` contains the game domain, repositories/services, `CombatEngine`, `GameSession`, and `PlayerSessionService`.
+- `:web` owns the Spring Boot REST application and its controllers/DTOs. Combat currently has no REST controller or published combat DTO contract.
+- `:cli` owns the terminal screens and state machine and remains an active source module.
+- `PlayerSessionService` is plain Java and is registered in Spring by `:web`; the unfinished `CombatService` is not wired. Keep framework wiring in `:web` and avoid HTTP/servlet dependencies in combat/domain rules.
+
+## Combat and session status
+
+`CombatEngine` currently handles one player and one monster, supports `ATTACK`, `CAST`, and `RUN`, resolves a weighted monster action, records simple log strings, and moves between `CombatState` values. `HEAL` exists in `CombatAction` but is not implemented in the engine. Status effects, loot, and a complete encounter lifecycle are not implemented.
+
+`GameSession` currently holds a `Kharacter`, optional current dungeon/combat references, and a last-active timestamp. `PlayerSessionService` loads a saved character into a `ConcurrentHashMap` keyed by a string session ID. There is no expiration, persistence, cookie, or REST integration yet.
+
+`CombatService` is currently an empty, unwired stub with unused members. It is optional work in progress, not the required design. Evaluate whether a service is needed when wiring combat to the REST boundary; do not move HTTP concerns into `CombatEngine`.
+
+## Intended browser session boundary
+
+Use a cryptographically random opaque session ID in an `HttpOnly` cookie and keep player/game state server-side. The ID is itself a sensitive bearer credential; the cookie must not contain serialized game state or a self-contained access token, and JavaScript must not be able to read it. For browser requests:
+
+- Set `Secure` on HTTPS, choose a deliberate `SameSite` policy, use `Path=/`, and choose a bounded lifetime; avoid an unnecessarily broad cookie domain.
+- Protect state-changing requests against CSRF with appropriate SameSite behavior plus Origin validation and/or a CSRF token.
+- Rotate/invalidate IDs at session creation, character changes, logout, and expiry as appropriate; never log cookie values.
+- Enforce that a session is authorized for the character and game state it accesses. Do not trust a client-supplied character name or session ID as authorization by itself.
+- Treat the current in-memory map as a single-process prototype. Define expiry and storage requirements before claiming restart persistence or horizontal scalability.
+
+## Implementation guidance
+
+Translate web input into domain commands and map domain outcomes to web DTOs in `:web`. Preserve state validation in the engine and make invalid transitions visible. Add tests around one action and the session boundary when those are implemented. Do not make the proposed API or UI in other guidance sound implemented.

@@ -1,177 +1,31 @@
-# Web UI & API Contracts: Dungeons and Morons
+# Web API contracts: implementation status and proposals
 
-This document specifies the REST API endpoints, TypeScript interfaces, and JSON payloads for the frontend client.
+There is no browser client in the repository. The endpoints below are the routes currently implemented by `:web`; examples in older documents for combat or dungeon exploration are proposals, not working contracts.
 
----
+## Implemented routes
 
-## 1. REST Endpoints Overview
+| Method | Route | Current behavior |
+|---|---|---|
+| `GET` | `/api/characters` | Lists character summaries. |
+| `GET` | `/api/characters/{name}` | Loads a character save or returns 404. |
+| `POST` | `/api/characters` | Creates a character save. |
+| `DELETE` | `/api/characters/{name}` | Deletes a save or returns 404. |
+| `PATCH` | `/api/characters/{name}/stats` | Calls stat allocation on a loaded save; the core allocation method is currently unfinished. |
+| `GET` | `/api/dungeons` | Lists dungeon summaries. |
+| `GET` | `/api/dungeons/{name}` | Returns one dungeon summary. |
 
-| Method   | Endpoint                | Description                                        | Request Body          | Response Body         |
-|:---------|:------------------------|:---------------------------------------------------|:----------------------|:----------------------|
-| **GET**  | `/api/combat/state`     | Retrieves the current combat session status        | None                  | `CombatStateResponse` |
-| **POST** | `/api/combat/action`    | Dispatches a player combat action                  | `CombatActionRequest` | `CombatStateResponse` |
-| **POST** | `/api/dungeon/explore`  | Steps dungeon exploration, triggering an encounter | None                  | `ExploreResultDto`    |
-| **GET**  | `/api/character/status` | Fetches persistent character stats and resources   | None                  | `CharacterProfileDto` |
+Implemented Java DTOs are `CreateCharacterRequest`, `AllocateStatsRequest`, `ApiErrorResponse`, `DungeonResponse`, and `MonsterSummaryResponse`. Character endpoints currently address saves by character name; they are not backed by the new game-session cookie flow.
 
----
+## Not implemented
 
-## 2. TypeScript Type Definitions
+There are no `/api/combat/*` or `/api/dungeon/explore` routes, no combat request/response DTOs, and no HTTP session cookie integration. Any TypeScript types or endpoint payloads added for those features must be labeled as a proposed contract until the Java DTOs, controller behavior, and tests exist. `HEAL` is not currently supported by `CombatEngine`.
 
-```typescript
-// Combat action types matching backend enum se.dungeonsandmorons.combat.CombatAction
-export type CombatAction = 'ATTACK' | 'CAST' | 'HEAL' | 'RUN';
+## Intended browser session contract
 
-// Combat FSM states matching backend enum se.dungeonsandmorons.combat.CombatState
-export type CombatState = 
-  | 'ROUND_START'
-  | 'AWAITING_PLAYER_INPUT'
-  | 'RESOLVING_PLAYER_ACTION'
-  | 'RESOLVING_ENEMY_ACTION'
-  | 'VICTORY'
-  | 'DEFEAT'
-  | 'ESCAPED';
+For gameplay requests, use a random opaque server-side session ID carried only in an HttpOnly cookie. Game state remains on the server. The ID is a sensitive bearer credential; do not put character data, serialized combat state, or a self-contained access token in the cookie or browser storage. Set `Secure` in HTTPS deployments, a deliberate `SameSite` policy, `Path=/`, and an appropriate lifetime. Cookie-authenticated writes need CSRF protection, such as strict Origin checks and/or a CSRF token. Never log cookie values.
 
-export interface CombatantStatusDto {
-  name: string;
-  level: number;
-  currentHp: number;
-  maxHp: number;
-  currentMana: number;
-  maxMana: number;
-  armor: number;
-}
+The current `PlayerSessionService` map is process-local and has no expiry or persistence; the eventual API must define session creation, character selection, expiry/logout, and invalid-session responses before claiming production-ready behavior.
 
-export interface CombatActionRequest {
-  action: CombatAction;
-  skillName?: string | null;
-}
+## Contract design notes for future work
 
-export interface CombatStateResponse {
-  combatState: CombatState;
-  roundNumber: number;
-  player: CombatantStatusDto;
-  enemy: CombatantStatusDto;
-  availableSkills: string[];
-  combatLog: string[];
-  isTerminal: boolean;
-}
-
-export interface CharacterProfileDto {
-  name: string;
-  characterClass: 'WARRIOR' | 'ARCHER' | 'MAGICIAN';
-  level: number;
-  experience: number;
-  unallocatedStatPoints: number;
-  strength: number;
-  agility: number;
-  intelligence: number;
-  vitality: number;
-  currentHealth: number;
-  maxHealth: number;
-  currentMana: number;
-  maxMana: number;
-  armor: number;
-  skills: string[];
-}
-```
-
----
-
-## 3. Example JSON Payloads
-
-### 3.1 Player Action Request (`POST /api/combat/action`)
-```json
-{
-  "action": "CAST",
-  "skillName": "Basic Magic Attack"
-}
-```
-
-### 3.2 State Response (`CombatStateResponse`)
-```json
-{
-  "combatState": "AWAITING_PLAYER_INPUT",
-  "roundNumber": 2,
-  "player": {
-    "name": "MoronHero",
-    "level": 3,
-    "currentHp": 118,
-    "maxHp": 150,
-    "currentMana": 25,
-    "maxMana": 35,
-    "armor": 12
-  },
-  "enemy": {
-    "name": "Dragon",
-    "level": 3,
-    "currentHp": 84,
-    "maxHp": 120,
-    "currentMana": 0,
-    "maxMana": 0,
-    "armor": 5
-  },
-  "availableSkills": [
-    "Basic Magic Attack",
-    "Strike"
-  ],
-  "combatLog": [
-    "Round 1 begins!",
-    "You used Basic Magic Attack on Dragon for 36 damage.",
-    "Dragon used Swipe for 32 damage!"
-  ],
-  "isTerminal": false
-}
-```
-
-### 3.3 Terminal Victory Response
-```json
-{
-  "combatState": "VICTORY",
-  "roundNumber": 3,
-  "player": {
-    "name": "MoronHero",
-    "level": 3,
-    "currentHp": 95,
-    "maxHp": 150,
-    "currentMana": 20,
-    "maxMana": 35,
-    "armor": 12
-  },
-  "enemy": {
-    "name": "Dragon",
-    "level": 3,
-    "currentHp": 0,
-    "maxHp": 120,
-    "currentMana": 0,
-    "maxMana": 0,
-    "armor": 5
-  },
-  "availableSkills": [],
-  "combatLog": [
-    "You used Strike on Dragon for 42 damage.",
-    "You defeated Dragon and earned 58 experience"
-  ],
-  "isTerminal": true
-}
-```
-
----
-
-## 4. Frontend UI State & Rendering Rules
-
-1. **Button Disabling & Locking:**
-    - Action buttons (`Attack`, `Cast`, `Run`) must be disabled when `combatState !== 'AWAITING_PLAYER_INPUT'`.
-    - If `isTerminal === true`, hide or lock the action tray and show the post-combat navigation modal (`Return to Town` / `Continue Dungeon`).
-    - Disable any action button immediately upon user click while awaiting an asynchronous `fetch`/`axios` response.
-
-2. **Resource Bars:**
-    - HP Bar percentage: `Math.max(0, (currentHp / maxHp) * 100)%`
-    - Mana Bar percentage: `Math.max(0, (currentMana / maxMana) * 100)%`
-    - If `currentMana < skillCost`, the specific skill button must be styled as disabled.
-
-3. **Auto-Scrolling Combat Log:**
-    - Whenever `combatLog` updates, automatically scroll the container to bottom:
-   ```javascript
-   const logContainer = document.getElementById('combat-log');
-   logContainer.scrollTop = logContainer.scrollHeight;
-   ```
+When combat endpoints are added, define Java DTOs from the actual `CombatEngine` and session operations; validate inputs and state on the server; return a complete, stable snapshot and structured log events rather than serializing mutable domain objects directly. Endpoint paths and fields are intentionally not fixed here.

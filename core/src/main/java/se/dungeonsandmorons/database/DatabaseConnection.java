@@ -5,12 +5,20 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseConnection {
-    //private static final String URL = "jdbc:postgresql://localhost:5432/dungeonsandmorons";
-    private static final String URL = "jdbc:postgresql://ep-cool-art-b2km85jl-pooler.c-6.eu-central-1.aws.neon.tech/neondb?sslmode=require";
-    private static final String USER = "neondb_owner";
-    private static final String PASSWORD = "npg_pTFZ0keKunD1";
 
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+        return DriverManager.getConnection(
+                requiredEnvironmentVariable("DB_URL"),
+                requiredEnvironmentVariable("DB_USERNAME"),
+                requiredEnvironmentVariable("DB_PASSWORD")
+        );
+    }
+
+    private static String requiredEnvironmentVariable(String name) {
+        String value = System.getenv(name);
+        if (value == null || value.isBlank()) {
+            throw new IllegalStateException("Required environment variable " + name + " is not set");
+        }
+        return value;
     }
 }

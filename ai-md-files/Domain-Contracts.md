@@ -1,243 +1,34 @@
-# Domain Contracts & Type System
+# Current domain contracts
 
-## 1. Core Interfaces
+This file summarizes types that exist in `:core`. It is not an API schema; the REST module has separate DTOs under `web/.../web/dto`.
 
-### `Combatant.java`
-```java
-package se.dungeonsandmorons.model.character;
+## Characters and combatants
 
-public interface Combatant {
-    String getName();
-    int getCurrentHealth();
-    int getMaxHealth();
+- `model.character.Combatant` exposes name, current/max health, armor, `takeDamage(rawDamage, attacker)`, and default alive/dead checks.
+- `model.character.Kharacter` is the mutable player model. It stores class, level/experience, attributes, health/mana, learned skills and cleared dungeon names. Its `allocateStats(...)` method is currently a TODO stub; use of stat allocation must not be assumed to update attributes yet.
+- `CharacterClass` defines `WARRIOR`, `ARCHER`, and `MAGICIAN`, each with a primary attribute, five stat points per level, and HP/mana-per-stat metadata. Those metadata values do not currently drive `Kharacter.updateStats()`.
 
-    default boolean isAlive() {
-        return getCurrentHealth() > 0;
-    }
+## Combat types
 
-    default boolean isDead() {
-        return getCurrentHealth() <= 0;
-    }
+- `combat.CombatAbility` defines `name()`, `getTargetType()`, and `tags()`.
+- `combat.CombatAction`: `ATTACK`, `CAST`, `HEAL`, `RUN`.
+- `combat.CombatState`: `ROUND_START`, `AWAITING_PLAYER_INPUT`, `RESOLVING_PLAYER_ACTION`, `RESOLVING_ENEMY_ACTION`, `VICTORY`, `DEFEAT`, `ESCAPED`; terminal states are victory, defeat and escaped.
+- `combat.CombatEvent` contains begin-turn, player/enemy attack, flee, and defeat events. It is not currently the driver of `CombatEngine`.
+- `CombatEngine` receives a player and a monster, starts in `ROUND_START`, and requires `startRound()` before player action. It executes attack/cast/run, then resolves one weighted monster action. `HEAL` is not implemented. It exposes state, round count, and an unmodifiable combat log.
+- `MonsterAction` is a record implementing `CombatAbility`, with name, base damage, positive selection weight, tags and flavor text. Target type is currently always single-target.
 
-    /**
-     * Mitigates raw damage via defender's armor and reduces current health.
-     * @param rawDamage Unmitigated attack power from attacker
-     * @param attacker The combatant dealing the damage
-     * @return The actual damage dealt after mitigation
-     */
-    int takeDamage(int rawDamage, Combatant attacker);
-}
-```
+## Skills and monsters
 
-### `CombatAbility.java`
-```java
-package se.dungeonsandmorons.combat;
+- `Skill` implements `CombatAbility` and stores ID/name/description, resource cost, base damage, scaling attribute/multiplier, target type, tags and allowed classes. `SkillRegistry` currently registers the warrior and archer skill sets; no magician skill set is registered.
+- `MonsterTemplate` is an immutable record/factory containing base health, armor, experience, and actions. `MonsterCatalog` currently registers templates including goblins, wolves, fungal creatures, bandits, woodland creatures and a dragon.
+- `Monster` applies level and rarity scaling, chooses a monster action by positive integer weights, and implements damage mitigation.
 
-import se.dungeonsandmorons.model.skill.SkillTag;
-import se.dungeonsandmorons.model.skill.TargetType;
+## Dungeons, towns, saves, sessions
 
-import java.util.Set;
+- `Dungeon` is mutable encounter state instantiated from factories in `DungeonRegistry`; `DensewoodDungeons` registers five Densewood dungeons. `TownRegistry` currently defines Densewood and Cliffhanger.
+- `CharacterRepository` defines save/load/list/delete/existence operations. `CharacterSaveData` and `CharacterSummary` are repository value records; the PostgreSQL implementation is `PostgresCharacterRepository`.
+- `GameSession` and `PlayerSessionService` are prototype session orchestration in `:core`. The service loads a save into an in-memory map by caller-provided string ID; no HTTP cookie integration, expiry, or durable game-session storage exists.
 
-public interface CombatAbility {
-    String name();
-    TargetType getTargetType();
-    Set<SkillTag> tags();
-}
-```
+## REST contracts are separate
 
----
-
-## 2. Core Enums
-
-### `Attribute.java`
-```java
-package se.dungeonsandmorons.model;
-
-public enum Attribute {
-    STRENGTH,
-    AGILITY,
-    INTELLIGENCE,
-    VITALITY
-}
-```
-
-### `CharacterClass.java`
-```java
-package se.dungeonsandmorons.model.character;
-
-import se.dungeonsandmorons.model.Attribute;
-
-public enum CharacterClass {
-    WARRIOR(Attribute.STRENGTH, 5, 6, 2),
-    ARCHER(Attribute.AGILITY, 5, 4, 4),
-    MAGICIAN(Attribute.INTELLIGENCE, 5, 3, 6);
-
-    private final Attribute primaryAttribute;
-    private final int statPointGain;
-    private final int hpPerVitality;
-    private final int manaPerIntelligence;
-
-    CharacterClass(Attribute primaryAttribute, int statPointGain, int hpPerVitality, int manaPerIntelligence) {
-        this.primaryAttribute = primaryAttribute;
-        this.statPointGain = statPointGain;
-        this.hpPerVitality = hpPerVitality;
-        this.manaPerIntelligence = manaPerIntelligence;
-    }
-
-    public Attribute getPrimaryAttribute() { return primaryAttribute; }
-    public int getStatPointGain() { return statPointGain; }
-    public int getUnallocatedStats() { return statPointGain; }
-    public int getHpPerVitality() { return hpPerVitality; }
-    public int getManaPerIntelligence() { return manaPerIntelligence; }
-}
-```
-
-### `CombatAction.java`
-```java
-package se.dungeonsandmorons.combat;
-
-public enum CombatAction {
-    ATTACK,
-    CAST,
-    HEAL,
-    RUN
-}
-```
-
-### `CombatState.java`
-```java
-package se.dungeonsandmorons.combat;
-
-public enum CombatState {
-    ROUND_START,
-    AWAITING_PLAYER_INPUT,
-    RESOLVING_PLAYER_ACTION,
-    RESOLVING_ENEMY_ACTION,
-    VICTORY,
-    DEFEAT,
-    ESCAPED;
-
-    public boolean isTerminal() {
-        return this == VICTORY || this == DEFEAT || this == ESCAPED;
-    }
-}
-```
-
-### `CombatEvent.java`
-```java
-package se.dungeonsandmorons.combat;
-
-public enum CombatEvent {
-    BEGIN_TURN,
-    PLAYER_ATTACKED,
-    PLAYER_FLED,
-    ENEMY_DEFEATED,
-    ENEMY_ATTACKED,
-    PLAYER_DEFEATED
-}
-```
-
-### `TargetType.java`
-```java
-package se.dungeonsandmorons.model.skill;
-
-public enum TargetType {
-    SINGLE_TARGET,
-    MULTIPLE_TARGETS,
-    SELF,
-    SELF_AND_TARGET,
-    SELF_AND_TARGETS
-}
-```
-
-### `SkillTag.java`
-```java
-package se.dungeonsandmorons.model.skill;
-
-public enum SkillTag {
-    MELEE,
-    RANGED,
-    SPELL,
-    PHYSICAL,
-    FIRE,
-    COLD,
-    LIGHTNING,
-    HEAL,
-    BUFF,
-    DEBUFF
-}
-```
-
-### `MonsterRarity.java`
-```java
-package se.dungeonsandmorons.model.monster;
-
-public enum MonsterRarity {
-    NORMAL(1.0, 1.0, 1.0),
-    MAGIC(1.45, 1.15, 1.6),
-    RARE(2.25, 1.35, 2.75),
-    BOSS(4.5, 1.6, 6.0);
-
-    private final double healthMultiplier;
-    private final double damageMultiplier;
-    private final double experienceMultiplier;
-
-    MonsterRarity(double healthMultiplier, double damageMultiplier, double experienceMultiplier) {
-        this.healthMultiplier = healthMultiplier;
-        this.damageMultiplier = damageMultiplier;
-        this.experienceMultiplier = experienceMultiplier;
-    }
-
-    public double getHealthMultiplier() { return healthMultiplier; }
-    public double getDamageMultiplier() { return damageMultiplier; }
-    public double getExperienceMultiplier() { return experienceMultiplier; }
-}
-```
-
----
-
-## 3. Web API Transfer Contracts (DTOs)
-
-### `CombatActionRequest.java`
-```java
-package se.dungeonsandmorons.api.dto;
-
-import se.dungeonsandmorons.combat.CombatAction;
-
-public record CombatActionRequest(
-    CombatAction action,
-    String skillName
-) {}
-```
-
-### `CombatantStatusDto.java`
-```java
-package se.dungeonsandmorons.api.dto;
-
-public record CombatantStatusDto(
-    String name,
-    int level,
-    int currentHp,
-    int maxHp,
-    int currentMana,
-    int maxMana,
-    int armor
-) {}
-```
-
-### `CombatStateResponse.java`
-```java
-package se.dungeonsandmorons.api.dto;
-
-import java.util.List;
-
-public record CombatStateResponse(
-    String combatState,
-    int roundNumber,
-    CombatantStatusDto player,
-    CombatantStatusDto enemy,
-    List<String> availableSkills,
-    List<String> combatLog,
-    boolean isTerminal
-) {}
-```
+The currently implemented web DTOs are `CreateCharacterRequest`, `AllocateStatsRequest`, `ApiErrorResponse`, `DungeonResponse`, and `MonsterSummaryResponse`. Combat request/response DTO examples in older designs are not current Java types and must be treated as proposals until introduced and wired to controllers.

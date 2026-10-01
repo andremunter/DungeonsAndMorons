@@ -1,91 +1,41 @@
-# World & Content Registry: Dungeons and Morons
+# Current world and content registries
 
-This document catalogs existing character classes, registered skills, bestiary entries, locations, and narrative tone guidelines for *Dungeons and Morons*.
+This catalog reflects the existing `:core` registrations. It is not a complete GDD; content and balance can change.
 
----
+## Tone
 
-## 1. Tone & Narrative Style Guide
+The intended writing is dry, satirical fantasy: bureaucratic inconvenience and mundane concerns are treated seriously. Keep combat flavor text mechanically legible. Existing monster actions have short flavor strings, but do not assume every action in the project has polished narrative text.
 
-* **Genre Satire:** The world operates under mundane bureaucratic incompetence, inflated fantasy egos, and corporate-style dungeon management rather than epic, high-stakes drama.
-* **Dry & Cynical Humor:** Characters and enemies take their absurd reality completely seriously (e.g., dragons worried about housing market valuations, blacksmiths refusing service over union lunch breaks).
-* **Combat Flavor Text:** Every action must feature punchy, self-aware flavor text that grounds the ability in combat logs while maintaining mechanical clarity.
+## Character classes
 
----
+`CharacterClass` currently defines:
 
-## 2. Character Classes & Baseline Attributes
+| Class | Primary attribute | Stat-point gain | HP/vitality metadata | Mana/intelligence metadata |
+|---|---|---:|---:|---:|
+| WARRIOR | STRENGTH | 5 | 6 | 2 |
+| ARCHER | AGILITY | 5 | 4 | 4 |
+| MAGICIAN | INTELLIGENCE | 5 | 3 | 6 |
 
-All classes gain **5 unallocated stat points** per level, but differ in primary scaling attribute and derived resource yields:
+The HP/mana fields are metadata; `Kharacter.updateStats()` currently uses separate fixed constants and does not apply them. Newly constructed characters start at level 0. Do not describe class-specific resource growth as working until the core calculation changes.
 
-| Class        | Primary Attribute        | HP Per Vitality | Mana Per Intelligence | Allowed Playstyle Focus                                        |
-|:-------------|:-------------------------|:----------------|:----------------------|:---------------------------------------------------------------|
-| **WARRIOR**  | `Attribute.STRENGTH`     | 6 HP            | 2 MP                  | Heavy physical melee, shields, and front-line survivability    |
-| **ARCHER**   | `Attribute.AGILITY`      | 4 HP            | 4 MP                  | Ranged physical strikes, high evasion, and multi-hit abilities |
-| **MAGICIAN** | `Attribute.INTELLIGENCE` | 3 HP            | 6 MP                  | High mana scaling, ranged elemental spells, and debuffs        |
+## Registered skills
 
----
+`SkillRegistry` registers `WarriorSkills` and `ArcherSkills`:
 
-## 3. Skill Catalog (`SkillRegistry`)
+- Warrior: **Swing** (5 base damage, no resource cost, Strength, single target) and **Strike** (10 base damage, cost 5, Strength, single target).
+- Archer: **Requisitioned Shot** (5 base damage, no cost, Agility, single target), **Itemized Puncture** (11 base damage, cost 5, Agility, single target), and **Blanket Notice** (6 base damage, cost 8, Agility, multiple targets).
+- No Magician skill registration currently exists. Do not promise a registered magician spell set.
 
-All skills implement `CombatAbility` and define resource costs, scaling attributes, and target classifications:
+Each skill also declares scaling multiplier, tags, allowed classes, and a description in its Java builder.
 
-### 3.1 Warrior Skills
-* **Basic Melee Attack**
-    * **Base Damage:** 5
-    * **Mana Cost:** 0
-    * **Scaling:** `Attribute.STRENGTH` (Multiplier: 1x)
-    * **Target Type:** `TargetType.SINGLE_TARGET`
-    * **Tags:** `[SkillTag.MELEE, SkillTag.PHYSICAL]`
-* **Strike**
-    * **Base Damage:** 9
-    * **Mana Cost:** 5
-    * **Scaling:** `Attribute.STRENGTH` (Multiplier: 1x)
-    * **Target Type:** `TargetType.SINGLE_TARGET`
-    * **Tags:** `[SkillTag.MELEE, SkillTag.PHYSICAL]`
-* **Raise Shield**
-    * **Base Damage:** 0
-    * **Mana Cost:** 5
-    * **Scaling:** `Attribute.STRENGTH` (Multiplier: 1x)
-    * **Target Type:** `TargetType.SELF`
-    * **Tags:** `[SkillTag.MELEE, SkillTag.PHYSICAL]` (or `BUFF`/`DEFENSIVE`)
+## Monster registry and rarity
 
-### 3.2 Magician Skills
-* **Basic Magic Attack**
-    * **Base Damage:** 4
-    * **Mana Cost:** 0
-    * **Scaling:** `Attribute.INTELLIGENCE` (Multiplier: 1x)
-    * **Target Type:** `TargetType.SINGLE_TARGET`
-    * **Tags:** `[SkillTag.RANGED, SkillTag.FIRE]`
+`MonsterCatalog` currently contains 15 templates: goblin scout/chieftain, forest wolf, spore shrieker, giant webspinner, brood matron, bandit cutpurse/bowman/captain, moss golem, corrupted druid/grovekeeper, briar horror, ancient treant, and dragon. Each template defines base health, armor, experience and weighted actions.
 
----
+Current rarity multipliers `(HP, damage, EXP)` are NORMAL `(1.0, 1.0, 1.0)`, MAGIC `(1.2, 1.15, 1.2)`, RARE `(1.4, 1.35, 1.5)`, EPIC `(1.8, 1.6, 1.8)`, and BOSS `(5.0, 2.0, 3.5)`. These differ from earlier proposed balance tables.
 
-## 4. Bestiary & Monster Design Roster
+## Towns and dungeons
 
-Monsters define base values, scaling rates, and a weighted action table for combat AI rolls:
-
-### 4.1 Dragon (`se.dungeonsandmorons.model.monster.Dragon`)
-* **Baseline Stats:** Base HP and Base EXP scale dynamically per level via compound growth.
-* **Configured Actions:**
-    1. **"Swipe"** (Base Damage: 20, Weight: 50)
-        * **Tags:** `[MELEE, PHYSICAL]`
-        * **Flavor Text:** *"Swipes with its claws"*
-    2. **"Fire Breath"** (Base Damage: 35, Weight: 35)
-        * **Tags:** `[MELEE, PHYSICAL]` (or `FIRE, SPELL`)
-        * **Flavor Text:** *"Breathes fire"*
-    3. **"Incinerate"** (Base Damage: 20, Weight: 15)
-        * **Tags:** `[MELEE, PHYSICAL]` (or `FIRE, SPELL`)
-        * **Flavor Text:** *"Focuses flames from its belly into a super-heated laser-like fire"*
-
----
-
-## 5. World Locations & Dungeons
-
-### 5.1 Towns (`TownScreen` / `TownView`)
-* **Default Starting Town:** Hub containing persistent service NPCs.
-* **NPCs:**
-    * **Flint Blunt:** Town blacksmith providing equipment checks and repairs.
-
-### 5.2 Dungeons (`ExploringDungeonScreen` / `DungeonView`)
-* **The Damp Cellar:**
-    * **Area Level:** 3–5
-    * **Encounter Pool:** Small pests, low-level monstrosities, wandering dragons, and trapped dungeon caches.
-    * **Exploration Flow:** Step-by-step exploration trigger rolling between monster combat, events, and safe returns to town.
+- `TownRegistry` currently defines Densewood and Cliffhanger. Densewood has Watchman Gourd, Flint Blunt, and Phil Phial; Cliffhanger has Cliff Hanger, Eileen Dover, and Brinkley.
+- `DensewoodDungeons` registers five dungeons, levels 1–5: Densewood Outskirts, The Fungal Hollow, The Bramble Maze, The Whispering Depths, and Heart of the Densewood. Each has a predefined list of normal monster factories and a boss factory.
+- `Dungeon` instances are mutable runtime objects populated from those recipes. Registry lookups instantiate dungeons; no web exploration/session progression is currently implemented.

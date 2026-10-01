@@ -6,6 +6,7 @@ import se.dungeonsandmorons.repository.CharacterRepository;
 import se.dungeonsandmorons.repository.PostgresCharacterRepository;
 import se.dungeonsandmorons.service.DungeonService;
 import se.dungeonsandmorons.service.SaveService;
+import se.dungeonsandmorons.session.PlayerSessionService;
 
 import javax.sql.DataSource;
 
@@ -25,5 +26,10 @@ public class CoreConfig {
     @Bean
     public DungeonService dungeonService() {
         return new DungeonService();
+    }
+
+    @Bean
+    public PlayerSessionService playerSessionService(CharacterRepository characterRepository) {
+        return new PlayerSessionService(characterRepository);
     }
 }
