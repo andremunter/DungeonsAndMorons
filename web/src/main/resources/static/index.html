@@ -85,8 +85,24 @@
 
             <div class="panel">
                 <h3>Town Activities</h3>
-                <button id="btn-to-dungeons">Go to Dungeon Gate</button>
+                <button id="btn-to-dungeon-gate">Go to Dungeon Gate</button>
                 <button id="btn-logout">Switch Character</button>
+            </div>
+        </main>
+
+        <!-- SCREEN 3: Dungeon selection -->
+        <main id="screen-dungeon-gate" style="display: none;">
+            <h1>Dungeon Gate</h1>
+            <p>Select an expedition.</p>
+
+            <div class="panel">
+                <h3>Available Dungeons</h3>
+                <div id="dungeon-list">Loading dungeons...</div>
+                <div id="dungeon-gate-error" class="error"></div>
+            </div>
+
+            <div class="panel">
+                <button id="btn-back-to-town">Back to Town</button>
             </div>
         </main>
 
