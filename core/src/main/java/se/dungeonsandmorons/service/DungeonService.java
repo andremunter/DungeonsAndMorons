@@ -49,7 +49,7 @@ public class DungeonService {
         }
 
         saveService.saveGame(player, currentTown);
-        session.clearDungeon();
+        session.endDungeonRun();
     }
 
     public List<String> getAvailableDungeonNames() {

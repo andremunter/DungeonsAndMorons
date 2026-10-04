@@ -47,42 +47,6 @@ public class CombatController {
                 run.recordVictory(engine.getEnemy());
             }
         }
-        return ResponseEntity.ok(toResponseDto(engine));
+        return ResponseEntity.ok(CombatStateResponse.from(engine));
     }
-
-    private CombatStateResponse toResponseDto(CombatEngine engine) {
-        Kharacter player = engine.getPlayer();
-        Monster enemy = engine.getEnemy();
-
-        CombatantStatusDto playerDto = new CombatantStatusDto(
-                player.getName(),
-                player.getLevel(),
-                player.getCurrentHealth(),
-                player.getMaxHealth(),
-                player.getCurrentMana(),
-                player.getMaxMana(),
-                player.getArmor()
-        );
-
-        CombatantStatusDto enemyDto = new CombatantStatusDto(
-                enemy.getName(),
-                enemy.getLevel(),
-                enemy.getCurrentHealth(),
-                enemy.getMaxHealth(),
-                0, // Monsters have no mana
-                0,
-                enemy.getArmor()
-        );
-
-        return new CombatStateResponse(
-                engine.getState().name(),
-                engine.getRoundCount(),
-                playerDto,
-                enemyDto,
-                player.getSkillNames(),
-                engine.getCombatLog().stream().map(Object::toString).toList(),
-                engine.getState().isTerminal()
-        );
-    }
-
 }

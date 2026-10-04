@@ -3,7 +3,9 @@ package se.dungeonsandmorons.web.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se.dungeonsandmorons.model.character.CharacterClass;
@@ -11,11 +13,15 @@ import se.dungeonsandmorons.model.character.Kharacter;
 import se.dungeonsandmorons.repository.CharacterSaveData;
 import se.dungeonsandmorons.repository.CharacterSummary;
 import se.dungeonsandmorons.service.SaveService;
+import se.dungeonsandmorons.session.GameSession;
+import se.dungeonsandmorons.session.PlayerSessionService;
 import se.dungeonsandmorons.web.dto.AllocateStatsRequest;
 import se.dungeonsandmorons.web.dto.CreateCharacterRequest;
 
 import java.net.URI;
+import java.time.Duration;
 import java.util.List;
+import java.util.UUID;
 
 @Tag(name = "Characters", description = "Character save and retrieval operations")
 @RestController
@@ -23,9 +29,39 @@ import java.util.List;
 public class CharacterController {
 
     private final SaveService saveService;
+    private final PlayerSessionService sessionService;
 
-    public CharacterController(SaveService saveService) {
+    public CharacterController(SaveService saveService, PlayerSessionService sessionService) {
+        this.sessionService = sessionService;
         this.saveService = saveService;
+    }
+
+    @Operation(summary = "Select and load a character into an active session")
+    public ResponseEntity<CharacterSummary> selectCharacter(@PathVariable String name) {
+        String sessionId = UUID.randomUUID().toString();
+
+        // Loads character into hot memory (ConcurrentHashMap)
+        GameSession session = sessionService.loadCharacter(sessionId, name);
+
+        // HttpOnly session cookie
+        ResponseCookie cookie = ResponseCookie.from("GAME_SESSION", sessionId)
+                .httpOnly(true)
+                .secure(false) // True in production with HTTPS
+                .sameSite("Strict")
+                .path("/")
+                .maxAge(Duration.ofHours(12))
+                .build();
+
+        Kharacter player = session.getPlayer();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(new CharacterSummary(
+                        player.getName(),
+                        player.getCharacterClass().name(),
+                        player.getLevel(),
+                        "Densewood"
+                ));
     }
 
     @Operation(summary = "List all saved characters")
@@ -112,6 +148,22 @@ public class CharacterController {
         saveService.saveGame(player, saveData.lastTownVisited());
 
         return ResponseEntity.ok(new CharacterSaveData(player, saveData.lastTownVisited()));
+    }
+
+    @Operation(summary = "Clear the current acive session, effectively logging out the player")
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout() {
+        ResponseCookie clearedCookie = ResponseCookie.from("GAME_SESSION")
+                .httpOnly(true)
+                .secure(false) // True in production with HTTPS
+                .sameSite("Strict")
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        return ResponseEntity.noContent()
+                .header(HttpHeaders.SET_COOKIE, clearedCookie.toString())
+                .build();
     }
 
 }
