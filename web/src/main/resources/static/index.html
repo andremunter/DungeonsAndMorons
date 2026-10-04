@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dungeons & Morons</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #121212;
+            color: #e0e0e0;
+            padding: 2rem;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+        .panel {
+            border: 1px solid #333;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: #1c1c1c;
+            border-radius: 4px;
+        }
+        button {
+            background: #2a2a2a;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        button:hover { background: #3a3a3a; }
+        input, select {
+            background: #0d0d0d;
+            color: #fff;
+            border: 1px solid #444;
+            padding: 0.5rem;
+            font-family: inherit;
+            margin-right: 0.5rem;
+        }
+        .char-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border: 1px solid #2d2d2d;
+            margin-bottom: 0.5rem;
+            background: #161616;
+        }
+        .error { color: #ff5555; margin-top: 0.5rem; }
+    </style>
+</head>
+    <body>
+
+        <!-- SCREEN 1: Character Select & Creation -->
+        <main id="screen-select">
+            <h1>Select Character</h1>
+
+            <div class="panel">
+                <h3>Available Characters</h3>
+                <div id="character-list">Loading saves...</div>
+            </div>
+
+            <div class="panel">
+                <h3>Create New Character</h3>
+                <form id="create-character-form">
+                    <input type="text" id="new-character-name" placeholder="Name" required />
+                    <select id="new-character-class">
+                        <option value="WARRIOR">Warrior</option>
+                        <option value="MAGICIAN">Magician</option>
+                        <option value="ARCHER">Archer</option>
+                    </select>
+                    <button type="submit">Create Character</button>
+                </form>
+                <div id="select-error" class="error"></div>
+            </div>
+        </main>
+
+        <!-- SCREEN 2: Town Hub -->
+        <main id="screen-town" style="display: none;">
+            <h1 id="town-title">Welcome to Town</h1>
+
+            <div class="panel">
+                <h3>Player Status</h3>
+                <p id="player-vitals">Loading...</p>
+            </div>
+
+            <div class="panel">
+                <h3>Town Activities</h3>
+                <button id="btn-to-dungeons">Go to Dungeon Gate</button>
+                <button id="btn-logout">Switch Character</button>
+            </div>
+        </main>
+
+        <script src="/app.js"></script>
+    </body>
+</html>

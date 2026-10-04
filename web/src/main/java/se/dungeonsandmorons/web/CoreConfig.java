@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import se.dungeonsandmorons.repository.CharacterRepository;
 import se.dungeonsandmorons.repository.PostgresCharacterRepository;
+import se.dungeonsandmorons.service.CombatService;
 import se.dungeonsandmorons.service.DungeonService;
 import se.dungeonsandmorons.service.SaveService;
 import se.dungeonsandmorons.session.PlayerSessionService;
@@ -31,5 +32,10 @@ public class CoreConfig {
     @Bean
     public PlayerSessionService playerSessionService(CharacterRepository characterRepository) {
         return new PlayerSessionService(characterRepository);
+    }
+
+    @Bean
+    public CombatService combatService() {
+        return new CombatService();
     }
 }

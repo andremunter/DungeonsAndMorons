@@ -1,6 +1,7 @@
 package se.dungeonsandmorons.web.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
@@ -37,6 +38,7 @@ public class CharacterController {
     }
 
     @Operation(summary = "Select and load a character into an active session")
+    @PostMapping("/{name}/select")
     public ResponseEntity<CharacterSummary> selectCharacter(@PathVariable String name) {
         String sessionId = UUID.randomUUID().toString();
 
