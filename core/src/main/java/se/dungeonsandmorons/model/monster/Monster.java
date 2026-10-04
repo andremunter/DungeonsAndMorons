@@ -140,6 +140,7 @@ public class Monster implements Combatant {
     public List<MonsterAction> getActions() {
         return Collections.unmodifiableList(this.actions);
     }
+    public int getLevel() { return this.level; }
 
 
     @Override

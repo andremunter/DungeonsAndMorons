@@ -100,4 +100,7 @@ public class CombatEngine {
     public CombatState getState() { return state; }
     public int getRoundCount() { return roundCount; }
     public List<String> getCombatLog() { return Collections.unmodifiableList(combatLog); }
+
+    public Kharacter getPlayer() { return player; }
+    public Monster getEnemy() { return monster; }
 }

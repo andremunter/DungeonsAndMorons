@@ -24,8 +24,8 @@ public class CoreConfig {
     }
 
     @Bean
-    public DungeonService dungeonService() {
-        return new DungeonService();
+    public DungeonService dungeonService(SaveService saveService) {
+        return new DungeonService(saveService);
     }
 
     @Bean
