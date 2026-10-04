@@ -1,5 +1,6 @@
 package se.dungeonsandmorons.web.controller;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se.dungeonsandmorons.combat.CombatEngine;
@@ -29,7 +30,7 @@ public class CombatController {
 
     @PostMapping("/action")
     public ResponseEntity<CombatStateResponse> executeAction(
-            @CookieValue(name = "GAME_SESSION") String sessionId,
+            @Parameter(hidden = true) @CookieValue(name = "GAME_SESSION") String sessionId,
             @RequestBody CombatActionRequest request
     ) {
 
