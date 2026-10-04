@@ -9,6 +9,8 @@ function showScreen(screenId) {
     document.getElementById("screen-select").style.display = "none";
     document.getElementById("screen-town").style.display = "none";
     document.getElementById("screen-dungeon-gate").style.display = "none";
+    document.getElementById("screen-dungeon-run").style.display = "none";
+    document.getElementById("screen-combat").style.display = "none";
 
     const activeScreen = document.getElementById(screenId);
     if (activeScreen) {
@@ -17,9 +19,19 @@ function showScreen(screenId) {
 }
 
 
-
-
 // --- API Functions ---
+
+async function leaveDungeon() {
+    const res = await fetch("/api/dungeons/leave", {
+        method: "POST"
+    });
+
+    if (!res.ok) {
+        const errorMsg = await res.text();
+        throw new Error(errorMsg || "Failed to leave dungeon");
+    }
+    return await res.text();
+}
 
 async function fetchDungeons() {
     const res = await fetch("/api/dungeons");
@@ -99,7 +111,7 @@ async function loadDungeonGateScreen() {
         listContainer.innerHTML = "";
 
         if (dungeons.length === 0) {
-            listContainer.innerHTML = "<p>No dungeons available right now<p/>";
+            listContainer.innerHTML = "<p>No dungeons available right now</p>";
             return
         }
 
@@ -165,10 +177,53 @@ async function handleEnterDungeon(dungeonName) {
     errorBox.textContent = "";
 
     try {
-        const message = await enterDungeon(dungeonName);
-        console.log(message);
-        alert(message);
-        /// Next step :: transition to active dungeon exploration screen
+        await enterDungeon(dungeonName);
+        startDungeonRunView(dungeonName);
+    } catch (err) {
+        errorBox.textContent = err.message;
+    }
+}
+
+function startDungeonRunView(dungeonName) {
+    document.getElementById("active-dungeon-title").textContent = `Exploring: ${dungeonName}`;
+    document.getElementById("dungeon-event-text").textContent = "You step cautiously into the depths...";
+    document.getElementById("btn-explore-room").disabled = false;
+    showScreen("screen-dungeon-run");
+}
+
+async function handleExplore() {
+    const eventText = document.getElementById("dungeon-event-text");
+    const errorBox = document.getElementById("dungeon-run-error");
+    errorBox.textContent = "";
+
+    try {
+        const response = await explore(); // calls POST /api/dungeons/explore
+        eventText.textContent = response.message;
+
+        if (response.eventType === "COMBAT") {
+            startCombatView(response.combatState);
+        } else if (response.eventType === "CLEARED") {
+            document.getElementById("btn-explore-room").disabled = true;
+            eventText.textContent += " Head for the exit to secure your rewards!";
+        }
+    } catch (err) {
+        errorBox.textContent = err.message;
+    }
+}
+
+async function handleLeave() {
+    const errorBox = document.getElementById("dungeon-run-error");
+    errorBox.textContent = "";
+
+    try {
+        const summary = await leaveDungeon();
+        alert(summary);
+
+        if (state.activeCharacter) {
+            enterTown(state.activeCharacter);
+        } else {
+            showScreen("screen-select");
+        }
     } catch (err) {
         errorBox.textContent = err.message;
     }
@@ -195,6 +250,81 @@ function enterTown(character) {
     showScreen("screen-town");
 }
 
+// --- Combat UI & Flow ---
+
+function appendCombatLog(messages) {
+    const logBox = document.getElementById("combat-log");
+    if (!messages) return;
+
+    const list = Array.isArray(messages) ? messages : [messages];
+    list.forEach(msg => {
+        const line = document.createElement("div");
+        line.textContent = `> ${msg}`;
+        logBox.appendChild(line);
+    });
+    logBox.scrollTop = logBox.scrollHeight;
+}
+
+function updateCombatVitals(combatState) {
+    const player = combatState.player;
+    const enemy = combatState.enemy;
+
+    if (player) {
+        document.getElementById("combat-player-name").textContent = player.name || "Player";
+        document.getElementById("combat-player-hp").textContent =
+            `HP: ${player.currentHealth} / ${player.maxHealth}`;
+    }
+    if (enemy) {
+        document.getElementById("combat-enemy-name").textContent = enemy.name || "Enemy";
+        document.getElementById("combat-enemy-hp").textContent =
+            `HP: ${enemy.currentHealth} / ${enemy.maxHealth}`;
+    }
+}
+
+function startCombatView(combatState) {
+    showScreen("screen-combat");
+    document.getElementById("combat-error").textContent = "";
+    document.getElementById("combat-log").innerHTML = "";
+    document.getElementById("combat-action-buttons").style.display = "block";
+    document.getElementById("combat-post-buttons").style.display = "none";
+    document.getElementById("btn-combat-attack").disabled = false;
+
+    updateCombatVitals(combatState);
+    const enemyName = combatState.enemy ? combatState.enemy.name : "Enemy";
+    appendCombatLog(`Encounter started with ${enemyName}!`);
+}
+
+async function handleCombatAttack() {
+    const errorBox = document.getElementById("combat-error");
+    errorBox.textContent = "";
+
+    try {
+        const result = await sendCombatAction("ATTACK", null);
+
+        const combatState = result.combatState || result;
+        updateCombatVitals(combatState);
+
+        if (combatState.combatLog && combatState.combatLog.length > 0) {
+            appendCombatLog(combatState.combatLog);
+        }
+
+        if (combatState.terminal) {
+            document.getElementById("btn-combat-attack").disabled = true;
+            document.getElementById("combat-action-buttons").style.display = "none";
+            document.getElementById("combat-post-buttons").style.display = "block";
+
+            if (combatState.state === "VICTORY") {
+                appendCombatLog("Victory! The enemy has been defeated.");
+            } else if (combatState.state === "DEFEAT") {
+                appendCombatLog("Defeat! You have fallen in battle.");
+                document.getElementById("btn-combat-continue").textContent = "Return to Town";
+            }
+        }
+    } catch (err) {
+        errorBox.textContent = err.message;
+    }
+}
+
 
 // --- App Initialization ---
 
@@ -219,6 +349,28 @@ window.addEventListener("DOMContentLoaded", () => {
             enterTown(state.activeCharacter);
         } else {
             showScreen("screen-select");
+        }
+    });
+
+    // Dungeon events
+    document.getElementById("btn-explore-room").addEventListener("click", handleExplore);
+    document.getElementById("btn-leave-dungeon").addEventListener("click", handleLeave);
+
+    // Combat events
+    document.getElementById("btn-combat-attack").addEventListener("click", handleCombatAttack);
+
+    // Continue after battle
+    document.getElementById("btn-combat-continue").addEventListener("click", () => {
+        const continueBtn = document.getElementById("btn-combat-continue");
+        if (continueBtn.textContent === "Return to Town") {
+            if (state.activeCharacter) {
+                enterTown(state.activeCharacter);
+            } else {
+                showScreen("screen-select");
+            }
+        } else {
+            document.getElementById("dungeon-event-text").textContent = "Enemy killed. Choose your next move.";
+            showScreen("screen-dungeon-run");
         }
     });
 });

@@ -36,7 +36,7 @@
             font-family: inherit;
             margin-right: 0.5rem;
         }
-        .char-card {
+        .character-card {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -74,6 +74,7 @@
             </div>
         </main>
 
+
         <!-- SCREEN 2: Town Hub -->
         <main id="screen-town" style="display: none;">
             <h1 id="town-title">Welcome to Town</h1>
@@ -90,6 +91,7 @@
             </div>
         </main>
 
+
         <!-- SCREEN 3: Dungeon selection -->
         <main id="screen-dungeon-gate" style="display: none;">
             <h1>Dungeon Gate</h1>
@@ -104,6 +106,63 @@
             <div class="panel">
                 <button id="btn-back-to-town">Back to Town</button>
             </div>
+        </main>
+
+
+        <!-- SCREEN 4: Active Dungeon Run -->
+        <main id="screen-dungeon-run" style="display: none;">
+            <h1 id="active-dungeon-title">Exploring Dungeon</h1>
+
+            <div class="panel">
+                <h3>Room Status</h3>
+                <p id="dungeon-event-text">You step cautiously into the depths...</p>
+            </div>
+
+            <div class="panel">
+                <h3>Actions</h3>
+                <button id="btn-explore-room">Explore Next Room</button>
+                <button id="btn-leave-dungeon">Leave & Cash Out</button>
+            </div>
+
+            <div id="dungeon-run-error" class="error"></div>
+        </main>
+
+
+        <!-- SCREEN 5: Combat Arena -->
+        <main id="screen-combat" style="display: none;">
+            <h1>Combat Encounter</h1>
+
+            <!-- Vitals Display -->
+            <div class="panel" style="display: flex; justify-content: space-between; gap: 1rem;">
+                <div style="flex: 1;">
+                    <h3 id="combat-player-name">Player</h3>
+                    <p id="combat-player-hp">HP: -- / --</p>
+                </div>
+                <div style="text-align: center; align-self: center; font-weight: bold; color: #888;">VS</div>
+                <div style="flex: 1; text-align: right;">
+                    <h3 id="combat-enemy-name">Enemy</h3>
+                    <p id="combat-enemy-hp">HP: -- / --</p>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="panel">
+                <h3>Actions</h3>
+                <div id="combat-action-buttons">
+                    <button id="btn-combat-attack">Attack</button>
+                </div>
+                <div id="combat-post-buttons" style="display: none; margin-top: 0.5rem;">
+                    <button id="btn-combat-continue">Continue Exploring</button>
+                </div>
+            </div>
+
+            <!-- Combat Log -->
+            <div class="panel">
+                <h3>Combat Log</h3>
+                <div id="combat-log" style="height: 140px; overflow-y: auto; background: #0d0d0d; padding: 0.75rem; border: 1px solid #333; font-size: 0.9em; line-height: 1.4;"></div>
+            </div>
+
+            <div id="combat-error" class="error"></div>
         </main>
 
         <script src="/app.js"></script>
