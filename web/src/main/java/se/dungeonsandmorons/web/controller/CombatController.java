@@ -4,16 +4,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se.dungeonsandmorons.combat.CombatEngine;
 import se.dungeonsandmorons.combat.CombatState;
-import se.dungeonsandmorons.model.character.Kharacter;
 import se.dungeonsandmorons.model.dungeon.DungeonRun;
-import se.dungeonsandmorons.model.monster.Monster;
 import se.dungeonsandmorons.service.CombatService;
 import se.dungeonsandmorons.service.DungeonService;
 import se.dungeonsandmorons.session.GameSession;
 import se.dungeonsandmorons.session.PlayerSessionService;
 import se.dungeonsandmorons.web.dto.CombatActionRequest;
 import se.dungeonsandmorons.web.dto.CombatStateResponse;
-import se.dungeonsandmorons.web.dto.CombatantStatusDto;
 
 @RestController
 @RequestMapping("/api/combat")
