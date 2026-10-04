@@ -2,6 +2,7 @@ package se.dungeonsandmorons.web.controller;
 
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +39,7 @@ public class DungeonController {
     }
 
     @PostMapping("/explore")
-    public ResponseEntity<ExploreResponse> explore(@CookieValue(name = "GAME_SESSION") String sessionId) {
+    public ResponseEntity<ExploreResponse> explore(@Parameter(hidden = true) @CookieValue(name = "GAME_SESSION") String sessionId) {
         GameSession session = sessionService.getSession(sessionId);
 
         if (!session.isInDungeon()) {
@@ -70,7 +71,7 @@ public class DungeonController {
 
     @PostMapping("/{name}/enter")
     public ResponseEntity<String> enterDungeon(
-            @CookieValue(name = "GAME_SESSION") String sessionId,
+            @Parameter(hidden = true) @CookieValue(name = "GAME_SESSION") String sessionId,
             @PathVariable String name) {
 
         GameSession session =  sessionService.getSession(sessionId);
@@ -87,7 +88,7 @@ public class DungeonController {
     }
 
     @PostMapping("/leave")
-    public ResponseEntity<String> leaveDungeon(@CookieValue(name = "GAME_SESSION") String sessionId) {
+    public ResponseEntity<String> leaveDungeon(@Parameter(hidden = true) @CookieValue(name = "GAME_SESSION") String sessionId) {
 
         GameSession session = sessionService.getSession(sessionId);
 
