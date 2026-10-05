@@ -53,24 +53,6 @@ async function enterDungeon(dungeonName) {
     return await res.text();
 }
 
-async function fetchSavedCharacters() {
-    const res = await fetch("/api/characters");
-    if (!res.ok) throw new Error("Failed to load characters");
-    return await res.json();
-}
-
-async function selectCharacter(name) {
-    const res = await fetch(`/api/characters/${encodeURIComponent(name)}/select`, {
-        method: "POST"
-    });
-
-    if (!res.ok) {
-        const errorMsg = await res.text();
-        throw new Error(errorMsg || "Failed to select character");
-    }
-    return await res.json();
-}
-
 async function explore() {
     const res = await fetch("/api/dungeons/explore", {
         method: "POST"
@@ -93,6 +75,44 @@ async function sendCombatAction(action, skillName = null) {
     if (!res.ok) {
         const errorMsg = await res.text();
         throw new Error(errorMsg || "Failed to send combat action");
+    }
+    return await res.json();
+}
+
+async function fetchSavedCharacters() {
+    const res = await fetch("/api/characters");
+    if (!res.ok) throw new Error("Failed to load characters");
+    return await res.json();
+}
+
+async function selectCharacter(name) {
+    const res = await fetch(`/api/characters/${encodeURIComponent(name)}/select`, {
+        method: "POST"
+    });
+
+    if (!res.ok) {
+        const errorMsg = await res.text();
+        throw new Error(errorMsg || "Failed to select character");
+    }
+    return await res.json();
+}
+
+async function createCharacter(name, characterClass) {
+    const res = await fetch("/api/characters", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({name, characterClass })
+    });
+
+    if (!res.ok) {
+       try {
+           const errJson = await res.json();
+           throw new Error(errJson.message || errJson.error || "Failed to create character");
+       } catch (e) {
+           if (e.message && e.message !== "Failed to create character") throw e;
+           const errorText = await res.text();
+           throw new Error(errorText || "Failed to create character");
+       }
     }
     return await res.json();
 }
@@ -250,6 +270,29 @@ function enterTown(character) {
     showScreen("screen-town");
 }
 
+async function handleCreateCharacter(e) {
+    e.preventDefault();
+
+    const nameInput = document.getElementById("new-character-name");
+    const classSelect = document.getElementById("new-character-class");
+    const errorBox = document.getElementById("select-error");
+
+    const name = nameInput.value.trim();
+    const characterClass = classSelect.value;
+
+    errorBox.textContent = "";
+
+    try {
+        await createCharacter(name, characterClass);
+
+        nameInput.value = "";
+
+        await handleSelectCharacter(name);
+    } catch (err) {
+        errorBox.textContent = err.message;
+    }
+}
+
 // --- Combat UI & Flow ---
 
 function appendCombatLog(messages) {
@@ -330,6 +373,12 @@ async function handleCombatAttack() {
 
 window.addEventListener("DOMContentLoaded", () => {
     loadCharacterSelectScreen();
+
+    // Character creation form
+    const createForm = document.getElementById("create-character-form");
+    if (createForm) {
+        createForm.addEventListener("submit", handleCreateCharacter);
+    }
 
     // Switching character (back to select)
     document.getElementById("btn-logout").addEventListener("click", () => {
