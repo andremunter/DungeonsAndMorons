@@ -1,6 +1,6 @@
 package se.dungeonsandmorons.model.skill;
 
-import se.dungeonsandmorons.model.Attribute;
+import se.dungeonsandmorons.model.character.Attribute;
 import se.dungeonsandmorons.model.character.CharacterClass;
 
 import java.util.Set;

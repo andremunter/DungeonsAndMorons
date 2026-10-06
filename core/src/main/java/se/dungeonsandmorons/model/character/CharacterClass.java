@@ -1,7 +1,5 @@
 package se.dungeonsandmorons.model.character;
 
-import se.dungeonsandmorons.model.Attribute;
-
 public enum CharacterClass {
     WARRIOR(
             Attribute.STRENGTH, // Primary Attribute, for baseDamage scaling

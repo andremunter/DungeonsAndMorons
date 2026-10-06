@@ -1,7 +1,7 @@
 package se.dungeonsandmorons.model.character;
 
-import se.dungeonsandmorons.model.Attribute;
 import se.dungeonsandmorons.model.skill.Skill;
+import se.dungeonsandmorons.model.skill.SkillRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,11 +64,20 @@ public class Kharacter implements Combatant {
         vitality = 0;
         armor = 0;
 
-    }
+        switch (characterClass) {
+            case WARRIOR -> {
+                this.learnSkill(SkillRegistry.get("warrior_basic_melee_attack"));
+                this.learnSkill(SkillRegistry.get("warrior_strike"));
+            }
+            case ARCHER -> {
+                this.learnSkill(SkillRegistry.get("archer_requisitioned_shot"));
+                this.learnSkill(SkillRegistry.get("archer_itemized_puncture"));
+            }
+            case MAGICIAN -> {
+                // MageSkills when ready
+            }
+        }
 
-    Kharacter(String name, int level) {
-        this.name = name;
-        this.level = level;
     }
 
     public Kharacter(int id, String name, CharacterClass characterClass, int level, int experience, int unallocatedStatPoints, int strength, int agility, int intelligence, int vitality, int currentHealth, int maxHealth, int currentMana, int maxMana) {

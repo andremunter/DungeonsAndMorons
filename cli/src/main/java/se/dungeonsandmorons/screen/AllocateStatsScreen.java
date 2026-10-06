@@ -2,7 +2,7 @@ package se.dungeonsandmorons.screen;
 
 import se.dungeonsandmorons.game.GameContext;
 import se.dungeonsandmorons.game.GameEvent;
-import se.dungeonsandmorons.model.Attribute;
+import se.dungeonsandmorons.model.character.Attribute;
 
 public class AllocateStatsScreen implements Screen {
 

@@ -38,11 +38,19 @@ public class CombatEngine {
             throw new IllegalStateException("Player action forbidden in state: " + state);
         }
 
+        if (skill != null && player.getCurrentMana() < skill.getResourceCost()) {
+            combatLog.add(String.format(
+                    "Not enough mana to cast %s. Required: %d, Available: %d",
+                    skill.name(), skill.getResourceCost(), player.getCurrentMana()
+            ));
+            return;
+        }
+
         this.state = CombatState.RESOLVING_PLAYER_ACTION;
 
         switch (action) {
             // TODO: Separate Attack and Cast. Dunno yet how. Cast should be like a magicians Firebolt or a Buff
-            case ATTACK, CAST -> {
+            case ATTACK, CAST, SKILL -> {
                 int damageDealt = player.attack(monster, skill);
                 combatLog.add(String.format("You used %s on %s for %d damage.",
                         skill != null ? skill.name() : "Basic Attack", monster.getName(), damageDealt

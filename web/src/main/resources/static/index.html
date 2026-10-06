@@ -9,7 +9,7 @@
             background: #121212;
             color: #e0e0e0;
             padding: 2rem;
-            max-width: 650px;
+            max-width: 1400px;
             margin: 0 auto;
         }
         .panel {
@@ -46,6 +46,44 @@
             background: #161616;
         }
         .error { color: #ff5555; margin-top: 0.5rem; }
+
+        .dungeon-run-container {
+            display: grid;
+            grid-template-columns: 30% 1fr;
+            gap: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .dungeon-run-sidebar {
+            display: grid;
+            grid-template-rows: 70% 1fr;
+            min-height: 700px;
+        }
+
+        .dungeon-run-sidebar-content-select {
+            display: flex;
+            width: 100%;
+            box-sizing: border-box;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .dungeon-run-main {
+            display: grid;
+            grid-template-rows: 80% 1fr;
+            gap: 1rem;
+            height: 100%;
+        }
+
+        .dungeon-run-combat-window {
+
+        }
+
+        .dungeon-run-action-bar {
+
+        }
+
     </style>
 </head>
     <body>
@@ -109,7 +147,50 @@
         </main>
 
 
+        <!-- SCREEN: Dungeon Run -->
+        <main id="screen-dungeon-run" style="display: none;">
+
+            <div class="dungeon-run-container">
+
+                <div class="panel dungeon-run-sidebar">
+
+                    <div>
+                        gsdgsdg
+                    </div>
+
+                    <div>
+                        <div class="dungeon-run-sidebar-content-select">
+                            <button id="btn-dungeon-run-inventory">Inventory</button>
+                            <button id="btn-dungeon-run-equipment">Equipment</button>
+                            <button id="btn-dungeon-run-stats">Stats</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dungeon-run-main">
+
+                    <div class="panel dungeon-run-combat-window">
+                        <h2 id="active-dungeon-title">Dungeon Name</h2>
+                        <p id="dungeon-floor-text">Floor: --</p>
+                        <p id="dungeon-room-text">Room: --</p>
+
+
+                    </div>
+
+                    <div class="panel dungeon-run-action-bar">
+                        <button id="btn-explore-room">Explore Next Room</button>
+                        <button id="btn-leave-dungeon">Leave & Cash Out</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+
         <!-- SCREEN 4: Active Dungeon Run -->
+        <!--
         <main id="screen-dungeon-run" style="display: none;">
             <h1 id="active-dungeon-title">Exploring Dungeon</h1>
 
@@ -126,6 +207,7 @@
 
             <div id="dungeon-run-error" class="error"></div>
         </main>
+        -->
 
 
         <!-- SCREEN 5: Combat Arena -->
@@ -150,6 +232,12 @@
                 <h3>Actions</h3>
                 <div id="combat-action-buttons">
                     <button id="btn-combat-attack">Attack</button>
+
+                    <!-- Dynamic Skills list -->
+                    <div style="margin-top: 1rem">
+                        <h4 style="margin: 0.25rem 0;">Skills</h4>
+                        <div id="combat-skills-list" style="display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
+                    </div>
                 </div>
                 <div id="combat-post-buttons" style="display: none; margin-top: 0.5rem;">
                     <button id="btn-combat-continue">Continue Exploring</button>

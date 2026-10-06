@@ -205,8 +205,8 @@ async function handleEnterDungeon(dungeonName) {
 }
 
 function startDungeonRunView(dungeonName) {
-    document.getElementById("active-dungeon-title").textContent = `Exploring: ${dungeonName}`;
-    document.getElementById("dungeon-event-text").textContent = "You step cautiously into the depths...";
+    document.getElementById("active-dungeon-title").textContent = `${dungeonName}`;
+    //document.getElementById("dungeon-event-text").textContent = "You step cautiously into the depths...";
     document.getElementById("btn-explore-room").disabled = false;
     showScreen("screen-dungeon-run");
 }
@@ -333,18 +333,20 @@ function startCombatView(combatState) {
     document.getElementById("btn-combat-attack").disabled = false;
 
     updateCombatVitals(combatState);
+    renderCombatSkills(combatState.availableSkills);
+
     const enemyName = combatState.enemy ? combatState.enemy.name : "Enemy";
     appendCombatLog(`Encounter started with ${enemyName}!`);
 }
 
-async function handleCombatAttack() {
+async function executeCombatTurn(action, skillName = null) {
     const errorBox = document.getElementById("combat-error");
     errorBox.textContent = "";
 
     try {
-        const result = await sendCombatAction("ATTACK", null);
-
+        const result = await sendCombatAction(action, skillName);
         const combatState = result.combatState || result;
+
         updateCombatVitals(combatState);
 
         if (combatState.combatLog && combatState.combatLog.length > 0) {
@@ -366,6 +368,33 @@ async function handleCombatAttack() {
     } catch (err) {
         errorBox.textContent = err.message;
     }
+}
+
+function renderCombatSkills(skills) {
+    const listContainer = document.getElementById("combat-skills-list");
+    if (!listContainer) return;
+    listContainer.innerHTML = "";
+
+    if (!skills || skills.length === 0) {
+        listContainer.innerHTML = `<span style="font-size: 0.85em; color: #777;">No active skills available</span>`;
+        return;
+    }
+
+    skills.forEach(skill => {
+        const skillName = typeof skill === "string" ? skill : (skill.name || skill.skillName || "Skill");
+        const costLabel = (typeof skill === "object" && skill.cost != null) ? ` (${skill.cost} MP)` : "";
+
+        const btn = document.createElement("button");
+        btn.textContent = `${skillName}${costLabel}`;
+        btn.style.marginRight = "0.5rem";
+        btn.style.borderColor = "#4a69bd";
+
+        btn.addEventListener("click", () => {
+            executeCombatTurn("SKILL", skillName);
+        })
+
+        listContainer.appendChild(btn)
+    })
 }
 
 
@@ -406,7 +435,9 @@ window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("btn-leave-dungeon").addEventListener("click", handleLeave);
 
     // Combat events
-    document.getElementById("btn-combat-attack").addEventListener("click", handleCombatAttack);
+    document.getElementById("btn-combat-attack").addEventListener("click", () => {
+        executeCombatTurn("ATTACK", null);
+    });
 
     // Continue after battle
     document.getElementById("btn-combat-continue").addEventListener("click", () => {

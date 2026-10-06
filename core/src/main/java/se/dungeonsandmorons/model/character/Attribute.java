@@ -1,4 +1,4 @@
-package se.dungeonsandmorons.model;
+package se.dungeonsandmorons.model.character;
 
 public enum Attribute {
     STRENGTH,
