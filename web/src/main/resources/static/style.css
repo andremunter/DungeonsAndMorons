@@ -1,0 +1,191 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: monospace;
+    background: #121212;
+    color: #e0e0e0;
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+.panel {
+    /* border: 1px solid #333; */
+    border: 1px solid #333;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    /* background: #1c1c1c; */
+    background: #1c1c1c;
+    border-radius: 4px;
+}
+button {
+    background: #2a2a2a;
+    color: #fff;
+    border: 1px solid #555;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-family: inherit;
+}
+button:hover { background: #3a3a3a; }
+input, select {
+    background: #0d0d0d;
+    color: #fff;
+    border: 1px solid #444;
+    padding: 0.5rem;
+    font-family: inherit;
+    margin-right: 0.5rem;
+}
+.character-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    border: 1px solid #2d2d2d;
+    margin-bottom: 0.5rem;
+    background: #161616;
+}
+.error { color: #ff5555; margin-top: 0.5rem; }
+
+.game-layout {
+    display: grid;
+    grid-template-columns: 30% 1fr;
+    gap: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 90vh;
+}
+
+.game-main-content {
+    height: 100%;
+}
+
+.game-view {
+    display: grid;
+    grid-template-rows: 80% 1fr;
+    gap: 1rem;
+    height: 100%;
+    box-sizing: border-box;
+}
+.game-view .panel {
+    margin-bottom: 0;
+}
+
+.game-sidebar {
+    display: grid;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    margin-bottom: 0;
+}
+.game-sidebar-top {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    height: auto;
+    margin-bottom: 0;
+}
+.game-sidebar-bottom {
+    flex-shrink: 0;
+    margin-top: 1rem;
+}
+
+.sidebar-bottom-content {
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.sidebar-tab-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.sidebar-tab-content {
+    display: none;
+}
+.sidebar-tab-content.active {
+    display: block;
+}
+
+.inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 34px);
+    gap: 2px;
+    margin-top: 0.5rem;
+    justify-content: center;
+}
+.inventory-slot {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #444;
+    background: #0d0d0d;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: transform 0.05s ease, background 0.15s ease, border-color 0.05s ease;
+}
+.inventory-slot:hover {
+    background: #2a2a2a;
+    border-color: #666;
+}
+.inventory-slot:active {
+    transform: scale(0.90);
+    border-color: #888;
+    background: #1a1a1a;
+}
+
+.combat-action-panel {
+    display: grid;
+    grid-template-columns: 50% 1fr;
+    gap: 2px;
+    justify-content: stretch;
+}
+
+.combat-display-panel {
+    position: relative;
+    overflow: hidden;
+}
+
+.combat-log {
+    position: absolute;
+    bottom: 1rem;
+    left: 1.5rem;
+    width: 60%;
+    max-height: 150px;
+    overflow-y: auto;
+
+    background: none !important;
+    border: none !important;
+    padding: 0;
+
+    z-index: 99;
+
+    text-shadow: 1px 1px 2px #000, 0 0 4px #000;
+    line-height: 1.4;
+    font-size: 0.9em;
+
+    /* Firefox */
+    scrollbar-width: none;
+
+    /* Legacy IE / Edge */
+    -ms-overflow-style: none;
+}
+    /* Chrome, Edge, Safari, Opera */
+.combat-log::-webkit-scrollbar {
+    display: none;
+}
+
+
+
+/* Rejection Buzz for clicks, like when out of mana, buzz the skill button */
+@keyframes rejection-buzz {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-3px); }
+    40%, 80% { transform: translateX(3px); }
+}
+.reject-click.shaking {
+    animation: rejection-buzz 0.2s ease-in-out;
+}

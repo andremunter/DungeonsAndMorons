@@ -3,101 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Dungeons & Morons</title>
-    <style>
-        body {
-            font-family: monospace;
-            background: #121212;
-            color: #e0e0e0;
-            padding: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        .panel {
-            /* border: 1px solid #333; */
-            border: 1px solid #333;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            /* background: #1c1c1c; */
-            background: #1c1c1c;
-            border-radius: 4px;
-        }
-        button {
-            background: #2a2a2a;
-            color: #fff;
-            border: 1px solid #555;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            font-family: inherit;
-        }
-        button:hover { background: #3a3a3a; }
-        input, select {
-            background: #0d0d0d;
-            color: #fff;
-            border: 1px solid #444;
-            padding: 0.5rem;
-            font-family: inherit;
-            margin-right: 0.5rem;
-        }
-        .character-card {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem;
-            border: 1px solid #2d2d2d;
-            margin-bottom: 0.5rem;
-            background: #161616;
-        }
-        .error { color: #ff5555; margin-top: 0.5rem; }
-
-        .dungeon-run-container {
-            display: grid;
-            grid-template-columns: 30% 1fr;
-            gap: 1rem;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .dungeon-run-sidebar {
-            display: grid;
-            grid-template-rows: 70% 1fr;
-            min-height: 700px;
-        }
-
-        .dungeon-run-sidebar-content {
-            display: flex;
-            width: 100%;
-            box-sizing: border-box;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .inventory-container {
-            display:grid;
-            grid-template-columns: repeat(10, 16px);
-            gap: 2px;
-        }
-
-        .inventory-box {
-            width: 16px;
-            height: 16px;
-        }
-
-        .dungeon-run-main {
-            display: grid;
-            grid-template-rows: 80% 1fr;
-            gap: 1rem;
-            height: 100%;
-        }
-
-        .dungeon-run-combat-window {
-
-        }
-
-        .dungeon-run-action-bar {
-
-        }
-
-    </style>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
     <body>
 
@@ -125,164 +31,157 @@
             </div>
         </main>
 
+        <!-- PERSISTENT IN-GAME SHELL (Town, Gate, Dungeon Run...) -->
+        <div id="game-shell" class="game-layout" style="display: none;">
 
-        <!-- SCREEN 2: Town Hub -->
-        <main id="screen-town" style="display: none;">
-            <h1 id="town-title">Welcome to Town</h1>
+            <!-- SHARED SIDEBAR -->
+            <aside class="panel game-sidebar">
 
-            <div class="panel">
-                <h3>Player Status</h3>
-                <p id="player-vitals">Loading...</p>
-            </div>
+                <!-- SIDEBAR: Top section -->
+                <div class="game-sidebar-top">
 
-            <div class="panel">
-                <h3>Town Activities</h3>
-                <button id="btn-to-dungeon-gate">Go to Dungeon Gate</button>
-                <button id="btn-logout">Switch Character</button>
-            </div>
-        </main>
+                    <!-- Inventory Tab -->
+                    <div id="inventory-container" class="sidebar-tab-content active">
+                        <h4 style="margin: 0 0 0.5rem 0;">Inventory</h4>
+                        <div id="inventory-grid" class="inventory-grid"><!-- Populated dynamically --></div>
+                    </div>
 
-
-        <!-- SCREEN 3: Dungeon selection -->
-        <main id="screen-dungeon-gate" style="display: none;">
-            <h1>Dungeon Gate</h1>
-            <p>Select an expedition.</p>
-
-            <div class="panel">
-                <h3>Available Dungeons</h3>
-                <div id="dungeon-list">Loading dungeons...</div>
-                <div id="dungeon-gate-error" class="error"></div>
-            </div>
-
-            <div class="panel">
-                <button id="btn-back-to-town">Back to Town</button>
-            </div>
-        </main>
-
-
-        <!-- SCREEN: Dungeon Run -->
-        <main id="screen-dungeon-run" style="display: none;">
-
-            <div class="dungeon-run-container">
-
-                <!-- DUNGEON RUN: Sidebar -->
-                <div class="panel dungeon-run-sidebar">
-
-                    <!-- SIDEBAR: Top Section -->
-                    <div class="dungeon-run-sidebar-top">
-
-                        <div class="inventory-container" style="display: block;">
-
-                        </div>
-
-                        <div class="equipment-container" style="display: none;">
-
-                        </div>
-
-                        <div class="stats-container" style="display: none;">
+                    <!-- Equipment Tab -->
+                    <div id="equipment-container" class="sidebar-tab-content">
+                        <h4 style="margin: 0 0 0.5rem 0;">Equipment</h4>
+                        <div class="equipment-grid">
 
                         </div>
                     </div>
 
-                    <!-- SIDEBAR: Bottom Section -->
-                    <div class="dungeon-run-sidebar-bottom">
+                    <!-- Stats tab -->
+                    <div id="stats-container" class="sidebar-tab-content">
+                        <h4 style="margin: 0 0 0.5rem 0;">Stats</h4>
+                        <div class="stats-grid">
 
-                        <div class="dungeon-run-sidebar-content">
-
-                            <button id="btn-dungeon-run-inventory">Inventory</button>
-                            <button id="btn-dungeon-run-equipment">Equipment</button>
-                            <button id="btn-dungeon-run-stats">Stats</button>
                         </div>
-
                     </div>
                 </div>
 
-                <!-- DUNGEON RUN: Right: Exploration & Combat Content -->
-                <div class="dungeon-run-main">
+                <!-- SIDEBAR: Bottom Section -->
+                <div class="game-sidebar-bottom">
 
-                    <div class="panel dungeon-run-combat-window">
+                    <div id="sidebar-tab-buttons" class="sidebar-bottom-content">
+                        <button data-tab="inventory-container">Inventory</button>
+                        <button data-tab="equipment-container">Equipment</button>
+                        <button data-tab="stats-container">Stats</button>
+                    </div>
+
+                </div>
+            </aside>
+
+            <!-- RIGHT CONTENT AREA: The active screen loads here -->
+            <section class="game-main-content">
+
+                <!-- VIEW: Town -->
+                <div id="screen-town" class="game-view" style="display: none;">
+
+                    <!-- Top -->
+                    <div class="panel">
+                        <h2 id="town-title">Welcome to Town</h2>
+                        <h3>Player Status</h3>
+                        <p id="player-vitals">Loading...</p>
+                    </div>
+
+                    <!-- Bottom -->
+                    <div class="panel">
+                        <h3>Town Activities</h3>
+                        <button id="btn-to-dungeon-gate">Go to Dungeon Gate</button>
+                        <button id="btn-logout">Switch Character</button>
+                    </div>
+                </div>
+
+                <!-- VIEW: Dungeon Gate -->
+                <div id="screen-dungeon-gate" class="game-view" style="display: none;">
+
+                    <!-- Top -->
+                    <div class="panel">
+                        <h1>Dungeon Gate</h1>
+                        <h3>Available Dungeons</h3>
+                        <div id="dungeon-list">Loading dungeons...</div>
+                        <div id="dungeon-gate-error" class="error"></div>
+                    </div>
+
+                    <!-- Bottom -->
+                    <div class="panel">
+                        <button id="btn-back-to-town">Back to Town</button>
+                    </div>
+                </div>
+
+                <!-- VIEW: Dungeon Run -->
+                <div id="screen-dungeon-run" class="game-view" style="display: none;">
+
+                    <!-- Top -->
+                    <div class="panel">
                         <h2 id="active-dungeon-title">Dungeon Name</h2>
                         <p id="dungeon-floor-text">Floor: --</p>
                         <p id="dungeon-room-text">Room: --</p>
-
-
+                        <p id="dungeon-round">Round: --</p>
                     </div>
 
-                    <div class="panel dungeon-run-action-bar">
+                    <!-- Bottom -->
+                    <div class="panel">
                         <button id="btn-explore-room">Explore Next Room</button>
                         <button id="btn-leave-dungeon">Leave & Cash Out</button>
-                    </div>
 
-                </div>
-
-            </div>
-
-        </main>
-
-
-        <!-- SCREEN 4: Active Dungeon Run -->
-        <!--
-        <main id="screen-dungeon-run" style="display: none;">
-            <h1 id="active-dungeon-title">Exploring Dungeon</h1>
-
-            <div class="panel">
-                <h3>Room Status</h3>
-                <p id="dungeon-event-text">You step cautiously into the depths...</p>
-            </div>
-
-            <div class="panel">
-                <h3>Actions</h3>
-                <button id="btn-explore-room">Explore Next Room</button>
-                <button id="btn-leave-dungeon">Leave & Cash Out</button>
-            </div>
-
-            <div id="dungeon-run-error" class="error"></div>
-        </main>
-        -->
-
-
-        <!-- SCREEN 5: Combat Arena -->
-        <main id="screen-combat" style="display: none;">
-            <h1>Combat Encounter</h1>
-
-            <!-- Vitals Display -->
-            <div class="panel" style="display: flex; justify-content: space-between; gap: 1rem;">
-                <div style="flex: 1;">
-                    <h3 id="combat-player-name">Player</h3>
-                    <p id="combat-player-hp">HP: -- / --</p>
-                </div>
-                <div style="text-align: center; align-self: center; font-weight: bold; color: #888;">VS</div>
-                <div style="flex: 1; text-align: right;">
-                    <h3 id="combat-enemy-name">Enemy</h3>
-                    <p id="combat-enemy-hp">HP: -- / --</p>
-                </div>
-            </div>
-
-            <!-- Actions -->
-            <div class="panel">
-                <h3>Actions</h3>
-                <div id="combat-action-buttons">
-                    <button id="btn-combat-attack">Attack</button>
-
-                    <!-- Dynamic Skills list -->
-                    <div style="margin-top: 1rem">
-                        <h4 style="margin: 0.25rem 0;">Skills</h4>
-                        <div id="combat-skills-list" style="display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
+                        <p id="dungeon-event-text"></p>
+                        <p id="dungeon-event-error" class="error"></p>
                     </div>
                 </div>
-                <div id="combat-post-buttons" style="display: none; margin-top: 0.5rem;">
-                    <button id="btn-combat-continue">Continue Exploring</button>
+
+                <!-- VIEW: Combat -->
+                <div id="screen-combat" class="game-view" style="display: none;">
+
+                    <!-- Top -->
+                    <div class="panel" style="position: relative; overflow: hidden;">
+                        <h1 style="margin-top: 0;">Combat Encounter</h1>
+
+                        <!-- Vitals Display -->
+                        <div style="display: flex; justify-content: space-between; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <h3 id="combat-player-name">Player</h3>
+                                <p id="combat-player-hp">HP: -- / --</p>
+                            </div>
+                            <div style="text-align: center; align-self: center; font-weight: bold; color: #888;">VS
+                            </div>
+                            <div style="flex: 1; text-align: right;">
+                                <h3 id="combat-enemy-name">Enemy</h3>
+                                <p id="combat-enemy-hp">HP: -- / --</p>
+                            </div>
+                        </div>
+
+                            <div id="combat-log" class="combat-log"></div>
+
+                    </div>
+
+                    <!-- Bottom -->
+                    <div class="panel combat-action-panel">
+
+                        <!-- Left side -->
+                        <div id="combat-action-buttons">
+                            <h3>Actions</h3>
+                            <button id="btn-combat-attack">Attack</button>
+
+                            <!-- Dynamic Skills list -->
+                            <div style="margin-top: 1rem">
+                                <h4 style="margin: 0.25rem 0;">Skills</h4>
+                                <div id="combat-skills-list" style="display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
+                            </div>
+
+                        </div>
+
+                        <!-- Right side -->
+                        <div id="combat-error" class="error"></div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Combat Log -->
-            <div class="panel">
-                <h3>Combat Log</h3>
-                <div id="combat-log" style="height: 140px; overflow-y: auto; background: #0d0d0d; padding: 0.75rem; border: 1px solid #333; font-size: 0.9em; line-height: 1.4;"></div>
-            </div>
-
-            <div id="combat-error" class="error"></div>
-        </main>
+            </section>
+        </div>
 
         <script src="/app.js"></script>
     </body>

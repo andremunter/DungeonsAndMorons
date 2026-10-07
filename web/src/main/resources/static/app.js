@@ -6,15 +6,38 @@ const state = {
 
 // --- Screen Switching ---
 function showScreen(screenId) {
-    document.getElementById("screen-select").style.display = "none";
-    document.getElementById("screen-town").style.display = "none";
-    document.getElementById("screen-dungeon-gate").style.display = "none";
-    document.getElementById("screen-dungeon-run").style.display = "none";
-    document.getElementById("screen-combat").style.display = "none";
+    const selectScreen = document.getElementById("screen-select");
+    const gameShell = document.getElementById("game-shell");
+
+    if (screenId === "screen-select") {
+        selectScreen.style.display = "block";
+        gameShell.style.display = "none";
+        return;
+    }
+
+    // Entering Game View:
+    selectScreen.style.display = "none";
+    gameShell.style.display = "grid";
+
+    // Hide all internal view, display target view
+    document.querySelectorAll(".game-view").forEach(view => {
+        view.style.display = "none";
+    });
+
+    const activeView = document.getElementById(screenId);
+    if (activeView) {
+        activeView.style.display = "grid";
+    }
+}
+
+function showDungeonSidebarScreen(screenId) {
+    document.querySelectorAll(".sidebar-tab-content").forEach(el => {
+        el.classList.remove("active");
+    });
 
     const activeScreen = document.getElementById(screenId);
     if (activeScreen) {
-        activeScreen.style.display = "block";
+        activeScreen.classList.add("active");
     }
 }
 
@@ -213,7 +236,7 @@ function startDungeonRunView(dungeonName) {
 
 async function handleExplore() {
     const eventText = document.getElementById("dungeon-event-text");
-    const errorBox = document.getElementById("dungeon-run-error");
+    const errorBox = document.getElementById("dungeon-event-error");
     errorBox.textContent = "";
 
     try {
@@ -232,7 +255,7 @@ async function handleExplore() {
 }
 
 async function handleLeave() {
-    const errorBox = document.getElementById("dungeon-run-error");
+    const errorBox = document.getElementById("combat-error");
     errorBox.textContent = "";
 
     try {
@@ -402,6 +425,7 @@ function renderCombatSkills(skills) {
 
 window.addEventListener("DOMContentLoaded", () => {
     loadCharacterSelectScreen();
+    initInventorySlots(120);
 
     // Character creation form
     const createForm = document.getElementById("create-character-form");
@@ -430,7 +454,28 @@ window.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // Sidebar
+
+    const sidebarNav = document.getElementById("sidebar-tab-buttons");
+    if (sidebarNav) {
+        sidebarNav.addEventListener("click", (e) => {
+            const btn = e.target.closest("button");
+            if (btn && btn.dataset.tab) {
+                showDungeonSidebarScreen(btn.dataset.tab);
+            }
+        });
+    }
+
+    document.querySelector(".inventory-grid").addEventListener("click", (e) => {
+        const slot = e.target.closest(".inventory-slot");
+        if (slot) {
+            const index = slot.dataset.slotIndex;
+            console.log(`Clicked slot index: ${index}`)
+        }
+    });
+
     // Dungeon events
+
     document.getElementById("btn-explore-room").addEventListener("click", handleExplore);
     document.getElementById("btn-leave-dungeon").addEventListener("click", handleLeave);
 
@@ -454,4 +499,38 @@ window.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // Rejection Buzz implementation
+    /*
+    grid.addEventListener("click", (e) => {
+        const slot = e.target.closest(".inventory-slot");
+        if (!slot) return;
+
+        slot.classList.remove("shaking");
+        void slot.offsetWidth; // Force CSS reflow to restart animation on rapid clicks
+        slot.classList.add("shaking");
+
+        // Auto-remove class when animation finishes
+        slot.addEventListener("animationend", () => slot.classList.remove("shaking"), { once: true });
+    });
+    */
+
 });
+
+function initInventorySlots(totalSlots = 60) {
+    const grid = document.getElementById("inventory-grid");
+    if (!grid) return;
+
+    grid.innerHTML = "";
+
+    const fragment = document.createDocumentFragment();
+
+    for (let i = 0; i < totalSlots; i++) {
+        const slot = document.createElement("div");
+        slot.className = "inventory-slot";
+        slot.dataset.slotIndex = i; // Storing index for item dragging/clicking later on
+
+        fragment.appendChild(slot);
+    }
+
+    grid.appendChild(fragment);
+}
