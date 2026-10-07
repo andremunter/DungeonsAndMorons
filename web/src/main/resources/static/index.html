@@ -13,9 +13,11 @@
             margin: 0 auto;
         }
         .panel {
+            /* border: 1px solid #333; */
             border: 1px solid #333;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
+            /* background: #1c1c1c; */
             background: #1c1c1c;
             border-radius: 4px;
         }
@@ -61,12 +63,23 @@
             min-height: 700px;
         }
 
-        .dungeon-run-sidebar-content-select {
+        .dungeon-run-sidebar-content {
             display: flex;
             width: 100%;
             box-sizing: border-box;
             justify-content: center;
             gap: 0.5rem;
+        }
+
+        .inventory-container {
+            display:grid;
+            grid-template-columns: repeat(10, 16px);
+            gap: 2px;
+        }
+
+        .inventory-box {
+            width: 16px;
+            height: 16px;
         }
 
         .dungeon-run-main {
@@ -152,21 +165,39 @@
 
             <div class="dungeon-run-container">
 
+                <!-- DUNGEON RUN: Sidebar -->
                 <div class="panel dungeon-run-sidebar">
 
-                    <div>
-                        gsdgsdg
+                    <!-- SIDEBAR: Top Section -->
+                    <div class="dungeon-run-sidebar-top">
+
+                        <div class="inventory-container" style="display: block;">
+
+                        </div>
+
+                        <div class="equipment-container" style="display: none;">
+
+                        </div>
+
+                        <div class="stats-container" style="display: none;">
+
+                        </div>
                     </div>
 
-                    <div>
-                        <div class="dungeon-run-sidebar-content-select">
+                    <!-- SIDEBAR: Bottom Section -->
+                    <div class="dungeon-run-sidebar-bottom">
+
+                        <div class="dungeon-run-sidebar-content">
+
                             <button id="btn-dungeon-run-inventory">Inventory</button>
                             <button id="btn-dungeon-run-equipment">Equipment</button>
                             <button id="btn-dungeon-run-stats">Stats</button>
                         </div>
+
                     </div>
                 </div>
 
+                <!-- DUNGEON RUN: Right: Exploration & Combat Content -->
                 <div class="dungeon-run-main">
 
                     <div class="panel dungeon-run-combat-window">
