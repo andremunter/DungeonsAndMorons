@@ -82,10 +82,12 @@ public class PostgresCharacterRepository implements CharacterRepository {
             """;
 
     private static final String SELECT_ALL_SUMMARIES_SQL = """
-            SELECT name, character_class, level, last_town_visited
-            FROM character_saves
-            ORDER BY name;
-            """;
+        SELECT name, character_class, level, last_town_visited,
+               health, max_health, mana, max_mana,
+               strength, agility, intelligence, vitality
+        FROM character_saves
+        ORDER BY name;
+        """;
 
     public PostgresCharacterRepository(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -182,7 +184,16 @@ public class PostgresCharacterRepository implements CharacterRepository {
                         rs.getString("name"),
                         rs.getString("character_class"),
                         rs.getInt("level"),
-                        rs.getString("last_town_visited")
+                        rs.getString("last_town_visited"),
+                        rs.getInt("health"),
+                        rs.getInt("max_health"),
+                        rs.getInt("mana"),
+                        rs.getInt("max_mana"),
+                        0, // Default 0 for armor; Armor is calculated when character/gear is loaded (Future WIP)
+                        rs.getInt("strength"),
+                        rs.getInt("agility"),
+                        rs.getInt("intelligence"),
+                        rs.getInt("vitality")
                 ));
             }
 

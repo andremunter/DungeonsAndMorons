@@ -25,8 +25,7 @@
 }
 
 body {
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto;
     font-family: var(--font-mono);
     background: var(--bg-primary);
     color: var(--text-main);
@@ -64,7 +63,7 @@ input, select {
     font-family: inherit;
     margin-right: 0.5rem;
 }
-.character-card {
+.card {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -76,7 +75,7 @@ input, select {
     cursor: pointer;
     transition: background 0.15s ease, border-color 0.15s ease, transform 0.05s ease;
 }
-.character-card:hover {
+.card:hover {
     background: var(--bg-surface);
     color: var(--text-muted);
     border-color: var(--border-focus);
@@ -107,10 +106,31 @@ input, select {
 }
 .game-view .panel {
     margin-bottom: 0;
+    min-height: 0;
+}
+#screen-dungeon-gate .panel:first-of-type {
+    display: flex;
+    flex-direction: column;
+}
+#dungeon-list {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    margin-top: 0.75rem;
+
+    scrollbar-width: none;
+
+    /* Legacy IE / Edge */
+    -ms-overflow-style: none;
+}
+/* Chrome, Edge, Safari, Opera */
+#dungeon-list::-webkit-scrollbar {
+    display: none;
 }
 
+
 .game-sidebar {
-    display: grid;
+    display: flex;
     flex-direction: column;
     justify-content: center;
     height: 100%;
@@ -120,8 +140,11 @@ input, select {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    height: auto;
     margin-bottom: 0;
+}
+.game-sidebar-top-title {
+    margin: 0 0 0.75rem 0;
+    color: var(--accent);
 }
 .game-sidebar-bottom {
     flex-shrink: 0;
@@ -173,6 +196,40 @@ input, select {
     transform: scale(0.90);
     border-color: #888;
     background: #1a1a1a;
+}
+
+.stats-section {
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+.stats-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+.stats-section-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.05rem;
+    margin-bottom: 0.4rem;
+}
+.stats-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.25rem 0;
+    font-size: 0.85rem;
+}
+.stat-label {
+    color: var(--text-muted);
+}
+.stat-value {
+    font-weight: bold;
+    color: var(--text-main);
+}
+.stat-value.highlight {
+    color: var(--accent);
 }
 
 .combat-action-panel {

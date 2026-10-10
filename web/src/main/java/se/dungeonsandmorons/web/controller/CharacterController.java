@@ -62,7 +62,16 @@ public class CharacterController {
                         player.getName(),
                         player.getCharacterClass().name(),
                         player.getLevel(),
-                        "Densewood"
+                        "Densewood",
+                        player.getCurrentHealth(),
+                        player.getMaxHealth(),
+                        player.getCurrentMana(),
+                        player.getMaxMana(),
+                        player.getArmor(),
+                        player.getStrength(),
+                        player.getAgility(),
+                        player.getIntelligence(),
+                        player.getVitality()
                 ));
     }
 
@@ -110,7 +119,16 @@ public class CharacterController {
                 newCharacter.getName(),
                 newCharacter.getCharacterClass().name(),
                 newCharacter.getLevel(),
-                startingTown
+                startingTown,
+                newCharacter.getCurrentHealth(),
+                newCharacter.getMaxHealth(),
+                newCharacter.getCurrentMana(),
+                newCharacter.getMaxMana(),
+                newCharacter.getArmor(),
+                newCharacter.getStrength(),
+                newCharacter.getAgility(),
+                newCharacter.getIntelligence(),
+                newCharacter.getVitality()
         ));
     }
 

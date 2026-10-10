@@ -160,7 +160,7 @@ async function loadDungeonGateScreen() {
 
         dungeons.forEach(dungeon => {
             const card = document.createElement("div");
-            card.className = "character-card";
+            card.className = "card";
             card.style.marginBottom = "0.75rem";
             card.innerHTML = `
                 <div>
@@ -172,8 +172,9 @@ async function loadDungeonGateScreen() {
                         Encounters ${dungeon.monsterCount} monsters
                     </div>
                 </div>
-                <button onclick="handleEnterDungeon('${dungeon.name}')">Enter</button>
             `;
+
+            card.addEventListener("click", () => handleEnterDungeon(dungeon.name));
             listContainer.appendChild(card);
         });
     } catch (err) {
@@ -197,7 +198,7 @@ async function loadCharacterSelectScreen() {
 
         characters.forEach(char => {
             const card = document.createElement("div");
-            card.className = "character-card";
+            card.className = "card";
 
             const locationName = char.lastTownVisited || char.town || "Densewood";
 
@@ -218,22 +219,64 @@ async function loadCharacterSelectScreen() {
 }
 
 async function loadCharacterStats(character) {
+    console.log("Character payload from backend:", character);
+
     const statsContainer = document.getElementById("stats-grid");
-    const stat = document.createElement("div");
-    stat.className = "stats-grid-stats";
-    stat.innerHTML = `
-        <strong>${character.name}</strong>
-        <strong>Level</strong> ${character.level}
-        <strong>Class</strong> ${character.characterClass}
-        <strong>Health</strong> ${character.health}
-        <strong>Mana</strong> ${character.mana}
-        <strong>Armor</strong> ${character.armor}
-        <h4>Attributes</h4>
-        <strong>Strength</strong> ${character.strength}
-        <strong>Agility</strong> ${character.agility}
-        <strong>Intelligence</strong> ${character.intelligence}
-        <Strong>Vitality</Strong> ${character.vitality}
-        `;
+    if (!statsContainer || !character) return;
+
+    statsContainer.innerHTML = ` 
+        <div class="stats-section">
+            <div class="stats-row">
+                <span class="stat-label">Name</span>
+                <span class="stat-value">${character.name}</span>
+            </div>
+            <div class="stats-row">
+                <span class="stat-label">Class</span>
+                <span class="stat-value">${character.characterClass}</span>
+            </div>
+            <div class="stats-row">
+                <span class="stat-label">Level</span>
+                <span class="stat-value">${character.level}</span>
+            </div>
+        </div>
+        
+        <div class="stats-section">
+            <div class="stats-section-title">Vitals</div>    
+            <div class="stats-row">
+                <span class="stat-label">Health</span>
+                <span class="stat-value">${character.health}</span>
+            </div>
+            <div class="stats-row">
+                <span class="stat-label">Mana</span>
+                <span class="stat-value">${character.mana}</span>
+            </div>
+            <div class="stats-row">
+                <span class="stat-label">Armor</span>
+                <span class="stat-value">${character.armor}</span>
+            </div>
+        </div>
+        
+        <div class="stats-section">
+            <div class="stats-section-title">Attributes</div>
+            <div class="stat-row">
+                <span class="stat-label">Strength</span>
+                <span class="stat-value">${character.strength ?? 0}</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Agility</span>
+                <span class="stat-value">${character.agility ?? 0}</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Intelligence</span>
+                <span class="stat-value">${character.intelligence ?? 0}</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Vitality</span>
+                <span class="stat-value">${character.vitality ?? 0}</span>
+            </div>
+        </div>
+    `;
+
 }
 
 // --- Event Handlers ---
@@ -302,6 +345,7 @@ async function handleSelectCharacter(name) {
     try {
         const charSummary = await selectCharacter(name);
         state.activeCharacter = charSummary;
+        loadCharacterStats(charSummary)
         enterTown(charSummary);
     } catch (err) {
         errorBox.textContent = err.message;
@@ -310,9 +354,7 @@ async function handleSelectCharacter(name) {
 
 function enterTown(character) {
     document.getElementById("town-title").textContent = `${character.town || 'Densewood'} Square`;
-    document.getElementById("player-vitals").innerHTML = `
-        <strong>${character.name}</strong> | Level ${character.level} | Class: ${character.characterClass}
-    `;
+    loadCharacterStats(character)
     showScreen("screen-town");
 }
 

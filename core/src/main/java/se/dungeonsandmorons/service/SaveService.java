@@ -4,7 +4,6 @@ import se.dungeonsandmorons.model.character.Kharacter;
 import se.dungeonsandmorons.repository.CharacterRepository;
 import se.dungeonsandmorons.repository.CharacterSaveData;
 import se.dungeonsandmorons.repository.CharacterSummary;
-import se.dungeonsandmorons.town.TownRegistry;
 
 import java.util.List;
 import java.util.Optional;
