@@ -198,13 +198,17 @@ async function loadCharacterSelectScreen() {
         characters.forEach(char => {
             const card = document.createElement("div");
             card.className = "character-card";
+
+            const locationName = char.lastTownVisited || char.town || "Densewood";
+
             card.innerHTML = `
                 <div>
                     <strong>${char.name}</strong> - Level ${char.level} ${char.characterClass}
-                    <div style="font-size: 0.85em; color: #888;">Location: ${char.lastTownVisited}</div>
+                    <div style="font-size: 0.85em; color: #888;">Location: ${locationName}</div>
                 </div>
-                <button onclick="handleSelectCharacter('${char.name}')">Select</button>
             `;
+
+            card.addEventListener("click", () => handleSelectCharacter(char.name));
             listContainer.appendChild(card);
         });
     } catch (err) {
