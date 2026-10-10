@@ -213,6 +213,25 @@ async function loadCharacterSelectScreen() {
     }
 }
 
+async function loadCharacterStats(character) {
+    const statsContainer = document.getElementById("stats-grid");
+    const stat = document.createElement("div");
+    stat.className = "stats-grid-stats";
+    stat.innerHTML = `
+        <strong>${character.name}</strong>
+        <strong>Level</strong> ${character.level}
+        <strong>Class</strong> ${character.characterClass}
+        <strong>Health</strong> ${character.health}
+        <strong>Mana</strong> ${character.mana}
+        <strong>Armor</strong> ${character.armor}
+        <h4>Attributes</h4>
+        <strong>Strength</strong> ${character.strength}
+        <strong>Agility</strong> ${character.agility}
+        <strong>Intelligence</strong> ${character.intelligence}
+        <Strong>Vitality</Strong> ${character.vitality}
+        `;
+}
+
 // --- Event Handlers ---
 
 async function handleEnterDungeon(dungeonName) {
